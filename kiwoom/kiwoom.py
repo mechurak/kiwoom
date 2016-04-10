@@ -3,10 +3,13 @@ from PyQt4.QtCore import *
 
 
 class Kiwoom:
-    data = {"조건식_list": [[0, "조건식0", "매도신호", False]],  # [인덱스, 조건명, 신호종류, 적용유무]
+    data = {
+            "조건식_list_header": ["인덱스", "조건명", "신호종류", "적용유무"],
+            "조건식_list": [[0, "조건식0", "매도신호", False]],
             "계좌번호": "12345",
-            "잔고_dic": {"00000": {"종목명": "테스트0", "현재가": 2000, "매입가": 1000, "수익율": 0.5, "매수전략": True, "매도전략": True},
-                       "00001": {"종목명": "테스트1", "현재가": 2000, "매입가": 1000, "수익율": 0.5, "매수전략": False, "매도전략": False}
+            "잔고_dic_header": ["종목명", "현재가", "매앱가", "수익율", "매수전략", "매도전략"],
+            "잔고_dic": {"00000": ["종목명1", 15000, 10000, 0.5, False, False],
+                       "00001": ["종목명2", 15000, 10000, 0.5, False, False]
                        },
             }
 
@@ -55,7 +58,7 @@ class Kiwoom:
                 earnings_rate /= 100
                 print("수익률", earnings_rate)
                 print(name, "현재가: ", cur_price, "매입가: ", buy_price, "수익률: ", earnings_rate)
-                잔고_dic[code] = {"종목명": name, "현재가": cur_price, "매입가": buy_price, "수익율": earnings_rate, "매수전략": True, "매도전략": True}
+                잔고_dic[code] = [name, cur_price, buy_price, earnings_rate, True, True]
             self.callback.on_data_updated(["잔고_dic"])
 
     def OnReceiveRealData(self, sJongmokCode, sRealType, sRealData):

@@ -67,6 +67,10 @@ class MyWindow(QMainWindow, KiwoomCallback):
 
         if "조건식_list" in key_list:
             condition_list = kiwoom.data["조건식_list"]
+            headers = kiwoom.data["조건식_list_header"]
+            self.ui.table_condition.setColumnCount(len(headers))
+            self.ui.table_condition.setHorizontalHeaderLabels(headers)
+
             for i in range(0, len(condition_list)):
                 self.ui.table_condition.setItem(i, 0, QTableWidgetItem(str(condition_list[i][0])))
                 self.ui.table_condition.setItem(i, 1, QTableWidgetItem(condition_list[i][1]))
@@ -86,14 +90,18 @@ class MyWindow(QMainWindow, KiwoomCallback):
 
         if "잔고_dic" in key_list:
             balance_dic = kiwoom.data["잔고_dic"]
-            headers = list(list(balance_dic.values())[0].keys())
+            headers = kiwoom.data["잔고_dic_header"]
             self.ui.table_current.setColumnCount(len(headers))
             self.ui.table_current.setHorizontalHeaderLabels(headers)
             balance_list = list(balance_dic.values())
+
             for i in range(0, len(balance_list)):
-                cur_list = list(balance_list[i].values())
-                for j in range(0, len(cur_list)):
-                    self.ui.table_current.setItem(i, j, QTableWidgetItem(str(cur_list[j])))
+                self.ui.table_current.setItem(i, 0, QTableWidgetItem(balance_list[i][0]))  # 종목명
+                self.ui.table_current.setItem(i, 1, QTableWidgetItem(str(balance_list[i][1])))  # 현재가
+                self.ui.table_current.setItem(i, 2, QTableWidgetItem(str(balance_list[i][2])))  # 매입가
+                self.ui.table_current.setItem(i, 3, QTableWidgetItem(str(balance_list[i][3])))  # 수익율
+                self.ui.table_current.setItem(i, 4, QTableWidgetItem(str(balance_list[i][4])))  # 매수전략
+                self.ui.table_current.setItem(i, 5, QTableWidgetItem(str(balance_list[i][5])))  # 매도전략
 
     def on_print(self, log_str):
         self.ui.txt_output.append(log_str)
