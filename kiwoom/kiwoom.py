@@ -1,17 +1,20 @@
 from PyQt4.QAxContainer import *
 from PyQt4.QtCore import *
+from kiwoom.strategy.stop_loss import StopLoss
 
 
 class Kiwoom:
     data = {
-            "조건식_list_header": ["인덱스", "조건명", "신호종류", "적용유무"],
+            "조건식_list_header": ["인덱스", "조건명", "신호종류", "적용유무", "요청버튼"],
             "조건식_list": [[0, "조건식0", "매도신호", False]],
             "계좌번호": "12345",
-            "잔고_dic_header": ["종목명", "현재가", "매앱가", "수익율", "매수전략", "매도전략"],
-            "잔고_dic": {"00000": ["종목명1", 15000, 10000, 0.5, False, False],
-                       "00001": ["종목명2", 15000, 10000, 0.5, False, False]
+            "잔고_dic_header": ["종목명", "현재가", "매입가", "보유수량", "수익율", "매수전략", "매도전략"],
+            "잔고_dic": {"00000": ["종목명1", 15000, 10000, 100, 0.5, [], []],
+                       "00001": ["종목명2", 15000, 10000, 100, 0.5, [], []]
                        },
             }
+
+    sell_strategy = []
 
     def __init__(self, the_callback):
         self.callback = the_callback
@@ -25,6 +28,9 @@ class Kiwoom:
         self.ocx.connect(self.ocx, SIGNAL("OnReceiveCondition(QString, QString, QString, QString)"), self.OnReceiveCondition)
         self.ocx.connect(self.ocx, SIGNAL("OnReceiveTrCondition(QString, QString, QString, int, int)"), self.OnReceiveTrCondition)
         self.ocx.connect(self.ocx, SIGNAL("OnReceiveConditionVer(int, QString)"), self.OnReceiveConditionVer)
+
+        sell_stop_loss = StopLoss(self.ocx, self.data)
+        self.sell_strategy.append(sell_stop_loss)
 
         self.login()
 
@@ -45,39 +51,67 @@ class Kiwoom:
             잔고_dic = self.data["잔고_dic"]
             잔고_dic.clear()
             for i in range(0, count):
-                code = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "종목번호")
-                name = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "종목명")
-                cur_price = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "현재가")
-                buy_price = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "매입가")
-                earnings_rate = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "수익률(%)")
-                code = code.strip()
-                name = name.strip()
-                cur_price = int(cur_price.strip())
-                buy_price = int(buy_price.strip())
-                earnings_rate = float(earnings_rate.strip())
-                earnings_rate /= 100
-                print("수익률", earnings_rate)
-                print(name, "현재가: ", cur_price, "매입가: ", buy_price, "수익률: ", earnings_rate)
-                잔고_dic[code] = [name, cur_price, buy_price, earnings_rate, True, True]
+                종목번호 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "종목번호")
+                종목명 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "종목명")
+                현재가_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "현재가")
+                매입가_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "매입가")
+                보유수량_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "보유수량")
+                수익률_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "수익률(%)")
+                종목번호 = 종목번호.strip()
+                종목명 = 종목명.strip()
+                현재가 = int(현재가_str.strip())
+                매입가 = int(매입가_str.strip())
+                보유수량 = int(보유수량_str.strip())
+                수익율 = float(수익률_str.strip()) / 100
+                print("수익률", 수익율)
+                print(종목명, "현재가: ", 현재가, "매입가: ", 매입가, "보유수량: ", 보유수량, "수익률: ", 수익율)
+                잔고_dic[종목번호] = [종목명, 현재가, 매입가, 보유수량, 수익율, [], []]
             self.callback.on_data_updated(["잔고_dic"])
 
     def OnReceiveRealData(self, sJongmokCode, sRealType, sRealData):
         print("(OnReceiveRealData) ", sJongmokCode, ", ", sRealType, ", ", sRealData)
         잔고_dic = self.data["잔고_dic"]
         if sJongmokCode in 잔고_dic:
-            매수전략_list = 잔고_dic[sJongmokCode]["매수전략"]
-            for 매수전략 in 매수전략_list:
-                매수전략.onRealData(sJongmokCode, sRealType, sRealData)
+            if (sRealType == "주식체결"):
+                현재가_str = self.ocx.dynamicCall("GetCommRealData(QString, int)", "주식체결", 10)
+                잔고_dic[sJongmokCode][1] = int(현재가_str.strip())
 
-            매도전략_list = 잔고_dic[sJongmokCode]["매도전략"]
-            for 매도전략 in 매도전략_list:
-                매도전략.onRealData(sJongmokCode, sRealType, sRealData)
+                매수전략_list = 잔고_dic[sJongmokCode]["매수전략"]
+                for 매수전략 in 매수전략_list:
+                    매수전략.onRealData(sJongmokCode, sRealType, sRealData)
+
+                매도전략_list = 잔고_dic[sJongmokCode]["매도전략"]
+                for 매도전략 in 매도전략_list:
+                    매도전략.onRealData(sJongmokCode, sRealType, sRealData)
 
     def OnReceiveMsg(self, sScrNo, sRQName, sTrCode, sMsg):
         print("(OnReceiveMsg) ", sScrNo, sRQName, sTrCode, sMsg)
 
     def OnReceiveChejanData(self, sGubun, nItemCnt, sFidList):
         print("(OnReceiveChejanData) ", sGubun, nItemCnt, sFidList)
+        if sGubun == 0:  # 주문체결통보
+            pass
+
+        elif sGubun == 1:  # 잔고통보
+            종목코드 = self.ocx.dynamicCall("GetChejanData(int)", 9001)
+            종목명 = self.ocx.dynamicCall("GetChejanData(int)", 302)
+            현재가_str = self.ocx.dynamicCall("GetChejanData(int)", 10)
+            보유수량_str = self.ocx.dynamicCall("GetChejanData(int)", 930)
+            종목코드 = 종목코드.strip()
+            종목명 = 종목명.strip()
+            현재가 = int(현재가_str.strip())
+            보유수량 = int(보유수량_str.strip())
+            잔고_dic = self.data["잔고_dic"]
+            if 보유수량 == 0:
+                del 잔고_dic[종목코드]
+            else:
+                잔고_dic[종목코드][1] = int(현재가)
+                잔고_dic[종목코드][3] = int(보유수량)
+
+        elif sGubun == 3:  # 특이신호
+            pass
+
+
 
     def OnEventConnect(self, nErrCode):
         if nErrCode == 0:
@@ -163,6 +197,3 @@ class KiwoomCallback:
 
     def on_print(self, log_str):
         pass
-
-
-

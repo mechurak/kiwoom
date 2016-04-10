@@ -99,9 +99,10 @@ class MyWindow(QMainWindow, KiwoomCallback):
                 self.ui.table_current.setItem(i, 0, QTableWidgetItem(balance_list[i][0]))  # 종목명
                 self.ui.table_current.setItem(i, 1, QTableWidgetItem(str(balance_list[i][1])))  # 현재가
                 self.ui.table_current.setItem(i, 2, QTableWidgetItem(str(balance_list[i][2])))  # 매입가
-                self.ui.table_current.setItem(i, 3, QTableWidgetItem(str(balance_list[i][3])))  # 수익율
-                self.ui.table_current.setItem(i, 4, QTableWidgetItem(str(balance_list[i][4])))  # 매수전략
-                self.ui.table_current.setItem(i, 5, QTableWidgetItem(str(balance_list[i][5])))  # 매도전략
+                self.ui.table_current.setItem(i, 3, QTableWidgetItem(str(balance_list[i][3])))  # 보유수량
+                self.ui.table_current.setItem(i, 4, QTableWidgetItem(str(balance_list[i][4])))  # 수익율
+                self.ui.table_current.setItem(i, 5, QTableWidgetItem(str(balance_list[i][5])))  # 매수전략
+                self.ui.table_current.setItem(i, 6, QTableWidgetItem(str(balance_list[i][6])))  # 매도전략
 
     def on_print(self, log_str):
         self.ui.txt_output.append(log_str)
