@@ -7,7 +7,10 @@ class Kiwoom:
     data = {
             "조건식_list_header": ["인덱스", "조건명", "신호종류", "적용유무", "요청버튼"],
             "조건식_list": [[0, "조건식0", "매도신호", False]],
+
             "계좌번호": "12345",
+            "계좌번호_list": ["12345", "23456"],
+
             "잔고_dic_header": ["종목명", "현재가", "매입가", "보유수량", "수익율", "매수전략", "매도전략"],
             "잔고_dic": {"00000": ["종목명1", 15000, 10000, 100, 0.5, [], []],
                        "00001": ["종목명2", 15000, 10000, 100, 0.5, [], []]
@@ -120,6 +123,7 @@ class Kiwoom:
             account_num = self.ocx.dynamicCall("GetLoginInfo(QString)", ["ACCNO"])
             account_num = account_num[:-1]
             account_list = account_num.split(";")
+            self.data["계좌번호_list"] = account_list
             self.data["계좌번호"] = account_list[0]
             self.callback.on_data_updated(["계좌번호"])
             self.callback.on_connected()

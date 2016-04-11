@@ -109,14 +109,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLineEdit" name="edit_account">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="readOnly">
-        <bool>false</bool>
-       </property>
-      </widget>
+      <widget class="QComboBox" name="combo_account"/>
      </item>
     </layout>
    </widget>
@@ -307,6 +300,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>combo_account</sender>
+   <signal>currentIndexChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_account_changed(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>344</x>
+     <y>44</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>728</x>
+     <y>69</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>on_condition_refresh_btn_clicked()</slot>
@@ -316,6 +325,6 @@
   <slot>on_code_btn_clicked()</slot>
   <slot>on_register_real_btn_clicked()</slot>
   <slot>on_register_real_all_btn_clicked()</slot>
-  <slot>on_account_changed()</slot>
+  <slot>on_account_changed(QString)</slot>
  </slots>
 </ui>

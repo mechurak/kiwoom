@@ -62,8 +62,11 @@ class MyWindow(QMainWindow, KiwoomCallback):
 
     def on_data_updated(self, key_list):
         if "계좌번호" in key_list:
-            account = kiwoom.data["계좌번호"]
-            self.ui.edit_account.setText(account)
+            계좌번호 = kiwoom.data["계좌번호"]
+            계좌번호_list = kiwoom.data["계좌번호_list"]
+            self.ui.combo_account.clear()
+            self.ui.combo_account.addItems(계좌번호_list)
+            self.ui.combo_account.setCurrentIndex(self.ui.combo_account.findText(계좌번호))
 
         if "조건식_list" in key_list:
             condition_list = kiwoom.data["조건식_list"]
@@ -91,6 +94,7 @@ class MyWindow(QMainWindow, KiwoomCallback):
         if "잔고_dic" in key_list:
             balance_dic = kiwoom.data["잔고_dic"]
             headers = kiwoom.data["잔고_dic_header"]
+            self.ui.table_current.clear()
             self.ui.table_current.setColumnCount(len(headers))
             self.ui.table_current.setHorizontalHeaderLabels(headers)
             balance_list = list(balance_dic.values())
