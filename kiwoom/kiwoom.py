@@ -170,8 +170,13 @@ class Kiwoom:
         success = self.ocx.dynamicCall("GetConditionLoad()")
         print(success)
 
-    def tr_condition_result(self, condition):
-        ret = self.ocx.dynamicCall("SendCondition(QString, QString, int, int)", "0101", condition[1], condition[0], 0)
+    def tr_condition_result(self, 조건명, 인덱스, 신호종류, 적용유무):
+        screen_num = "0100"
+        if 신호종류 == "매수신호":
+            screen_num = "0101"
+        elif 신호종류 == "매도신호":
+            screen_num = "0102"
+        ret = self.ocx.dynamicCall("SendCondition(QString, QString, int, int)", screen_num, 조건명, 인덱스, 적용유무)
         print("SendCondition ret: ", ret)
 
     def tr_balance(self):

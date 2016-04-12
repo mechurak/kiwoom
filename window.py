@@ -6,6 +6,36 @@ from kiwoom.kiwoom import Kiwoom
 from kiwoom.kiwoom import KiwoomCallback
 
 
+class Condition:
+    def __init__(self, i, 조건식):
+        self.i = i
+        self.조건식 = 조건식
+
+        self.combo_box_signal = QComboBox()
+        self.combo_box_signal.addItems(["매도신호", "매수신호", "미지정"])
+        self.combo_box_signal.setCurrentIndex(self.combo_box_signal.findText(self.조건식[2]))
+        self.combo_box_signal.connect(self.combo_box_signal, SIGNAL("currentIndexChanged(QString)"), self.on_signal_changed)
+        #self.combo_box_signal.currentIndexChanged.connect(self.on_signal_changed)
+        #self.combo_box_signal.editTextChanged.connect(self.on_signal_changed)
+
+        self.combo_box_apply = QComboBox()
+        self.combo_box_apply.addItems(["True", "False"])
+        self.combo_box_apply.setCurrentIndex(self.combo_box_apply.findText(str(self.조건식[3])))
+        self.combo_box_apply.connect(self.combo_box_apply, SIGNAL("currentIndexChanged(QString)"), self.on_apply_changed)
+
+        self.button = QPushButton("요청")
+        적용유무 = 0
+        if self.조건식[3]:
+            적용유무 = 1
+        self.button.clicked.connect(lambda: kiwoom.tr_condition_result(self.조건식[1], self.조건식[0], self.조건식[2], 적용유무))
+
+    def on_signal_changed(self, 신호종류):
+        self.조건식[2] = 신호종류
+
+    def on_apply_changed(self, 적용유무):
+        self.조건식[3] = 적용유무
+
+
 class MyWindow(QMainWindow, KiwoomCallback):
     def __init__(self):
         super().__init__()
@@ -75,21 +105,12 @@ class MyWindow(QMainWindow, KiwoomCallback):
             self.ui.table_condition.setHorizontalHeaderLabels(headers)
 
             for i in range(0, len(condition_list)):
+                condition = Condition(i, condition_list[i])
                 self.ui.table_condition.setItem(i, 0, QTableWidgetItem(str(condition_list[i][0])))
                 self.ui.table_condition.setItem(i, 1, QTableWidgetItem(condition_list[i][1]))
-
-                combo_box_signal = QComboBox()
-                combo_box_signal.addItems(["매도신호", "매수신호", "미지정"])
-                combo_box_signal.setCurrentIndex(combo_box_signal.findText(condition_list[i][2]))
-                self.ui.table_condition.setCellWidget(i, 2, combo_box_signal)
-
-                combo_box_apply = QComboBox()
-                combo_box_apply.addItems(["True", "False"])
-                combo_box_apply.setCurrentIndex(combo_box_apply.findText(str(condition_list[i][3])))
-                self.ui.table_condition.setCellWidget(i, 3, combo_box_apply)
-
-                button = QPushButton("요청")
-                self.ui.table_condition.setCellWidget(i, 4, button)
+                self.ui.table_condition.setCellWidget(i, 2, condition.combo_box_signal)
+                self.ui.table_condition.setCellWidget(i, 3, condition.combo_box_apply)
+                self.ui.table_condition.setCellWidget(i, 4, condition.button)
 
         if "잔고_dic" in key_list:
             balance_dic = kiwoom.data["잔고_dic"]
