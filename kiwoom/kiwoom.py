@@ -17,7 +17,17 @@ class Kiwoom:
                        },
             }
 
+    # 매수/매도 전략
+    buy_strategy = []
     sell_strategy = []
+
+    # 화면번호
+    SN_잔고조회 = "0101"
+    SN_종목정보 = "0102"
+    SN_실시간조회 = "1030"
+    SN_조건식_미지정 = "2000"
+    SN_조건식_매수신호 = "2001"
+    SN_조건식_매도신호 = "2002"
 
     def __init__(self, the_callback):
         self.callback = the_callback
@@ -100,21 +110,30 @@ class Kiwoom:
             종목명 = self.ocx.dynamicCall("GetChejanData(int)", 302)
             현재가_str = self.ocx.dynamicCall("GetChejanData(int)", 10)
             보유수량_str = self.ocx.dynamicCall("GetChejanData(int)", 930)
+            매입단가_str = self.ocx.dynamicCall("GetChejanData(int)", 931)
             종목코드 = 종목코드.strip()
             종목명 = 종목명.strip()
             현재가 = int(현재가_str.strip())
+            매입단가 = int(매입단가_str.strip())
             보유수량 = int(보유수량_str.strip())
             잔고_dic = self.data["잔고_dic"]
-            if 보유수량 == 0:
+
+            prev_보유수량 = 잔고_dic[종목코드][3]
+            if 보유수량 == 0 and prev_보유수량 != 0:  # 해당 종목 청산
                 del 잔고_dic[종목코드]
+                self.set_real_remove(종목코드)  # 실시간 해제
+
+            elif 보유수량 != 0 and prev_보유수량 == 0:  # 새로운 종목 매수
+                잔고_dic[종목코드][1] = 현재가
+                잔고_dic[종목코드][2] = 매입단가
+                잔고_dic[종목코드][3] = 보유수량
+                self.set_real_reg([종목코드])  # 실시간 등록
+
             else:
-                잔고_dic[종목코드][1] = int(현재가)
-                잔고_dic[종목코드][3] = int(보유수량)
+                print("unexpected condition")
 
         elif sGubun == 3:  # 특이신호
             pass
-
-
 
     def OnEventConnect(self, nErrCode):
         if nErrCode == 0:
@@ -171,11 +190,11 @@ class Kiwoom:
         print(success)
 
     def tr_condition_result(self, 조건명, 인덱스, 신호종류, 적용유무):
-        screen_num = "0100"
+        screen_num = self.SN_조건식_미지정
         if 신호종류 == "매수신호":
-            screen_num = "0101"
+            screen_num = self.SN_조건식_매수신호
         elif 신호종류 == "매도신호":
-            screen_num = "0102"
+            screen_num = self.SN_조건식_매도신호
         ret = self.ocx.dynamicCall("SendCondition(QString, QString, int, int)", screen_num, 조건명, 인덱스, 적용유무)
         print("SendCondition ret: ", ret)
 
@@ -184,17 +203,21 @@ class Kiwoom:
         print("계좌번호", account)
         self.ocx.dynamicCall("SetInputValue(QString, QString)", "계좌번호", account)
         self.ocx.dynamicCall("SetInputValue(QString, QString)", "조회구분", 2)
-        self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "계좌평가잔고내역요청", "opw00018", 0, "0101")
+        self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "계좌평가잔고내역요청", "opw00018", 0, self.SN_잔고조회)
 
     def tr_code(self, 종목코드):
         self.ocx.dynamicCall("SetInputValue(QString, QString)", "종목코드", 종목코드)
-        self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "주식기본정보요청", "opt10001", 0, "0102")
+        self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "주식기본정보요청", "opt10001", 0, self.SN_종목정보)
 
     def set_real_reg(self, 종목코드_list_str):
-        screen_num = "0103"
-        fid = "9001;10;13;21;41"
-        ret = self.ocx.dynamicCall("SetRealReg(QString, QString, QString, QString)", [screen_num, 종목코드_list_str, fid, "0"])
-        print("ret ", ret)
+        fid = "9001;10;13"  # 종목코드,업종코드;현재가;누적거래량
+        ret = self.ocx.dynamicCall("SetRealReg(QString, QString, QString, QString)",
+                                   [self.SN_실시간조회, 종목코드_list_str, fid, "1"])
+        print("SetRealReg. ret ", ret)
+
+    def set_real_remove(self, 종목코드):
+        ret = self.ocx.dynamicCall("SetRealRemove(QString, QString)", [self.SN_실시간조회, 종목코드])
+        print("SetRealRemove ret ", ret)
 
 
 class KiwoomCallback:

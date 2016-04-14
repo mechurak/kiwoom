@@ -15,8 +15,6 @@ class Condition:
         self.combo_box_signal.addItems(["매도신호", "매수신호", "미지정"])
         self.combo_box_signal.setCurrentIndex(self.combo_box_signal.findText(self.조건식[2]))
         self.combo_box_signal.connect(self.combo_box_signal, SIGNAL("currentIndexChanged(QString)"), self.on_signal_changed)
-        #self.combo_box_signal.currentIndexChanged.connect(self.on_signal_changed)
-        #self.combo_box_signal.editTextChanged.connect(self.on_signal_changed)
 
         self.combo_box_apply = QComboBox()
         self.combo_box_apply.addItems(["True", "False"])
