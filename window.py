@@ -46,7 +46,7 @@ class MyWindow(QMainWindow, KiwoomCallback):
     @pyqtSlot(str)
     def on_account_changed(self, account):
         print("on_account_changed" + account)
-        kiwoom.data["계좌번호"] = account
+        kiwoom.data.계좌번호 = account
 
     @pyqtSlot()
     def on_condition_refresh_btn_clicked(self):
@@ -61,8 +61,7 @@ class MyWindow(QMainWindow, KiwoomCallback):
     @pyqtSlot()
     def on_print_my_data_btn_clicked(self):
         print("\n========== my data ==============")
-        for key, data in kiwoom.data.items():
-            print(" (" + key + ") ", data)
+        kiwoom.data.print()
 
     @pyqtSlot()
     def on_code_btn_clicked(self):
@@ -79,7 +78,7 @@ class MyWindow(QMainWindow, KiwoomCallback):
     @pyqtSlot()
     def on_register_real_all_btn_clicked(self):
         print("on_register_real_all_btn_clicked")
-        잔고_dic = kiwoom.data["잔고_dic"]
+        잔고_dic = kiwoom.data.잔고_dic
         잔고코드_list = 잔고_dic.keys()
         잔고코드_list_str = ";".join(잔고코드_list)
         print("잔고코드_list_str", 잔고코드_list_str)
@@ -90,15 +89,15 @@ class MyWindow(QMainWindow, KiwoomCallback):
 
     def on_data_updated(self, key_list):
         if "계좌번호" in key_list:
-            계좌번호 = kiwoom.data["계좌번호"]
-            계좌번호_list = kiwoom.data["계좌번호_list"]
+            계좌번호 = kiwoom.data.계좌번호
+            계좌번호_list = kiwoom.data.계좌번호_list
             self.ui.combo_account.clear()
             self.ui.combo_account.addItems(계좌번호_list)
             self.ui.combo_account.setCurrentIndex(self.ui.combo_account.findText(계좌번호))
 
         if "조건식_list" in key_list:
-            condition_list = kiwoom.data["조건식_list"]
-            headers = kiwoom.data["조건식_list_header"]
+            condition_list = kiwoom.data.조건식_list
+            headers = kiwoom.data.get_condition_header()
             self.ui.table_condition.setColumnCount(len(headers))
             self.ui.table_condition.setHorizontalHeaderLabels(headers)
 
@@ -111,21 +110,17 @@ class MyWindow(QMainWindow, KiwoomCallback):
                 self.ui.table_condition.setCellWidget(i, 4, condition.button)
 
         if "잔고_dic" in key_list:
-            balance_dic = kiwoom.data["잔고_dic"]
-            headers = kiwoom.data["잔고_dic_header"]
+            headers = kiwoom.data.get_balance_header()
             self.ui.table_current.clear()
             self.ui.table_current.setColumnCount(len(headers))
             self.ui.table_current.setHorizontalHeaderLabels(headers)
-            balance_list = list(balance_dic.values())
+            balance_list = kiwoom.data.get_balance_list()
+            print(balance_list)
 
             for i in range(0, len(balance_list)):
-                self.ui.table_current.setItem(i, 0, QTableWidgetItem(balance_list[i][0]))  # 종목명
-                self.ui.table_current.setItem(i, 1, QTableWidgetItem(str(balance_list[i][1])))  # 현재가
-                self.ui.table_current.setItem(i, 2, QTableWidgetItem(str(balance_list[i][2])))  # 매입가
-                self.ui.table_current.setItem(i, 3, QTableWidgetItem(str(balance_list[i][3])))  # 보유수량
-                self.ui.table_current.setItem(i, 4, QTableWidgetItem(str(balance_list[i][4])))  # 수익율
-                self.ui.table_current.setItem(i, 5, QTableWidgetItem(str(balance_list[i][5])))  # 매수전략
-                self.ui.table_current.setItem(i, 6, QTableWidgetItem(str(balance_list[i][6])))  # 매도전략
+                cur_list = balance_list[i]
+                for j in range(0, len(cur_list)):
+                    self.ui.table_current.setItem(i, j, QTableWidgetItem(str(cur_list[j])))
 
     def on_print(self, log_str):
         self.ui.txt_output.append(log_str)

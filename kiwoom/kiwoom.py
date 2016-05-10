@@ -1,21 +1,11 @@
 from PyQt4.QAxContainer import *
 from PyQt4.QtCore import *
 from kiwoom.strategy.stop_loss import StopLoss
+from kiwoom.data import Data
 
 
 class Kiwoom:
-    data = {
-            "조건식_list_header": ["인덱스", "조건명", "신호종류", "적용유무", "요청버튼"],
-            "조건식_list": [[0, "조건식0", "매도신호", False]],
-
-            "계좌번호": "12345",
-            "계좌번호_list": ["12345", "23456"],
-
-            "잔고_dic_header": ["종목명", "현재가", "매입가", "보유수량", "수익율", "매수전략", "매도전략"],
-            "잔고_dic": {"00000": ["종목명1", 15000, 10000, 100, 0.5, [], []],
-                       "00001": ["종목명2", 15000, 10000, 100, 0.5, [], []]
-                       },
-            }
+    data = Data()
 
     # 매수/매도 전략
     buy_strategy = []
@@ -61,8 +51,6 @@ class Kiwoom:
             print("계좌평가잔고내역요청")
             count = self.ocx.dynamicCall("GetDataCount(QString)", ["계좌평가잔고개별합산"])
             print("count: ", count)
-            잔고_dic = self.data["잔고_dic"]
-            잔고_dic.clear()
             for i in range(0, count):
                 종목번호 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "종목번호")
                 종목명 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "종목명")
@@ -75,15 +63,17 @@ class Kiwoom:
                 현재가 = int(현재가_str.strip())
                 매입가 = int(매입가_str.strip())
                 보유수량 = int(보유수량_str.strip())
-                수익율 = float(수익률_str.strip()) / 100
-                print("수익률", 수익율)
-                print(종목명, "현재가: ", 현재가, "매입가: ", 매입가, "보유수량: ", 보유수량, "수익률: ", 수익율)
-                잔고_dic[종목번호] = [종목명, 현재가, 매입가, 보유수량, 수익율, [], []]
+                수익률 = float(수익률_str.strip()) / 100
+                print("수익률", 수익률)
+                print(종목명, "현재가: ", 현재가, "매입가: ", 매입가, "보유수량: ", 보유수량, "수익률: ", 수익률)
+                cur_balance_dic = {"종목명": 종목명, "현재가": 현재가, "매입가": 매입가, "보유수량": 보유수량, "수익률": 수익률}
+                self.data.set_balance(종목번호, cur_balance_dic)
+
             self.callback.on_data_updated(["잔고_dic"])
 
     def OnReceiveRealData(self, sJongmokCode, sRealType, sRealData):
         print("(OnReceiveRealData) ", sJongmokCode, ", ", sRealType, ", ", sRealData)
-        잔고_dic = self.data["잔고_dic"]
+        잔고_dic = self.data.잔고_dic
         if sJongmokCode in 잔고_dic:
             if (sRealType == "주식체결"):
                 현재가_str = self.ocx.dynamicCall("GetCommRealData(QString, int)", "주식체결", 10)
@@ -116,7 +106,7 @@ class Kiwoom:
             현재가 = int(현재가_str.strip())
             매입단가 = int(매입단가_str.strip())
             보유수량 = int(보유수량_str.strip())
-            잔고_dic = self.data["잔고_dic"]
+            잔고_dic = self.data.잔고_dic
 
             prev_보유수량 = 잔고_dic[종목코드][3]
             if 보유수량 == 0 and prev_보유수량 != 0:  # 해당 종목 청산
@@ -142,8 +132,8 @@ class Kiwoom:
             account_num = self.ocx.dynamicCall("GetLoginInfo(QString)", ["ACCNO"])
             account_num = account_num[:-1]
             account_list = account_num.split(";")
-            self.data["계좌번호_list"] = account_list
-            self.data["계좌번호"] = account_list[0]
+            self.data.계좌번호_list = account_list
+            self.data.계좌번호 = account_list[0]
             self.callback.on_data_updated(["계좌번호"])
             self.callback.on_connected()
 
@@ -166,7 +156,7 @@ class Kiwoom:
         print(condition_ret)
         condition_list_raw = condition_ret.split(";")
         print(condition_list_raw)
-        condition_list = self.data["조건식_list"]
+        condition_list = self.data.조건식_list
         condition_list.clear()
         for condition_with_index in condition_list_raw:
             if condition_with_index == "":
@@ -199,7 +189,7 @@ class Kiwoom:
         print("SendCondition ret: ", ret)
 
     def tr_balance(self):
-        account = self.data["계좌번호"]
+        account = self.data.계좌번호
         print("계좌번호", account)
         self.ocx.dynamicCall("SetInputValue(QString, QString)", "계좌번호", account)
         self.ocx.dynamicCall("SetInputValue(QString, QString)", "조회구분", 2)
