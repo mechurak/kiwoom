@@ -47,7 +47,7 @@ class MyWindow(QMainWindow, KiwoomCallback):
 
     @pyqtSlot(str)
     def on_account_changed(self, account):
-        print("on_account_changed" + account)
+        print("on_account_changed", account)
         kiwoom.data.계좌번호 = account
 
     @pyqtSlot()

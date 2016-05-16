@@ -66,3 +66,33 @@ class Data:
 
         balance = self.잔고_dic[the_종목번호]
         balance.update(the_잔고_dic)
+
+    def get_balance_hold_amount(self, the_종목번호):
+        if the_종목번호 not in self.잔고_dic:
+            return 0
+        balance = self.잔고_dic[the_종목번호]
+        return balance.보유수량
+
+    def get_balance_current_price(self, the_종목번호):
+        if the_종목번호 not in self.잔고_dic:
+            return 0
+        balance = self.잔고_dic[the_종목번호]
+        return balance.현재가
+
+    def get_balance_buy_price(self, the_종목번호):
+        if the_종목번호 not in self.잔고_dic:
+            return 0
+        balance = self.잔고_dic[the_종목번호]
+        return balance.매입가
+
+    def get_balance_buy_strategy(self, the_종목번호):
+        if the_종목번호 not in self.잔고_dic:
+            return []
+        balance = self.잔고_dic[the_종목번호]
+        return balance.매수전략
+
+    def get_balance_sell_strategy(self, the_종목번호):
+        if the_종목번호 not in self.잔고_dic:
+            return []
+        balance = self.잔고_dic[the_종목번호]
+        return balance.매도전략

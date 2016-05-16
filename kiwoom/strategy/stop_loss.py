@@ -5,10 +5,9 @@ class StopLoss(StrategyBase):
     threshold = -0.03
 
     def on_real_data(self, sJongmokCode, sRealType, sRealData):
-        현재가 = int(self.ocx.dynamicCall("GetCommRealData(QString, int)", "주식체결", 10))
-        잔고_dic = self.data["잔고_dic"]
-        매입가 = 잔고_dic[sJongmokCode][2]
-        보유수량 = 잔고_dic[sJongmokCode][3]
+        현재가 = self.data.get_balance_current_price(sJongmokCode)
+        매입가 = self.data.get_balance_buy_price(sJongmokCode)
+        보유수량 = self.data.get_balance_hold_amount(sJongmokCode)
 
         if 보유수량 == 0:
             return

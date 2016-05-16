@@ -1,3 +1,5 @@
+from kiwoom import constant
+
 class StrategyBase:
     def __init__(self, ocx, data):
         self.ocx = ocx
@@ -16,7 +18,7 @@ class StrategyBase:
     def send_order(self, 주문유형, 종목코드, 주문수량, 주문단가, 거래구분):
         print("(send_order)", 주문유형, 종목코드, 주문수량, 주문단가, 거래구분)
         sRQName = "주식주문"
-        sScreenNo = "1111"
+        sScreenNo = constant.SN_주식주문
         ret = self.ocx.dynamicCall("SendOrder(QString, QString, QString, int, QString, int, int, QString, QString)",
                                    [sRQName, sScreenNo, self.data["계좌번호"], 주문유형, 종목코드, 주문수량, 주문단가, 거래구분, ""])
         print(ret)

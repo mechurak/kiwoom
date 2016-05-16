@@ -2,6 +2,7 @@ from PyQt4.QAxContainer import *
 from PyQt4.QtCore import *
 from kiwoom.strategy.stop_loss import StopLoss
 from kiwoom.data import Data
+from kiwoom import constant
 
 
 class Kiwoom:
@@ -10,14 +11,6 @@ class Kiwoom:
     # 매수/매도 전략
     buy_strategy = []
     sell_strategy = []
-
-    # 화면번호
-    SN_잔고조회 = "0101"
-    SN_종목정보 = "0102"
-    SN_실시간조회 = "1030"
-    SN_조건식_미지정 = "2000"
-    SN_조건식_매수신호 = "2001"
-    SN_조건식_매도신호 = "2002"
 
     def __init__(self, the_callback):
         self.callback = the_callback
@@ -85,17 +78,18 @@ class Kiwoom:
 
     def OnReceiveRealData(self, sJongmokCode, sRealType, sRealData):
         print("(OnReceiveRealData) ", sJongmokCode, ", ", sRealType, ", ", sRealData)
-        잔고_dic = self.data.잔고_dic
-        if sJongmokCode in 잔고_dic:
+        if sJongmokCode in self.data.잔고_dic:
             if (sRealType == "주식체결"):
                 현재가_str = self.ocx.dynamicCall("GetCommRealData(QString, int)", "주식체결", 10)
-                잔고_dic[sJongmokCode][1] = int(현재가_str.strip())
+                현재가 = int(현재가_str.strip())
+                cur_balance_dic = {"현재가": 현재가}
+                self.data.set_balance(sJongmokCode, cur_balance_dic)
 
-                매수전략_list = 잔고_dic[sJongmokCode]["매수전략"]
+                매수전략_list = self.data.get_balance_buy_strategy(sJongmokCode)
                 for 매수전략 in 매수전략_list:
                     매수전략.onRealData(sJongmokCode, sRealType, sRealData)
 
-                매도전략_list = 잔고_dic[sJongmokCode]["매도전략"]
+                매도전략_list = self.data.get_balance_sell_strategy(sJongmokCode)
                 for 매도전략 in 매도전략_list:
                     매도전략.onRealData(sJongmokCode, sRealType, sRealData)
 
@@ -120,15 +114,14 @@ class Kiwoom:
             보유수량 = int(보유수량_str.strip())
             잔고_dic = self.data.잔고_dic
 
-            prev_보유수량 = 잔고_dic[종목코드][3]
+            prev_보유수량 = self.data.get_balance_hold_amount(종목코드)
             if 보유수량 == 0 and prev_보유수량 != 0:  # 해당 종목 청산
                 del 잔고_dic[종목코드]
                 self.set_real_remove(종목코드)  # 실시간 해제
 
             elif 보유수량 != 0 and prev_보유수량 == 0:  # 새로운 종목 매수
-                잔고_dic[종목코드][1] = 현재가
-                잔고_dic[종목코드][2] = 매입단가
-                잔고_dic[종목코드][3] = 보유수량
+                cur_balance_dic = {"현재가": 현재가, "매입가": 매입단가, "보유수량": 보유수량}
+                self.data.set_balance(종목코드, cur_balance_dic)
                 self.set_real_reg([종목코드])  # 실시간 등록
 
             else:
@@ -192,11 +185,11 @@ class Kiwoom:
         print(success)
 
     def tr_condition_result(self, 조건명, 인덱스, 신호종류, 적용유무):
-        screen_num = self.SN_조건식_미지정
+        screen_num = constant.SN_조건식_미지정
         if 신호종류 == "매수신호":
-            screen_num = self.SN_조건식_매수신호
+            screen_num = constant.SN_조건식_매수신호
         elif 신호종류 == "매도신호":
-            screen_num = self.SN_조건식_매도신호
+            screen_num = constant.SN_조건식_매도신호
         ret = self.ocx.dynamicCall("SendCondition(QString, QString, int, int)", screen_num, 조건명, 인덱스, 적용유무)
         print("SendCondition ret: ", ret)
 
@@ -205,20 +198,20 @@ class Kiwoom:
         print("계좌번호", account)
         self.ocx.dynamicCall("SetInputValue(QString, QString)", "계좌번호", account)
         self.ocx.dynamicCall("SetInputValue(QString, QString)", "조회구분", 2)
-        self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "계좌평가잔고내역요청", "opw00018", 0, self.SN_잔고조회)
+        self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "계좌평가잔고내역요청", "opw00018", 0, constant.SN_잔고조회)
 
     def tr_code(self, 종목코드):
         self.ocx.dynamicCall("SetInputValue(QString, QString)", "종목코드", 종목코드)
-        self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "주식기본정보요청", "opt10001", 0, self.SN_종목정보)
+        self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "주식기본정보요청", "opt10001", 0, constant.SN_종목정보)
 
     def set_real_reg(self, 종목코드_list_str):
         fid = "9001;10;13"  # 종목코드,업종코드;현재가;누적거래량
         ret = self.ocx.dynamicCall("SetRealReg(QString, QString, QString, QString)",
-                                   [self.SN_실시간조회, 종목코드_list_str, fid, "1"])
+                                   [constant.SN_실시간조회, 종목코드_list_str, fid, "1"])
         print("SetRealReg. ret ", ret)
 
     def set_real_remove(self, 종목코드):
-        ret = self.ocx.dynamicCall("SetRealRemove(QString, QString)", [self.SN_실시간조회, 종목코드])
+        ret = self.ocx.dynamicCall("SetRealRemove(QString, QString)", [constant.SN_실시간조회, 종목코드])
         print("SetRealRemove ret ", ret)
 
 
