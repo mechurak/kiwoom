@@ -40,12 +40,24 @@ class Kiwoom:
     def OnReceiveTrData(self, sScrNo, sRQName, sTrCode, sRecordName, sPreNext, nDataLength, sErrorCode, sMessage, sSplmMsg):
         print("(OnReceiveTrData) ", sScrNo, sRQName, sTrCode, sRecordName, sPreNext, nDataLength, sErrorCode, sMessage, sSplmMsg)
         if sRQName == "주식기본정보요청":
-            name = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, 0, "종목명")
-            volume = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, 0, "거래량")
-            retStr = ""
-            retStr += "종목명: " + name.strip() + "\n"
-            retStr += "거래량: " + volume.strip() + "\n"
-            self.callback.on_print(retStr)
+            종목코드 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, 0, "종목코드")
+            종목명 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, 0, "종목명")
+            현재가_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, 0, "현재가")
+            종목코드 = 종목코드.strip()
+            종목명 = 종목명.strip()
+            현재가_str = 현재가_str.strip()
+
+            if 종목코드 and 종목명 and 현재가_str:
+                print(종목코드, 종목명, 현재가_str)
+                종목코드 = 종목코드.strip()
+                종목명 = 종목명.strip()
+                현재가 = int(현재가_str.strip())
+
+                cur_balance_dic = {"종목명": 종목명, "현재가": 현재가}
+                self.data.set_balance(종목코드, cur_balance_dic)
+                self.callback.on_data_updated(["잔고_dic"])
+            else:
+                print("잘못된 종목 코드")
 
         elif sRQName == "계좌평가잔고내역요청":
             print("계좌평가잔고내역요청")

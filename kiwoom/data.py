@@ -2,9 +2,10 @@ class Balance:
     종목번호 = "000000"
     종목명 = "종목명1"
     현재가 = 15000
-    매입가 = 10000
-    보유수량 = 100
-    수익률 = 0.5
+    매입가 = None
+    보유수량 = None
+    목표보유수량 = None
+    수익률 = None
     매수전략 = []
     매도전략 = []
 
@@ -16,12 +17,19 @@ class Balance:
             self.종목명 = the_잔고_dic["종목명"]
         if "현재가" in the_잔고_dic:
             self.현재가 = the_잔고_dic["현재가"]
+            self.현재가 = int(self.현재가)
         if "매입가" in the_잔고_dic:
             self.매입가 = the_잔고_dic["매입가"]
+            self.매입가 = int(self.매입가)
         if "보유수량" in the_잔고_dic:
             self.보유수량 = the_잔고_dic["보유수량"]
+            self.보유수량 = int(self.보유수량)
+        if "목표보유수량" in the_잔고_dic:
+            self.목표보유수량 = the_잔고_dic["목표보유수량"]
+            self.목표보유수량 = int(self.목표보유수량)
         if "수익률" in the_잔고_dic:
             self.수익률 = the_잔고_dic["수익률"]
+            self.수익률 = float(self.수익률)
         if "매수전략" in the_잔고_dic:
             self.매수전략 = the_잔고_dic["매수전략"]
         if "매도전략" in the_잔고_dic:
@@ -44,12 +52,12 @@ class Data:
         return ["인덱스", "조건명", "신호종류", "적용유무", "요청버튼"]
 
     def get_balance_header(self):
-        return ["종목번호", "종목명", "현재가", "매입가", "보유수량", "수익률", "매수전략", "매도전략"]
+        return ["종목번호", "종목명", "현재가", "매입가", "보유수량", "목표보유수량", "수익률", "매수전략", "매도전략"]
 
     def get_balance_list(self):
         ret = []
         for balance in self.잔고_dic.values():
-            ret.append([balance.종목번호, balance.종목명, balance.현재가, balance.매입가, balance.보유수량, balance.수익률, balance.매수전략, balance.매도전략])
+            ret.append([balance.종목번호, balance.종목명, balance.현재가, balance.매입가, balance.보유수량, balance.목표보유수량, balance.수익률, balance.매수전략, balance.매도전략])
         return ret
 
     def set_balance(self, the_종목번호, the_잔고_dic):

@@ -42,6 +42,8 @@ class MyWindow(QMainWindow, KiwoomCallback):
         self.ui.table_current.setItem(0, 0, QTableWidgetItem("test"))
         self.ui.table_current.setItem(0, 1, QTableWidgetItem("test0_1"))
         self.ui.table_current.setItem(1, 0, QTableWidgetItem("test1_0"))
+        self.ui.table_current.itemChanged.connect(self.on_balance_item_changed)
+        self.is_listening = False
 
     @pyqtSlot(str)
     def on_account_changed(self, account):
@@ -110,6 +112,7 @@ class MyWindow(QMainWindow, KiwoomCallback):
                 self.ui.table_condition.setCellWidget(i, 4, condition.button)
 
         if "잔고_dic" in key_list:
+            self.is_listening = False
             headers = kiwoom.data.get_balance_header()
             self.ui.table_current.clear()
             self.ui.table_current.setColumnCount(len(headers))
@@ -121,6 +124,25 @@ class MyWindow(QMainWindow, KiwoomCallback):
                 cur_list = balance_list[i]
                 for j in range(0, len(cur_list)):
                     self.ui.table_current.setItem(i, j, QTableWidgetItem(str(cur_list[j])))
+
+            self.is_listening = True
+
+    def on_balance_item_changed(self, item):
+        if not self.is_listening:
+            return
+        print("on_balance_item_changed")
+        row = item.row()
+        col = item.column()
+        value = item.text()
+        print(row, col, value)
+
+        종목번호_item = self.ui.table_current.item(row, 0)
+        종목번호 = 종목번호_item.text()
+        changed = kiwoom.data.get_balance_header()[col]
+        print(종목번호, changed, value)
+
+        cur_balance_dic = {changed: value}
+        kiwoom.data.set_balance(종목번호, cur_balance_dic)
 
     def on_print(self, log_str):
         self.ui.txt_output.append(log_str)

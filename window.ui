@@ -53,7 +53,7 @@
      <item row="3" column="1">
       <widget class="QPushButton" name="btn_code">
        <property name="text">
-        <string>종목조회</string>
+        <string>종목추가</string>
        </property>
       </widget>
      </item>
