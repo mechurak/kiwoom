@@ -17,15 +17,12 @@ class Condition:
         self.combo_box_signal.connect(self.combo_box_signal, SIGNAL("currentIndexChanged(QString)"), self.on_signal_changed)
 
         self.combo_box_apply = QComboBox()
-        self.combo_box_apply.addItems(["True", "False"])
-        self.combo_box_apply.setCurrentIndex(self.combo_box_apply.findText(str(self.조건식[3])))
+        self.combo_box_apply.addItems(["1", "0"])
+        self.combo_box_apply.setCurrentIndex(self.combo_box_apply.findText(self.조건식[3]))
         self.combo_box_apply.connect(self.combo_box_apply, SIGNAL("currentIndexChanged(QString)"), self.on_apply_changed)
 
         self.button = QPushButton("요청")
-        적용유무 = 0
-        if self.조건식[3]:
-            적용유무 = 1
-        self.button.clicked.connect(lambda: kiwoom.tr_condition_result(self.조건식[1], self.조건식[0], self.조건식[2], 적용유무))
+        self.button.clicked.connect(lambda: kiwoom.tr_condition_result(self.조건식[1], self.조건식[0], self.조건식[2], self.조건식[3]))
 
     def on_signal_changed(self, 신호종류):
         self.조건식[2] = 신호종류
@@ -136,13 +133,16 @@ class MyWindow(QMainWindow, KiwoomCallback):
         value = item.text()
         print(row, col, value)
 
-        종목번호_item = self.ui.table_current.item(row, 0)
-        종목번호 = 종목번호_item.text()
+        종목코드_item = self.ui.table_current.item(row, 0)
+        종목코드 = 종목코드_item.text()
         changed = kiwoom.data.get_balance_header()[col]
-        print(종목번호, changed, value)
+        print(종목코드, changed, value)
+        if changed == '매도전략' or changed == '매수전략':
+            value = value.split(",")
+            print("after value", value)
 
         cur_balance_dic = {changed: value}
-        kiwoom.data.set_balance(종목번호, cur_balance_dic)
+        kiwoom.data.set_balance(종목코드, cur_balance_dic)
 
     def on_print(self, log_str):
         self.ui.txt_output.append(log_str)

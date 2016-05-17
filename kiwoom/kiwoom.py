@@ -1,6 +1,7 @@
 from PyQt4.QAxContainer import *
 from PyQt4.QtCore import *
 from kiwoom.strategy.stop_loss import StopLoss
+from kiwoom.strategy.just_buy import JustBuy
 from kiwoom.data import Data
 from kiwoom import constant
 
@@ -8,16 +9,13 @@ from kiwoom import constant
 class Kiwoom:
     data = Data()
 
-    # 매수/매도 전략
-    buy_strategy = []
-    sell_strategy = []
-
     def __init__(self, the_callback):
         self.callback = the_callback
 
         self.ocx = QAxWidget("KHOPENAPI.KHOpenAPICtrl.1")
         self.ocx.connect(self.ocx, SIGNAL("OnReceiveTrData(QString, QString, QString, QString, QString, int, QString, QString, QString)"), self.OnReceiveTrData)
         self.ocx.connect(self.ocx, SIGNAL("OnReceiveRealData(QString, QString, QString)"), self.OnReceiveRealData)
+        self.ocx.connect(self.ocx, SIGNAL("OnReceiveRealCondition(QString, QString, QString, QString)"), self.OnReceiveRealCondition)
         self.ocx.connect(self.ocx, SIGNAL("OnReceiveMsg(QString, QString, QString, QString)"), self.OnReceiveMsg)
         self.ocx.connect(self.ocx, SIGNAL("OnReceiveChejanData(QString, int, QString)"), self.OnReceiveChejanData)
         self.ocx.connect(self.ocx, SIGNAL("OnEventConnect(int)"), self.OnEventConnect)
@@ -26,7 +24,10 @@ class Kiwoom:
         self.ocx.connect(self.ocx, SIGNAL("OnReceiveConditionVer(int, QString)"), self.OnReceiveConditionVer)
 
         sell_stop_loss = StopLoss(self.ocx, self.data)
-        self.sell_strategy.append(sell_stop_loss)
+        self.data.매도전략_dic["sell_stop_loss"] = sell_stop_loss
+
+        buy_just_buy = JustBuy(self.ocx, self.data)
+        self.data.매수전략_dic["buy_just_buy"] = buy_just_buy
 
         self.login()
 
@@ -64,6 +65,7 @@ class Kiwoom:
                 보유수량_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "보유수량")
                 수익률_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "수익률(%)")
                 종목번호 = 종목번호.strip()
+                종목코드 = 종목번호[1:]  # 앞에 'A' 제거
                 종목명 = 종목명.strip()
                 현재가 = int(현재가_str.strip())
                 매입가 = int(매입가_str.strip())
@@ -72,7 +74,7 @@ class Kiwoom:
                 print("수익률", 수익률)
                 print(종목명, "현재가: ", 현재가, "매입가: ", 매입가, "보유수량: ", 보유수량, "수익률: ", 수익률)
                 cur_balance_dic = {"종목명": 종목명, "현재가": 현재가, "매입가": 매입가, "보유수량": 보유수량, "수익률": 수익률}
-                self.data.set_balance(종목번호, cur_balance_dic)
+                self.data.set_balance(종목코드, cur_balance_dic)
 
             self.callback.on_data_updated(["잔고_dic"])
 
@@ -87,11 +89,14 @@ class Kiwoom:
 
                 매수전략_list = self.data.get_balance_buy_strategy(sJongmokCode)
                 for 매수전략 in 매수전략_list:
-                    매수전략.onRealData(sJongmokCode, sRealType, sRealData)
+                    매수전략.on_real_data(sJongmokCode, sRealType, sRealData)
 
                 매도전략_list = self.data.get_balance_sell_strategy(sJongmokCode)
                 for 매도전략 in 매도전략_list:
-                    매도전략.onRealData(sJongmokCode, sRealType, sRealData)
+                    매도전략.on_real_data(sJongmokCode, sRealType, sRealData)
+
+    def OnReceiveRealCondition(self, strCode, strType, strConditionName, strConditionIndex):
+        print("(OnReceiveRealCondition)", strCode, strType, strConditionName, strConditionIndex)
 
     def OnReceiveMsg(self, sScrNo, sRQName, sTrCode, sMsg):
         print("(OnReceiveMsg) ", sScrNo, sRQName, sTrCode, sMsg)
@@ -167,7 +172,7 @@ class Kiwoom:
             if condition_with_index == "":
                 continue
             cur = condition_with_index.split("^")
-            cur_list = [int(cur[0]), cur[1], "미지정", False]
+            cur_list = [int(cur[0]), cur[1], "미지정", "0"]
             condition_list.append(cur_list)
         print(condition_list)
         self.callback.on_data_updated(["조건식_list"])
@@ -190,7 +195,8 @@ class Kiwoom:
             screen_num = constant.SN_조건식_매수신호
         elif 신호종류 == "매도신호":
             screen_num = constant.SN_조건식_매도신호
-        ret = self.ocx.dynamicCall("SendCondition(QString, QString, int, int)", screen_num, 조건명, 인덱스, 적용유무)
+        print("tr_condition_result", screen_num, 조건명, 인덱스, int(적용유무))
+        ret = self.ocx.dynamicCall("SendCondition(QString, QString, int, int)", screen_num, 조건명, 인덱스, int(적용유무))
         print("SendCondition ret: ", ret)
 
     def tr_balance(self):
