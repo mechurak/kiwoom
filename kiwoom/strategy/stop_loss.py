@@ -15,7 +15,6 @@ class StopLoss(StrategyBase):
 
         if (현재가 - 매입가) / 매입가 < self.threshold:
             self.on_sell_signal(sJongmokCode, 보유수량)
-            self.data.set_balance()
 
             cur_balance_dic = {"매도전략": []}
             self.data.set_balance(sJongmokCode, cur_balance_dic)  # 매도전략 초기화

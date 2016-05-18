@@ -97,6 +97,14 @@ class Kiwoom:
 
     def OnReceiveRealCondition(self, strCode, strType, strConditionName, strConditionIndex):
         print("(OnReceiveRealCondition)", strCode, strType, strConditionName, strConditionIndex)
+        if strType == 'I':  # 조건식 편입
+            if self.data.get_condition_signal_type(strConditionIndex) == "매도신호":
+                보유수량 = self.data.get_balance_hold_amount(strCode)
+                if 보유수량 > 0:
+                    self.send_order(2, strCode, 보유수량, 0, "03")  # 시장가로 매도
+
+        elif strType == 'D':  # 조건식 이탈
+            pass
 
     def OnReceiveMsg(self, sScrNo, sRQName, sTrCode, sMsg):
         print("(OnReceiveMsg) ", sScrNo, sRQName, sTrCode, sMsg)
@@ -166,16 +174,16 @@ class Kiwoom:
         print(condition_ret)
         condition_list_raw = condition_ret.split(";")
         print(condition_list_raw)
-        condition_list = self.data.조건식_list
-        condition_list.clear()
+        self.data.조건식_dic.clear()
         for condition_with_index in condition_list_raw:
             if condition_with_index == "":
                 continue
             cur = condition_with_index.split("^")
-            cur_list = [int(cur[0]), cur[1], "미지정", "0"]
-            condition_list.append(cur_list)
-        print(condition_list)
-        self.callback.on_data_updated(["조건식_list"])
+            인덱스 = int(cur[0])
+            조건명 = cur[1]
+            cur_condition_dic = {"조건명": 조건명}
+            self.data.set_condition(인덱스, cur_condition_dic)
+        self.callback.on_data_updated(["조건식_dic"])
 
     ##############################################################
     # Functions
@@ -219,6 +227,14 @@ class Kiwoom:
     def set_real_remove(self, 종목코드):
         ret = self.ocx.dynamicCall("SetRealRemove(QString, QString)", [constant.SN_실시간조회, 종목코드])
         print("SetRealRemove ret ", ret)
+
+    def send_order(self, 주문유형, 종목코드, 주문수량, 주문단가, 거래구분):
+        print("(send_order)", 주문유형, 종목코드, 주문수량, 주문단가, 거래구분)
+        sRQName = "주식주문"
+        sScreenNo = constant.SN_주식주문
+        ret = self.ocx.dynamicCall("SendOrder(QString, QString, QString, int, QString, int, int, QString, QString)",
+                                   [sRQName, sScreenNo, self.data.계좌번호, 주문유형, 종목코드, 주문수량, 주문단가, 거래구분, ""])
+        print("send_order. ret", ret)
 
 
 class KiwoomCallback:

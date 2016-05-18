@@ -24,11 +24,17 @@ class Condition:
         self.button = QPushButton("요청")
         self.button.clicked.connect(lambda: kiwoom.tr_condition_result(self.조건식[1], self.조건식[0], self.조건식[2], self.조건식[3]))
 
-    def on_signal_changed(self, 신호종류):
-        self.조건식[2] = 신호종류
+    def on_signal_changed(self, the_신호종류):
+        self.조건식[2] = the_신호종류
+        인덱스 = self.조건식[0]
+        cur_condition_dic = {"신호종류": the_신호종류}
+        kiwoom.data.set_condition(인덱스, cur_condition_dic)
 
-    def on_apply_changed(self, 적용유무):
-        self.조건식[3] = 적용유무
+    def on_apply_changed(self, the_적용유무):
+        self.조건식[3] = the_적용유무
+        인덱스 = self.조건식[0]
+        cur_condition_dic = {"적용유무": the_적용유무}
+        kiwoom.data.set_condition(인덱스, cur_condition_dic)
 
 
 class MyWindow(QMainWindow, KiwoomCallback):
@@ -40,7 +46,7 @@ class MyWindow(QMainWindow, KiwoomCallback):
         self.ui.table_current.setItem(0, 1, QTableWidgetItem("test0_1"))
         self.ui.table_current.setItem(1, 0, QTableWidgetItem("test1_0"))
         self.ui.table_current.itemChanged.connect(self.on_balance_item_changed)
-        self.is_listening = False
+        self.is_user_changing_balance = False
 
     @pyqtSlot(str)
     def on_account_changed(self, account):
@@ -94,8 +100,8 @@ class MyWindow(QMainWindow, KiwoomCallback):
             self.ui.combo_account.addItems(계좌번호_list)
             self.ui.combo_account.setCurrentIndex(self.ui.combo_account.findText(계좌번호))
 
-        if "조건식_list" in key_list:
-            condition_list = kiwoom.data.조건식_list
+        if "조건식_dic" in key_list:
+            condition_list = kiwoom.data.get_condition_list()
             headers = kiwoom.data.get_condition_header()
             self.ui.table_condition.setColumnCount(len(headers))
             self.ui.table_condition.setHorizontalHeaderLabels(headers)
@@ -109,7 +115,7 @@ class MyWindow(QMainWindow, KiwoomCallback):
                 self.ui.table_condition.setCellWidget(i, 4, condition.button)
 
         if "잔고_dic" in key_list:
-            self.is_listening = False
+            self.is_user_changing_balance = False
             headers = kiwoom.data.get_balance_header()
             self.ui.table_current.clear()
             self.ui.table_current.setColumnCount(len(headers))
@@ -122,10 +128,10 @@ class MyWindow(QMainWindow, KiwoomCallback):
                 for j in range(0, len(cur_list)):
                     self.ui.table_current.setItem(i, j, QTableWidgetItem(str(cur_list[j])))
 
-            self.is_listening = True
+            self.is_user_changing_balance = True
 
     def on_balance_item_changed(self, item):
-        if not self.is_listening:
+        if not self.is_user_changing_balance:
             return
         print("on_balance_item_changed")
         row = item.row()
@@ -135,13 +141,13 @@ class MyWindow(QMainWindow, KiwoomCallback):
 
         종목코드_item = self.ui.table_current.item(row, 0)
         종목코드 = 종목코드_item.text()
-        changed = kiwoom.data.get_balance_header()[col]
-        print(종목코드, changed, value)
-        if changed == '매도전략' or changed == '매수전략':
+        changed_key = kiwoom.data.get_balance_header()[col]
+        print(종목코드, changed_key, value)
+        if changed_key == '매도전략' or changed_key == '매수전략':
             value = value.split(",")
             print("after value", value)
 
-        cur_balance_dic = {changed: value}
+        cur_balance_dic = {changed_key: value}
         kiwoom.data.set_balance(종목코드, cur_balance_dic)
 
     def on_print(self, log_str):

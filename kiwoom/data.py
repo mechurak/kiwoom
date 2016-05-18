@@ -36,27 +36,66 @@ class Balance:
             self.매도전략 = the_잔고_dic["매도전략"]
 
 
+class Condition:
+    인덱스 = -1
+    조건명 = "temp"
+    신호종류 = "미지정"   # "매도신호", "매수신호", "미지정"
+    적용유무 = "0"        # "0": 실시간 등록은 하지 않음, "1": 실시간 등록 예정
+
+    def __init__(self, the_인덱스):
+        self.인덱스 = the_인덱스
+
+    def update(self, the_조건식_dic):
+        if "조건명" in the_조건식_dic:
+            self.조건명 = the_조건식_dic["조건명"]
+        if "신호종류" in the_조건식_dic:
+            self.신호종류 = the_조건식_dic["신호종류"]
+        if "적용유무" in the_조건식_dic:
+            self.적용유무 = the_조건식_dic["적용유무"]
+
+
 class Data:
-    조건식_list = [[0, "조건식0", "매도신호", "0"]]
+    조건식_dic = {}  # {0: Condition(0, "temp"), 1: Condition(1, "temp1)}
     계좌번호 = "12345"
     계좌번호_list = ["12345", "23456"]
-    잔고_dic = {}
-    #잔고_dic = {"00000": Balance("00000"), "00001": Balance("00001")}
+    잔고_dic = {}  # {"00000": Balance("00000"), "00001": Balance("00001")}
     매수전략_dic = {}
     매도전략_dic = {}
 
     def print(self):
         print("계좌번호", self.계좌번호)
         print("계좌번호_list", self.계좌번호_list)
-        print("조건식_list", self.조건식_list)
+        print("조건식_dic", self.get_condition_list())
         print("잔고_dic", self.get_balance_list())
         print("매수전략_list", self.매수전략_dic)
         print("매도전략_list", self.매도전략_dic)
 
-    def get_condition_header(self):
+    @staticmethod
+    def get_condition_header():
         return ["인덱스", "조건명", "신호종류", "적용유무", "요청버튼"]
 
-    def get_balance_header(self):
+    def get_condition_list(self):
+        ret = []
+        for condition in self.조건식_dic.values():
+            ret.append([condition.인덱스, condition.조건명, condition.신호종류, condition.적용유무])
+        return ret
+
+    def set_condition(self, the_인덱스, the_조건식_dic):
+        print("set_condition", the_인덱스, the_조건식_dic)
+        if the_인덱스 not in self.조건식_dic:
+            self.조건식_dic[the_인덱스] = Condition(the_인덱스)
+
+        condition = self.조건식_dic[the_인덱스]
+        condition.update(the_조건식_dic)
+
+    def get_condition_signal_type(self, the_인덱스):
+        if the_인덱스 not in self.조건식_dic:
+            return "미지정"
+        condition = self.조건식_dic[the_인덱스]
+        return condition.신호종류
+
+    @staticmethod
+    def get_balance_header():
         return ["종목코드", "종목명", "현재가", "매입가", "보유수량", "목표보유수량", "수익률", "매수전략", "매도전략"]
 
     def get_balance_list(self):
