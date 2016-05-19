@@ -4,37 +4,32 @@ from PyQt4.QtGui import *
 from PyQt4 import uic
 from kiwoom.kiwoom import Kiwoom
 from kiwoom.kiwoom import KiwoomCallback
+from kiwoom.data import Condition
+from kiwoom.data import Balance
 
 
-class Condition:
-    def __init__(self, i, 조건식):
-        self.i = i
-        self.조건식 = 조건식
+class ConditionItem:
+    def __init__(self, the_condition):
+        self.condition = the_condition
 
         self.combo_box_signal = QComboBox()
-        self.combo_box_signal.addItems(["매도신호", "매수신호", "미지정"])
-        self.combo_box_signal.setCurrentIndex(self.combo_box_signal.findText(self.조건식[2]))
+        self.combo_box_signal.addItems(Condition.get_signal_type_items_list())
+        self.combo_box_signal.setCurrentIndex(self.combo_box_signal.findText(self.condition.신호종류))
         self.combo_box_signal.connect(self.combo_box_signal, SIGNAL("currentIndexChanged(QString)"), self.on_signal_changed)
 
         self.combo_box_apply = QComboBox()
-        self.combo_box_apply.addItems(["1", "0"])
-        self.combo_box_apply.setCurrentIndex(self.combo_box_apply.findText(self.조건식[3]))
+        self.combo_box_apply.addItems(Condition.get_applied_items_list())
+        self.combo_box_apply.setCurrentIndex(self.combo_box_apply.findText(self.condition.적용유무))
         self.combo_box_apply.connect(self.combo_box_apply, SIGNAL("currentIndexChanged(QString)"), self.on_apply_changed)
 
-        self.button = QPushButton("요청")
-        self.button.clicked.connect(lambda: kiwoom.tr_condition_result(self.조건식[1], self.조건식[0], self.조건식[2], self.조건식[3]))
+        self.button = QPushButton("조회&요청")
+        self.button.clicked.connect(lambda: kiwoom.tr_condition_result(self.condition.조건명, self.condition.인덱스, self.condition.신호종류, self.condition.적용유무))
 
     def on_signal_changed(self, the_신호종류):
-        self.조건식[2] = the_신호종류
-        인덱스 = self.조건식[0]
-        cur_condition_dic = {"신호종류": the_신호종류}
-        kiwoom.data.set_condition(인덱스, cur_condition_dic)
+        self.condition.신호종류 = the_신호종류
 
     def on_apply_changed(self, the_적용유무):
-        self.조건식[3] = the_적용유무
-        인덱스 = self.조건식[0]
-        cur_condition_dic = {"적용유무": the_적용유무}
-        kiwoom.data.set_condition(인덱스, cur_condition_dic)
+        self.condition.적용유무 = the_적용유무
 
 
 class MyWindow(QMainWindow, KiwoomCallback):
@@ -101,32 +96,33 @@ class MyWindow(QMainWindow, KiwoomCallback):
             self.ui.combo_account.setCurrentIndex(self.ui.combo_account.findText(계좌번호))
 
         if "조건식_dic" in key_list:
-            condition_list = kiwoom.data.get_condition_list()
-            headers = kiwoom.data.get_condition_header()
+            headers = Condition.get_table_header()
             self.ui.table_condition.setColumnCount(len(headers))
             self.ui.table_condition.setHorizontalHeaderLabels(headers)
 
-            for i in range(0, len(condition_list)):
-                condition = Condition(i, condition_list[i])
-                self.ui.table_condition.setItem(i, 0, QTableWidgetItem(str(condition_list[i][0])))
-                self.ui.table_condition.setItem(i, 1, QTableWidgetItem(condition_list[i][1]))
-                self.ui.table_condition.setCellWidget(i, 2, condition.combo_box_signal)
-                self.ui.table_condition.setCellWidget(i, 3, condition.combo_box_apply)
-                self.ui.table_condition.setCellWidget(i, 4, condition.button)
+            i = 0
+            for condition in kiwoom.data.조건식_dic.values():
+                condition_item = ConditionItem(condition)
+                self.ui.table_condition.setItem(i, 0, QTableWidgetItem(str(condition.인덱스)))
+                self.ui.table_condition.setItem(i, 1, QTableWidgetItem(condition.조건명))
+                self.ui.table_condition.setCellWidget(i, 2, condition_item.combo_box_signal)
+                self.ui.table_condition.setCellWidget(i, 3, condition_item.combo_box_apply)
+                self.ui.table_condition.setCellWidget(i, 4, condition_item.button)
+                i += 1
 
         if "잔고_dic" in key_list:
             self.is_user_changing_balance = False
-            headers = kiwoom.data.get_balance_header()
+            headers = Balance.get_table_header()
             self.ui.table_current.clear()
             self.ui.table_current.setColumnCount(len(headers))
             self.ui.table_current.setHorizontalHeaderLabels(headers)
-            balance_list = kiwoom.data.get_balance_list()
-            print(balance_list)
 
-            for i in range(0, len(balance_list)):
-                cur_list = balance_list[i]
-                for j in range(0, len(cur_list)):
-                    self.ui.table_current.setItem(i, j, QTableWidgetItem(str(cur_list[j])))
+            i = 0
+            for balance in kiwoom.data.잔고_dic.values():
+                str_list = balance.get_str_list()
+                for j in range(0, len(str_list)):
+                    self.ui.table_current.setItem(i, j, QTableWidgetItem(str(str_list[j])))
+                i += 1
 
             self.is_user_changing_balance = True
 
@@ -141,14 +137,23 @@ class MyWindow(QMainWindow, KiwoomCallback):
 
         종목코드_item = self.ui.table_current.item(row, 0)
         종목코드 = 종목코드_item.text()
-        changed_key = kiwoom.data.get_balance_header()[col]
+        balance = kiwoom.data.get_balance(종목코드)
+        changed_key = Balance.get_table_header()[col]
         print(종목코드, changed_key, value)
-        if changed_key == '매도전략' or changed_key == '매수전략':
-            value = value.split(",")
-            print("after value", value)
-
-        cur_balance_dic = {changed_key: value}
-        kiwoom.data.set_balance(종목코드, cur_balance_dic)
+        if changed_key == '매도전략':
+            strategy_list = value.split(",")
+            print("strategy_list", strategy_list)
+            balance.매도전략.clear()
+            balance.add_sell_strategy(strategy_list)
+        elif changed_key == '매수전략':
+            strategy_list = value.split(",")
+            print("strategy_list", strategy_list)
+            balance.매수전략.clear()
+            balance.add_buy_strategy(strategy_list)
+        elif changed_key == "목표보유수량":
+            balance.목표보유수량 = int(value)
+        else:
+            return
 
     def on_print(self, log_str):
         self.ui.txt_output.append(log_str)
@@ -156,6 +161,7 @@ class MyWindow(QMainWindow, KiwoomCallback):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MyWindow()
-    kiwoom = Kiwoom(window)
+    kiwoom = Kiwoom.instance()
+    kiwoom.set_callback(window)
     window.show()
     app.exec_()

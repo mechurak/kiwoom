@@ -1,17 +1,28 @@
 from PyQt4.QAxContainer import *
 from PyQt4.QtCore import *
-from kiwoom.strategy.stop_loss import StopLoss
-from kiwoom.strategy.just_buy import JustBuy
 from kiwoom.data import Data
 from kiwoom import constant
 
 
-class Kiwoom:
+class Singleton:
+    __instance = None
+
+    @classmethod
+    def __get_instance(cls):
+        return cls.__instance
+
+    @classmethod
+    def instance(cls, *args, **kargs):
+        cls.__instance = cls(*args, **kargs)
+        cls.instance = cls.__get_instance
+        return cls.__instance
+
+
+class Kiwoom(Singleton):
     data = Data()
+    callback = None
 
-    def __init__(self, the_callback):
-        self.callback = the_callback
-
+    def __init__(self):
         self.ocx = QAxWidget("KHOPENAPI.KHOpenAPICtrl.1")
         self.ocx.connect(self.ocx, SIGNAL("OnReceiveTrData(QString, QString, QString, QString, QString, int, QString, QString, QString)"), self.OnReceiveTrData)
         self.ocx.connect(self.ocx, SIGNAL("OnReceiveRealData(QString, QString, QString)"), self.OnReceiveRealData)
@@ -22,14 +33,10 @@ class Kiwoom:
         self.ocx.connect(self.ocx, SIGNAL("OnReceiveCondition(QString, QString, QString, QString)"), self.OnReceiveCondition)
         self.ocx.connect(self.ocx, SIGNAL("OnReceiveTrCondition(QString, QString, QString, int, int)"), self.OnReceiveTrCondition)
         self.ocx.connect(self.ocx, SIGNAL("OnReceiveConditionVer(int, QString)"), self.OnReceiveConditionVer)
-
-        sell_stop_loss = StopLoss(self.ocx, self.data)
-        self.data.매도전략_dic["sell_stop_loss"] = sell_stop_loss
-
-        buy_just_buy = JustBuy(self.ocx, self.data)
-        self.data.매수전략_dic["buy_just_buy"] = buy_just_buy
-
         self.login()
+
+    def set_callback(self, the_callback):
+        self.callback = the_callback
 
     def OnReceiveTrData(self, sScrNo, sRQName, sTrCode, sRecordName, sPreNext, nDataLength, sErrorCode, sMessage, sSplmMsg):
         print("(OnReceiveTrData) ", sScrNo, sRQName, sTrCode, sRecordName, sPreNext, nDataLength, sErrorCode, sMessage, sSplmMsg)
@@ -46,9 +53,12 @@ class Kiwoom:
                 종목코드 = 종목코드.strip()
                 종목명 = 종목명.strip()
                 현재가 = int(현재가_str.strip())
+                if 현재가 < 0:
+                    현재가 = 현재가 * (-1)  # 현재가가 음수로 오는 경우가 있음
 
-                cur_balance_dic = {"종목명": 종목명, "현재가": 현재가}
-                self.data.set_balance(종목코드, cur_balance_dic)
+                balance = self.data.get_balance(종목코드)
+                balance.종목명 = 종목명
+                balance.현재가 = 현재가
                 self.callback.on_data_updated(["잔고_dic"])
             else:
                 print("잘못된 종목 코드")
@@ -73,8 +83,12 @@ class Kiwoom:
                 수익률 = float(수익률_str.strip()) / 100
                 print("수익률", 수익률)
                 print(종목명, "현재가: ", 현재가, "매입가: ", 매입가, "보유수량: ", 보유수량, "수익률: ", 수익률)
-                cur_balance_dic = {"종목명": 종목명, "현재가": 현재가, "매입가": 매입가, "보유수량": 보유수량, "수익률": 수익률}
-                self.data.set_balance(종목코드, cur_balance_dic)
+                balance = self.data.get_balance(종목코드)
+                balance.종목명 = 종목명
+                balance.현재가 = 현재가
+                balance.매입가 = 매입가
+                balance.보유수량 = 보유수량
+                balance.수익률 = 수익률
 
             self.callback.on_data_updated(["잔고_dic"])
 
@@ -84,22 +98,28 @@ class Kiwoom:
             if (sRealType == "주식체결"):
                 현재가_str = self.ocx.dynamicCall("GetCommRealData(QString, int)", "주식체결", 10)
                 현재가 = int(현재가_str.strip())
-                cur_balance_dic = {"현재가": 현재가}
-                self.data.set_balance(sJongmokCode, cur_balance_dic)
+                if 현재가 < 0:
+                    현재가 = 현재가 * (-1)
 
-                매수전략_list = self.data.get_balance_buy_strategy(sJongmokCode)
-                for 매수전략 in 매수전략_list:
+                balance = self.data.get_balance(sJongmokCode)
+                balance.현재가 = 현재가
+
+                for 매수전략 in balance.매수전략.values():
                     매수전략.on_real_data(sJongmokCode, sRealType, sRealData)
 
-                매도전략_list = self.data.get_balance_sell_strategy(sJongmokCode)
-                for 매도전략 in 매도전략_list:
+                for 매도전략 in balance.매도전략.values():
                     매도전략.on_real_data(sJongmokCode, sRealType, sRealData)
 
     def OnReceiveRealCondition(self, strCode, strType, strConditionName, strConditionIndex):
         print("(OnReceiveRealCondition)", strCode, strType, strConditionName, strConditionIndex)
+        condition = self.data.get_condition(strConditionIndex)
+
         if strType == 'I':  # 조건식 편입
-            if self.data.get_condition_signal_type(strConditionIndex) == "매도신호":
-                보유수량 = self.data.get_balance_hold_amount(strCode)
+            if condition.신호종류 == "매도신호":
+                보유수량 = 0
+                if strCode in self.data.잔고_dic:
+                    balance = self.data.get_balance(strCode)
+                    보유수량 = balance.보유수량
                 if 보유수량 > 0:
                     self.send_order(2, strCode, 보유수량, 0, "03")  # 시장가로 매도
 
@@ -112,6 +132,7 @@ class Kiwoom:
     def OnReceiveChejanData(self, sGubun, nItemCnt, sFidList):
         print("(OnReceiveChejanData) ", sGubun, nItemCnt, sFidList)
         if sGubun == 0:  # 주문체결통보
+            print("sGubun == 0")
             pass
 
         elif sGubun == 1:  # 잔고통보
@@ -127,20 +148,23 @@ class Kiwoom:
             보유수량 = int(보유수량_str.strip())
             잔고_dic = self.data.잔고_dic
 
-            prev_보유수량 = self.data.get_balance_hold_amount(종목코드)
+            balance = self.data.get_balance(종목코드)
+            prev_보유수량 = balance.보유수량
+
             if 보유수량 == 0 and prev_보유수량 != 0:  # 해당 종목 청산
                 del 잔고_dic[종목코드]
                 self.set_real_remove(종목코드)  # 실시간 해제
 
-            elif 보유수량 != 0 and prev_보유수량 == 0:  # 새로운 종목 매수
-                cur_balance_dic = {"현재가": 현재가, "매입가": 매입단가, "보유수량": 보유수량}
-                self.data.set_balance(종목코드, cur_balance_dic)
-                self.set_real_reg([종목코드])  # 실시간 등록
-
             else:
-                print("unexpected condition")
+                if 보유수량 != 0 and prev_보유수량 == 0:  # 새로운 종목 매수
+                    self.set_real_reg([종목코드])  # 실시간 등록
+
+                balance.현재가 = 현재가
+                balance.보유수량 = 보유수량
+                balance.매입가 = 매입단가
 
         elif sGubun == 3:  # 특이신호
+            print("sGubun == 3")
             pass
 
     def OnEventConnect(self, nErrCode):
@@ -181,8 +205,8 @@ class Kiwoom:
             cur = condition_with_index.split("^")
             인덱스 = int(cur[0])
             조건명 = cur[1]
-            cur_condition_dic = {"조건명": 조건명}
-            self.data.set_condition(인덱스, cur_condition_dic)
+            condition_instance = self.data.get_condition(인덱스)
+            condition_instance.조건명 = 조건명
         self.callback.on_data_updated(["조건식_dic"])
 
     ##############################################################
