@@ -7,112 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>1075</width>
-    <height>633</height>
+    <height>761</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QTextEdit" name="txt_output">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>540</x>
-      <y>380</y>
-      <width>241</width>
-      <height>211</height>
-     </rect>
-    </property>
-    <property name="readOnly">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QWidget" name="gridLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>213</x>
-      <y>10</y>
-      <width>324</width>
-      <height>83</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="3" column="0">
-      <widget class="QLineEdit" name="edit_code">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="placeholderText">
-        <string>종목코드</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QPushButton" name="btn_code">
-       <property name="text">
-        <string>종목추가</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>계좌번호</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QPushButton" name="btn_get_balance">
-       <property name="text">
-        <string>잔고조회</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QPushButton" name="btn_condition_refresh">
-       <property name="toolTip">
-        <string>test</string>
-       </property>
-       <property name="whatsThis">
-        <string/>
-       </property>
-       <property name="text">
-        <string>조건식 refresh</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="3">
-      <widget class="QPushButton" name="btn_print_my_data">
-       <property name="text">
-        <string>my_data</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QPushButton" name="btn_register_real">
-       <property name="text">
-        <string>실시간등록</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3">
-      <widget class="QPushButton" name="btn_register_real_all">
-       <property name="text">
-        <string>보유실시간</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QComboBox" name="combo_account"/>
-     </item>
-    </layout>
-   </widget>
    <widget class="QTableWidget" name="table_current">
     <property name="geometry">
      <rect>
@@ -156,7 +57,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>380</y>
+      <y>450</y>
       <width>521</width>
       <height>211</height>
      </rect>
@@ -271,6 +172,112 @@
      <string>선택종목</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="btn_condition_refresh">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>670</y>
+      <width>81</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>test</string>
+    </property>
+    <property name="whatsThis">
+     <string/>
+    </property>
+    <property name="text">
+     <string>조건식 refresh</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="gridLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>211</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>계좌번호</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="combo_account"/>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="gridLayoutWidget_5">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>60</y>
+      <width>371</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_5">
+     <item row="0" column="2">
+      <widget class="QPushButton" name="btn_print_my_data">
+       <property name="text">
+        <string>data 확인</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="btn_register_real_all">
+       <property name="text">
+        <string>전체 실시간 등록</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="btn_get_balance">
+       <property name="text">
+        <string>잔고조회</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="gridLayoutWidget_4">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>380</y>
+      <width>201</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_4">
+     <item row="0" column="0">
+      <widget class="QLineEdit" name="edit_code">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>종목코드</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="btn_code">
+       <property name="text">
+        <string>종목추가</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -299,8 +306,8 @@
    <slot>on_condition_refresh_btn_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>236</x>
-     <y>76</y>
+     <x>32</x>
+     <y>706</y>
     </hint>
     <hint type="destinationlabel">
      <x>180</x>
@@ -331,8 +338,8 @@
    <slot>on_print_my_data_btn_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>535</x>
-     <y>112</y>
+     <x>534</x>
+     <y>101</y>
     </hint>
     <hint type="destinationlabel">
      <x>949</x>
@@ -347,28 +354,12 @@
    <slot>on_code_btn_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>349</x>
-     <y>102</y>
+     <x>131</x>
+     <y>432</y>
     </hint>
     <hint type="destinationlabel">
      <x>122</x>
      <y>85</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btn_register_real</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>on_register_real_btn_clicked()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>433</x>
-     <y>105</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>558</x>
-     <y>83</y>
     </hint>
    </hints>
   </connection>
@@ -412,7 +403,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>831</x>
-     <y>187</y>
+     <y>217</y>
     </hint>
     <hint type="destinationlabel">
      <x>894</x>
@@ -428,7 +419,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>861</x>
-     <y>291</y>
+     <y>341</y>
     </hint>
     <hint type="destinationlabel">
      <x>830</x>
@@ -443,8 +434,8 @@
    <slot>on_sell_strategy_add_btn_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1038</x>
-     <y>292</y>
+     <x>978</x>
+     <y>342</y>
     </hint>
     <hint type="destinationlabel">
      <x>1025</x>

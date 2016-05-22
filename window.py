@@ -82,12 +82,6 @@ class MyWindow(QMainWindow, KiwoomCallback):
         self.on_data_updated(["잔고_dic"])
 
     @pyqtSlot()
-    def on_register_real_btn_clicked(self):
-        print("on_register_real_btn_clicked")
-        print("text(): " + self.ui.edit_code.text())
-        kiwoom.set_real_reg(self.ui.edit_code.text())
-
-    @pyqtSlot()
     def on_register_real_all_btn_clicked(self):
         print("on_register_real_all_btn_clicked")
         잔고_dic = kiwoom.data.잔고_dic
@@ -210,9 +204,6 @@ class MyWindow(QMainWindow, KiwoomCallback):
             종목명_list.append(balance.종목명)
         selected_balance_str = ",".join(종목명_list)
         self.ui.txt_balance.setText(selected_balance_str)
-
-    def on_print(self, log_str):
-        self.ui.txt_output.append(log_str)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

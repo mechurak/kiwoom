@@ -13,6 +13,9 @@ class StrategyBase:
     def on_real_data(self, sJongmokCode, sRealType, sRealData):
         pass
 
+    def on_condition(self, condition_index, condition_name):
+        pass
+
     def on_buy_signal(self, 주문수량):
         print("(on_buy_signal)", 주문수량)
         kiwoom = Kiwoom.instance()

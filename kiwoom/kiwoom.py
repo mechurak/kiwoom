@@ -116,12 +116,12 @@ class Kiwoom(Singleton):
 
         if strType == 'I':  # 조건식 편입
             if condition.신호종류 == "매도신호":
-                보유수량 = 0
-                if strCode in self.data.잔고_dic:
-                    balance = self.data.get_balance(strCode)
-                    보유수량 = balance.보유수량
-                if 보유수량 > 0:
-                    self.send_order(2, strCode, 보유수량, 0, "03")  # 시장가로 매도
+                balance = self.data.get_balance(strCode)
+                for 매도전략 in balance.매도전략.values():
+                    매도전략.on_condition(strConditionIndex, strConditionName)
+
+            elif condition.신호종류 == "매수신호":
+                pass
 
         elif strType == 'D':  # 조건식 이탈
             pass
@@ -170,7 +170,6 @@ class Kiwoom(Singleton):
     def OnEventConnect(self, nErrCode):
         if nErrCode == 0:
             print("로그인 성공")
-            self.callback.on_print("로그인 성공")
             account_num = self.ocx.dynamicCall("GetLoginInfo(QString)", ["ACCNO"])
             account_num = account_num[:-1]
             account_list = account_num.split(";")
@@ -266,7 +265,4 @@ class KiwoomCallback:
         pass
 
     def on_data_updated(self, key_list):
-        pass
-
-    def on_print(self, log_str):
         pass
