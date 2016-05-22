@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>791</width>
+    <width>1075</width>
     <height>633</height>
    </rect>
   </property>
@@ -183,13 +183,101 @@
     <column/>
     <column/>
    </widget>
+   <widget class="QTextEdit" name="txt_balance">
+    <property name="geometry">
+     <rect>
+      <x>790</x>
+      <y>130</y>
+      <width>281</width>
+      <height>51</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_code_del">
+    <property name="geometry">
+     <rect>
+      <x>790</x>
+      <y>190</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>선택종목 삭제</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="gridLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>790</x>
+      <y>250</y>
+      <width>281</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>매도전략</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QComboBox" name="combo_buy"/>
+     </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="combo_sell"/>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>매수전략</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QPushButton" name="btn_buy_strategy_add">
+       <property name="text">
+        <string>선택종목에 매수전략 추가</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QPushButton" name="btn_sell_strategy_add">
+       <property name="text">
+        <string>선택종목에 매도전략 추가</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>790</x>
+      <y>110</y>
+      <width>46</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>선택종목</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>791</width>
+     <width>1075</width>
      <height>21</height>
     </rect>
    </property>
@@ -231,8 +319,8 @@
      <y>54</y>
     </hint>
     <hint type="destinationlabel">
-     <x>802</x>
-     <y>134</y>
+     <x>752</x>
+     <y>41</y>
     </hint>
    </hints>
   </connection>
@@ -247,8 +335,8 @@
      <y>112</y>
     </hint>
     <hint type="destinationlabel">
-     <x>832</x>
-     <y>203</y>
+     <x>949</x>
+     <y>58</y>
     </hint>
    </hints>
   </connection>
@@ -279,8 +367,8 @@
      <y>105</y>
     </hint>
     <hint type="destinationlabel">
-     <x>840</x>
-     <y>238</y>
+     <x>558</x>
+     <y>83</y>
     </hint>
    </hints>
   </connection>
@@ -295,8 +383,8 @@
      <y>46</y>
     </hint>
     <hint type="destinationlabel">
-     <x>807</x>
-     <y>164</y>
+     <x>566</x>
+     <y>27</y>
     </hint>
    </hints>
   </connection>
@@ -316,6 +404,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btn_code_del</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_code_del_btn_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>831</x>
+     <y>187</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>894</x>
+     <y>93</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_buy_strategy_add</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_buy_strategy_add_btn_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>861</x>
+     <y>291</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>830</x>
+     <y>324</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_sell_strategy_add</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_sell_strategy_add_btn_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1038</x>
+     <y>292</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1025</x>
+     <y>328</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>on_condition_refresh_btn_clicked()</slot>
@@ -326,5 +462,8 @@
   <slot>on_register_real_btn_clicked()</slot>
   <slot>on_register_real_all_btn_clicked()</slot>
   <slot>on_account_changed(QString)</slot>
+  <slot>on_code_del_btn_clicked()</slot>
+  <slot>on_buy_strategy_add_btn_clicked()</slot>
+  <slot>on_sell_strategy_add_btn_clicked()</slot>
  </slots>
 </ui>

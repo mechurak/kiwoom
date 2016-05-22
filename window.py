@@ -22,7 +22,7 @@ class ConditionItem:
         self.combo_box_apply.setCurrentIndex(self.combo_box_apply.findText(self.condition.적용유무))
         self.combo_box_apply.connect(self.combo_box_apply, SIGNAL("currentIndexChanged(QString)"), self.on_apply_changed)
 
-        self.button = QPushButton("조회&요청")
+        self.button = QPushButton("조회 및 요청")
         self.button.clicked.connect(lambda: kiwoom.tr_condition_result(self.condition.조건명, self.condition.인덱스, self.condition.신호종류, self.condition.적용유무))
 
     def on_signal_changed(self, the_신호종류):
@@ -41,7 +41,12 @@ class MyWindow(QMainWindow, KiwoomCallback):
         self.ui.table_current.setItem(0, 1, QTableWidgetItem("test0_1"))
         self.ui.table_current.setItem(1, 0, QTableWidgetItem("test1_0"))
         self.ui.table_current.itemChanged.connect(self.on_balance_item_changed)
+        vertical_header = self.ui.table_current.verticalHeader()
+        vertical_header.connect(vertical_header, SIGNAL("sectionClicked(int)"), self.on_balance_section_clicked)
         self.is_user_changing_balance = False
+        self.selected_balance = []
+        self.ui.combo_buy.addItems(Balance.get_available_buy_strategy())
+        self.ui.combo_sell.addItems(Balance.get_available_sell_strategy())
 
     @pyqtSlot(str)
     def on_account_changed(self, account):
@@ -70,6 +75,13 @@ class MyWindow(QMainWindow, KiwoomCallback):
         kiwoom.tr_code(self.ui.edit_code.text())
 
     @pyqtSlot()
+    def on_code_del_btn_clicked(self):
+        print("on_code_del_btn_clicked")
+        for balance in self.selected_balance:
+            del kiwoom.data.잔고_dic[balance.종목코드]
+        self.on_data_updated(["잔고_dic"])
+
+    @pyqtSlot()
     def on_register_real_btn_clicked(self):
         print("on_register_real_btn_clicked")
         print("text(): " + self.ui.edit_code.text())
@@ -83,6 +95,24 @@ class MyWindow(QMainWindow, KiwoomCallback):
         잔고코드_list_str = ";".join(잔고코드_list)
         print("잔고코드_list_str", 잔고코드_list_str)
         kiwoom.set_real_reg(잔고코드_list_str)
+
+    @pyqtSlot()
+    def on_buy_strategy_add_btn_clicked(self):
+        print("(on_buy_strategy_add_btn_clicked)")
+        strategy_str = self.ui.combo_buy.currentText()
+        print("strategy_str", strategy_str)
+        for balance in self.selected_balance:
+            balance.add_buy_strategy(strategy_str)
+        self.on_data_updated(["잔고_dic"])
+
+    @pyqtSlot()
+    def on_sell_strategy_add_btn_clicked(self):
+        print("(on_sell_strategy_add_btn_clicked)")
+        strategy_str = self.ui.combo_sell.currentText()
+        print("strategy_str", strategy_str)
+        for balance in self.selected_balance:
+            balance.add_sell_strategy(strategy_str)
+        self.on_data_updated(["잔고_dic"])
 
     def on_connected(self):
         self.statusBar().showMessage("Connected")
@@ -116,6 +146,8 @@ class MyWindow(QMainWindow, KiwoomCallback):
             self.ui.table_current.clear()
             self.ui.table_current.setColumnCount(len(headers))
             self.ui.table_current.setHorizontalHeaderLabels(headers)
+            self.selected_balance.clear()
+            self.ui.txt_balance.clear()
 
             i = 0
             for balance in kiwoom.data.잔고_dic.values():
@@ -154,6 +186,30 @@ class MyWindow(QMainWindow, KiwoomCallback):
             balance.목표보유수량 = int(value)
         else:
             return
+
+    def on_balance_section_clicked(self, int):
+        print("(on_balance_selection_changed)", int)
+        rows = []
+        for idx in self.ui.table_current.selectedIndexes():
+            current_row = idx.row()
+            if current_row not in rows:
+                rows.append(current_row)
+        print(rows)
+
+        self.selected_balance.clear()
+        for row in rows:
+            종목코드_item = self.ui.table_current.item(row, 0)
+            if not 종목코드_item:  # 빈칸(None)인 경우
+                continue
+            종목코드 = 종목코드_item.text()
+            balance = kiwoom.data.get_balance(종목코드)
+            self.selected_balance.append(balance)
+
+        종목명_list = []
+        for balance in self.selected_balance:
+            종목명_list.append(balance.종목명)
+        selected_balance_str = ",".join(종목명_list)
+        self.ui.txt_balance.setText(selected_balance_str)
 
     def on_print(self, log_str):
         self.ui.txt_output.append(log_str)

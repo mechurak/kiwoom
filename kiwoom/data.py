@@ -18,49 +18,53 @@ class Balance:
     def get_table_header():
         return ["종목코드", "종목명", "현재가", "매입가", "보유수량", "목표보유수량", "수익률", "매수전략", "매도전략"]
 
+    @staticmethod
+    def get_available_buy_strategy():
+        return ["buy_just_buy"]
+
+    @staticmethod
+    def get_available_sell_strategy():
+        return ["sell_stop_loss"]
+
     def get_str_list(self):
         return [self.종목코드, self.종목명, str(self.현재가), str(self.매입가), str(self.보유수량), str(self.목표보유수량), str(self.수익률), str(list(self.매수전략.keys())), str(list(self.매도전략.keys()))]
 
     def print(self):
         print("\t", self.get_str_list())
 
-    def add_buy_strategy(self, the_전략명_list):
+    def add_buy_strategy(self, the_전략명):
         from kiwoom.strategy.just_buy import JustBuy
-        for the_전략명 in the_전략명_list:
-            if the_전략명 not in self.매수전략:
-                if the_전략명 == "buy_just_buy":
-                    buy_just_buy = JustBuy(self)
-                    self.매수전략[the_전략명] = buy_just_buy
-                    print("add_buy_strategy. buy_just_buy 추가됨.", self.종목명)
-                elif the_전략명 == "next_strategy":
-                    print("add_sell_strategy. unknown strategy")
-                    pass
-                else:
-                    print("add_sell_strategy. unknown strategy")
+        if the_전략명 not in self.매수전략:
+            if the_전략명 == "buy_just_buy":
+                buy_just_buy = JustBuy(self)
+                self.매수전략[the_전략명] = buy_just_buy
+                print("add_buy_strategy. buy_just_buy 추가됨.", self.종목명)
+            elif the_전략명 == "next_strategy":
+                print("add_sell_strategy. unknown strategy")
+                pass
+            else:
+                print("add_sell_strategy. unknown strategy")
 
-    def add_sell_strategy(self, the_전략명_list):
+    def add_sell_strategy(self, the_전략명):
         from kiwoom.strategy.stop_loss import StopLoss
-        for the_전략명 in the_전략명_list:
-            if the_전략명 not in self.매도전략:
-                if the_전략명 == "sell_stop_loss":
-                    sell_stop_loss = StopLoss(self)
-                    self.매도전략[the_전략명] = sell_stop_loss
-                    print("add_sell_strategy. sell_stop_loss 추가됨.", self.종목명)
-                elif the_전략명 == "next_strategy":
-                    print("add_sell_strategy. unknown strategy")
-                    pass
-                else:
-                    print("add_sell_strategy. unknown strategy")
+        if the_전략명 not in self.매도전략:
+            if the_전략명 == "sell_stop_loss":
+                sell_stop_loss = StopLoss(self)
+                self.매도전략[the_전략명] = sell_stop_loss
+                print("add_sell_strategy. sell_stop_loss 추가됨.", self.종목명)
+            elif the_전략명 == "next_strategy":
+                print("add_sell_strategy. unknown strategy")
+                pass
+            else:
+                print("add_sell_strategy. unknown strategy")
 
-    def remove_buy_strategy(self, the_전략명_list):
-        for the_전략명 in the_전략명_list:
-            if the_전략명 not in self.매수전략:
-                del self.매수전략[the_전략명]
+    def remove_buy_strategy(self, the_전략명):
+        if the_전략명 not in self.매수전략:
+            del self.매수전략[the_전략명]
 
-    def remove_sell_strategy(self, the_전략명_list):
-        for the_전략명 in the_전략명_list:
-            if the_전략명 not in self.매도전략:
-                del self.매도전략[the_전략명]
+    def remove_sell_strategy(self, the_전략명):
+        if the_전략명 not in self.매도전략:
+            del self.매도전략[the_전략명]
 
 
 class Condition:
