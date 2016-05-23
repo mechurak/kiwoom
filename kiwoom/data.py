@@ -61,14 +61,6 @@ class Balance:
             else:
                 print("add_sell_strategy. unknown strategy")
 
-    def remove_buy_strategy(self, the_전략명):
-        if the_전략명 not in self.매수전략:
-            del self.매수전략[the_전략명]
-
-    def remove_sell_strategy(self, the_전략명):
-        if the_전략명 not in self.매도전략:
-            del self.매도전략[the_전략명]
-
 
 class Condition:
     인덱스 = -1

@@ -108,6 +108,20 @@ class MyWindow(QMainWindow, KiwoomCallback):
             balance.add_sell_strategy(strategy_str)
         self.on_data_updated(["잔고_dic"])
 
+    @pyqtSlot()
+    def on_buy_strategy_clear_btn_clicked(self):
+        print("(on_buy_strategy_clear_btn_clicked)")
+        for balance in self.selected_balance:
+            balance.매수전략.clear()
+        self.on_data_updated(["잔고_dic"])
+
+    @pyqtSlot()
+    def on_sell_strategy_clear_btn_clicked(self):
+        print("(on_sell_strategy_clear_btn_clicked)")
+        for balance in self.selected_balance:
+            balance.매도전략.clear()
+        self.on_data_updated(["잔고_dic"])
+
     def on_connected(self):
         self.statusBar().showMessage("Connected")
 
@@ -166,17 +180,7 @@ class MyWindow(QMainWindow, KiwoomCallback):
         balance = kiwoom.data.get_balance(종목코드)
         changed_key = Balance.get_table_header()[col]
         print(종목코드, changed_key, value)
-        if changed_key == '매도전략':
-            strategy_list = value.split(",")
-            print("strategy_list", strategy_list)
-            balance.매도전략.clear()
-            balance.add_sell_strategy(strategy_list)
-        elif changed_key == '매수전략':
-            strategy_list = value.split(",")
-            print("strategy_list", strategy_list)
-            balance.매수전략.clear()
-            balance.add_buy_strategy(strategy_list)
-        elif changed_key == "목표보유수량":
+        if changed_key == "목표보유수량":
             balance.목표보유수량 = int(value)
         else:
             return

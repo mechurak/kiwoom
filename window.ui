@@ -113,7 +113,7 @@
       <x>790</x>
       <y>250</y>
       <width>281</width>
-      <height>80</height>
+      <height>101</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_2">
@@ -130,9 +130,6 @@
      <item row="1" column="0">
       <widget class="QComboBox" name="combo_buy"/>
      </item>
-     <item row="1" column="1">
-      <widget class="QComboBox" name="combo_sell"/>
-     </item>
      <item row="0" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
@@ -143,6 +140,16 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="combo_sell"/>
+     </item>
+     <item row="2" column="1">
+      <widget class="QPushButton" name="btn_sell_strategy_add">
+       <property name="text">
+        <string>선택종목에 매도전략 추가</string>
+       </property>
+      </widget>
+     </item>
      <item row="2" column="0">
       <widget class="QPushButton" name="btn_buy_strategy_add">
        <property name="text">
@@ -150,10 +157,17 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QPushButton" name="btn_sell_strategy_add">
+     <item row="3" column="0">
+      <widget class="QPushButton" name="pushButton">
        <property name="text">
-        <string>선택종목에 매도전략 추가</string>
+        <string>선택종목 매수전략 clear</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="text">
+        <string>선택종목 매도전략 clear</string>
        </property>
       </widget>
      </item>
@@ -322,8 +336,8 @@
    <slot>on_balance_btn_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>436</x>
-     <y>54</y>
+     <x>437</x>
+     <y>85</y>
     </hint>
     <hint type="destinationlabel">
      <x>752</x>
@@ -338,8 +352,8 @@
    <slot>on_print_my_data_btn_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>534</x>
-     <y>101</y>
+     <x>779</x>
+     <y>107</y>
     </hint>
     <hint type="destinationlabel">
      <x>949</x>
@@ -354,8 +368,8 @@
    <slot>on_code_btn_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>131</x>
-     <y>432</y>
+     <x>219</x>
+     <y>427</y>
     </hint>
     <hint type="destinationlabel">
      <x>122</x>
@@ -370,8 +384,8 @@
    <slot>on_register_real_all_btn_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>508</x>
-     <y>46</y>
+     <x>634</x>
+     <y>85</y>
     </hint>
     <hint type="destinationlabel">
      <x>566</x>
@@ -386,8 +400,8 @@
    <slot>on_account_changed(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>344</x>
-     <y>44</y>
+     <x>219</x>
+     <y>55</y>
     </hint>
     <hint type="destinationlabel">
      <x>728</x>
@@ -422,8 +436,8 @@
      <y>341</y>
     </hint>
     <hint type="destinationlabel">
-     <x>830</x>
-     <y>324</y>
+     <x>789</x>
+     <y>471</y>
     </hint>
    </hints>
   </connection>
@@ -434,12 +448,44 @@
    <slot>on_sell_strategy_add_btn_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>978</x>
-     <y>342</y>
+     <x>1059</x>
+     <y>339</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1025</x>
-     <y>328</y>
+     <x>1033</x>
+     <y>516</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_buy_strategy_clear_btn_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>883</x>
+     <y>361</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>829</x>
+     <y>504</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_sell_strategy_clear_btn_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1040</x>
+     <y>358</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1019</x>
+     <y>547</y>
     </hint>
    </hints>
   </connection>
@@ -456,5 +502,7 @@
   <slot>on_code_del_btn_clicked()</slot>
   <slot>on_buy_strategy_add_btn_clicked()</slot>
   <slot>on_sell_strategy_add_btn_clicked()</slot>
+  <slot>on_buy_strategy_clear_btn_clicked()</slot>
+  <slot>on_sell_strategy_clear_btn_clicked()</slot>
  </slots>
 </ui>
