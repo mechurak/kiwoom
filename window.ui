@@ -292,6 +292,32 @@
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="gridLayoutWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>380</y>
+      <width>251</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_3">
+     <item row="0" column="0">
+      <widget class="QPushButton" name="btn_load_balance">
+       <property name="text">
+        <string>잔고 불러오기</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="btn_save_balance">
+       <property name="text">
+        <string>잔고 저장</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -489,6 +515,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btn_load_balance</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_load_balance_btn_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>590</x>
+     <y>418</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>559</x>
+     <y>438</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_save_balance</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_save_balance_btn_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>702</x>
+     <y>415</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>793</x>
+     <y>400</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>on_condition_refresh_btn_clicked()</slot>
@@ -504,5 +562,7 @@
   <slot>on_sell_strategy_add_btn_clicked()</slot>
   <slot>on_buy_strategy_clear_btn_clicked()</slot>
   <slot>on_sell_strategy_clear_btn_clicked()</slot>
+  <slot>on_load_balance_btn_clicked()</slot>
+  <slot>on_save_balance_btn_clicked()</slot>
  </slots>
 </ui>
