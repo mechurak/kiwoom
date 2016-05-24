@@ -1,3 +1,10 @@
+"""
+-- how to maximize the profit by betting money
+If we know the probability of p and q, we can decide x eventually.
+What would be parameters affecting winning probability?
+- # of news, # of magazines, KOSPI/KOSDAQ, other countries' indicators such as NASDAQ,
+- oil price, currency, interest, theme, ...
+"""
 class KellyBetting:
     def __init__(self):
         print("kelly betting class")
@@ -10,3 +17,5 @@ class KellyBetting:
         x = (b*p-q)/b
 
         return x*totalamount
+
+
