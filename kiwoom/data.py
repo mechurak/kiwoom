@@ -40,10 +40,10 @@ class Balance:
                 self.매수전략[the_전략명] = buy_just_buy
                 print("add_buy_strategy. buy_just_buy 추가됨.", self.종목명)
             elif the_전략명 == "next_strategy":
-                print("add_sell_strategy. unknown strategy")
+                print("add_buy_strategy. unknown strategy")
                 pass
             else:
-                print("add_sell_strategy. unknown strategy")
+                print("add_buy_strategy. unknown strategy", the_전략명)
 
     def add_sell_strategy(self, the_전략명):
         from kiwoom.strategy.stop_loss import StopLoss
@@ -59,7 +59,7 @@ class Balance:
                 print("add_sell_strategy. sell_condition_sell 추가됨.", self.종목명)
                 pass
             else:
-                print("add_sell_strategy. unknown strategy")
+                print("add_sell_strategy. unknown strategy", the_전략명)
 
 
 class Condition:

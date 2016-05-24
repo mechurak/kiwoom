@@ -122,6 +122,50 @@ class MyWindow(QMainWindow, KiwoomCallback):
             balance.매도전략.clear()
         self.on_data_updated(["잔고_dic"])
 
+    @pyqtSlot()
+    def on_load_balance_btn_clicked(self):
+        print("(on_load_balance_btn_clicked)")
+        f = open("my_list.txt", "r")
+        line = f.readline()
+        while line:
+            str_list = line.split(";")
+            종목코드 = str_list[0]
+            balance = kiwoom.data.get_balance(종목코드)
+            종목명 = str_list[1]
+            balance.종목명 = 종목명
+            목표보유수량_str = str_list[2]
+            if 목표보유수량_str != "None":
+                balance.목표보유수량 = int(목표보유수량_str)
+            매수전략_str = str_list[3]
+            매수전략_list = 매수전략_str[1:-1].split(",")
+            for 매수전략_temp in 매수전략_list:
+                if len(매수전략_temp) < 3:
+                    continue
+                매수전략 = 매수전략_temp.strip()[1:-1]  # 따옴표 제거
+                balance.add_buy_strategy(매수전략)
+            매도전략_str = str_list[4].strip()
+            매도전략_list = 매도전략_str[1:-1].split(",")
+            for 매도전략_temp in 매도전략_list:
+                if len(매도전략_temp) < 3:
+                    continue
+                매도전략 = 매도전략_temp.strip()[1:-1]  # 따옴표 제거
+                balance.add_sell_strategy(매도전략)
+            line = f.readline()
+        self.on_data_updated(["잔고_dic"])
+
+    @pyqtSlot()
+    def on_save_balance_btn_clicked(self):
+        print("(on_save_balance_btn_clicked)")
+        f = open("my_list.txt", "w")
+        for balance in kiwoom.data.잔고_dic.values():
+            balance.get_str_list()
+            f.write(balance.종목코드 + ";")
+            f.write(balance.종목명 + ";")
+            f.write(str(balance.목표보유수량) + ";")
+            f.write(str(list(balance.매수전략.keys())) + ";")
+            f.write(str(list(balance.매도전략.keys())) + "\n")
+        f.close()
+
     def on_connected(self):
         self.statusBar().showMessage("Connected")
 
@@ -154,6 +198,7 @@ class MyWindow(QMainWindow, KiwoomCallback):
             self.ui.table_current.clear()
             self.ui.table_current.setColumnCount(len(headers))
             self.ui.table_current.setHorizontalHeaderLabels(headers)
+            self.ui.table_current.setRowCount(len(kiwoom.data.잔고_dic))
             self.selected_balance.clear()
             self.ui.txt_balance.clear()
 

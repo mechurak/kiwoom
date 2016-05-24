@@ -62,3 +62,6 @@ target/
 .ipynb_checkpoints
 
 .idea/
+
+# local data
+my_list.txt
