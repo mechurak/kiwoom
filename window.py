@@ -6,6 +6,7 @@ from kiwoom.kiwoom import Kiwoom
 from kiwoom.kiwoom import KiwoomCallback
 from kiwoom.data import Condition
 from kiwoom.data import Balance
+from logger import MyLogger
 
 
 class ConditionItem:
@@ -50,81 +51,78 @@ class MyWindow(QMainWindow, KiwoomCallback):
 
     @pyqtSlot(str)
     def on_account_changed(self, account):
-        print("on_account_changed", account)
+        MyLogger.instance().logger().info("account: %s", account)
         kiwoom.data.계좌번호 = account
 
     @pyqtSlot()
     def on_condition_refresh_btn_clicked(self):
-        print("on_condition_refresh_clicked")
+        MyLogger.instance().logger().info("")
         kiwoom.refresh_condition_dic()
 
     @pyqtSlot()
     def on_balance_btn_clicked(self):
-        print("on_balance_btn_clicked")
+        MyLogger.instance().logger().info("")
         kiwoom.tr_balance()
 
     @pyqtSlot()
     def on_print_my_data_btn_clicked(self):
-        print("\n========== my data ==============")
+        MyLogger.instance().logger().info("")
         kiwoom.data.print()
 
     @pyqtSlot()
     def on_code_btn_clicked(self):
-        print("on_code_btn_clicked")
-        print("text(): " + self.ui.edit_code.text())
+        MyLogger.instance().logger().info("code: %s", self.ui.edit_code.text())
         kiwoom.tr_code(self.ui.edit_code.text())
 
     @pyqtSlot()
     def on_code_del_btn_clicked(self):
-        print("on_code_del_btn_clicked")
+        MyLogger.instance().logger().info("")
         for balance in self.selected_balance:
             del kiwoom.data.잔고_dic[balance.종목코드]
         self.on_data_updated(["잔고_dic"])
 
     @pyqtSlot()
     def on_register_real_all_btn_clicked(self):
-        print("on_register_real_all_btn_clicked")
+        MyLogger.instance().logger().info("")
         잔고_dic = kiwoom.data.잔고_dic
-        잔고코드_list = 잔고_dic.keys()
-        잔고코드_list_str = ";".join(잔고코드_list)
-        print("잔고코드_list_str", 잔고코드_list_str)
-        kiwoom.set_real_reg(잔고코드_list_str)
+        종목코드_list = 잔고_dic.keys()
+        종목코드_list_str = ";".join(종목코드_list)
+        MyLogger.instance().logger().info("종목코드_list_str %s", 종목코드_list_str)
+        kiwoom.set_real_reg(종목코드_list_str)
 
     @pyqtSlot()
     def on_buy_strategy_add_btn_clicked(self):
-        print("(on_buy_strategy_add_btn_clicked)")
         strategy_str = self.ui.combo_buy.currentText()
-        print("strategy_str", strategy_str)
+        MyLogger.instance().logger().info("전략: %s", strategy_str)
         for balance in self.selected_balance:
             balance.add_buy_strategy(strategy_str)
         self.on_data_updated(["잔고_dic"])
 
     @pyqtSlot()
     def on_sell_strategy_add_btn_clicked(self):
-        print("(on_sell_strategy_add_btn_clicked)")
         strategy_str = self.ui.combo_sell.currentText()
-        print("strategy_str", strategy_str)
+        MyLogger.instance().logger().info("전략: %s", strategy_str)
         for balance in self.selected_balance:
             balance.add_sell_strategy(strategy_str)
         self.on_data_updated(["잔고_dic"])
 
     @pyqtSlot()
     def on_buy_strategy_clear_btn_clicked(self):
-        print("(on_buy_strategy_clear_btn_clicked)")
+        MyLogger.instance().logger().info("")
         for balance in self.selected_balance:
             balance.매수전략.clear()
         self.on_data_updated(["잔고_dic"])
 
     @pyqtSlot()
     def on_sell_strategy_clear_btn_clicked(self):
-        print("(on_sell_strategy_clear_btn_clicked)")
+        MyLogger.instance().logger().info("")
         for balance in self.selected_balance:
             balance.매도전략.clear()
         self.on_data_updated(["잔고_dic"])
 
     @pyqtSlot()
     def on_load_balance_btn_clicked(self):
-        print("(on_load_balance_btn_clicked)")
+        MyLogger.instance().logger().info("")
         f = open("my_list.txt", "r")
         line = f.readline()
         while line:
@@ -155,7 +153,7 @@ class MyWindow(QMainWindow, KiwoomCallback):
 
     @pyqtSlot()
     def on_save_balance_btn_clicked(self):
-        print("(on_save_balance_btn_clicked)")
+        MyLogger.instance().logger().info("")
         f = open("my_list.txt", "w")
         for balance in kiwoom.data.잔고_dic.values():
             balance.get_str_list()
@@ -214,30 +212,27 @@ class MyWindow(QMainWindow, KiwoomCallback):
     def on_balance_item_changed(self, item):
         if not self.is_user_changing_balance:
             return
-        print("on_balance_item_changed")
         row = item.row()
         col = item.column()
         value = item.text()
-        print(row, col, value)
+        MyLogger.instance().logger().info("row:%d, col:%d, val:%s", row, col, value)
 
         종목코드_item = self.ui.table_current.item(row, 0)
         종목코드 = 종목코드_item.text()
         balance = kiwoom.data.get_balance(종목코드)
         changed_key = Balance.get_table_header()[col]
-        print(종목코드, changed_key, value)
         if changed_key == "목표보유수량":
             balance.목표보유수량 = int(value)
         else:
             return
 
-    def on_balance_section_clicked(self, int):
-        print("(on_balance_selection_changed)", int)
+    def on_balance_section_clicked(self, row):
+        MyLogger.instance().logger().info("row: %d", row)
         rows = []
         for idx in self.ui.table_current.selectedIndexes():
             current_row = idx.row()
             if current_row not in rows:
                 rows.append(current_row)
-        print(rows)
 
         self.selected_balance.clear()
         for row in rows:
@@ -255,6 +250,7 @@ class MyWindow(QMainWindow, KiwoomCallback):
         self.ui.txt_balance.setText(selected_balance_str)
 
 if __name__ == "__main__":
+    MyLogger.instance().logger().info("\n\n============================ start application =====================")
     app = QApplication(sys.argv)
     window = MyWindow()
     kiwoom = Kiwoom.instance()

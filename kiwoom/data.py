@@ -1,3 +1,6 @@
+from logger import MyLogger
+
+
 class Balance:
     종목코드 = "000000"
     종목명 = "종목명1"
@@ -30,7 +33,7 @@ class Balance:
         return [self.종목코드, self.종목명, str(self.현재가), str(self.매입가), str(self.보유수량), str(self.목표보유수량), str(self.수익률), str(list(self.매수전략.keys())), str(list(self.매도전략.keys()))]
 
     def print(self):
-        print("\t", self.get_str_list())
+        MyLogger.instance().logger().info("\t\t%s", self.get_str_list())
 
     def add_buy_strategy(self, the_전략명):
         from kiwoom.strategy.just_buy import JustBuy
@@ -38,12 +41,11 @@ class Balance:
             if the_전략명 == "buy_just_buy":
                 buy_just_buy = JustBuy(self)
                 self.매수전략[the_전략명] = buy_just_buy
-                print("add_buy_strategy. buy_just_buy 추가됨.", self.종목명)
+                MyLogger.instance().logger().info("buy_just_buy 추가됨. %s", self.종목명)
             elif the_전략명 == "next_strategy":
-                print("add_buy_strategy. unknown strategy")
-                pass
+                MyLogger.instance().logger().warnning("next_strategy. ignore %s", self.종목명)
             else:
-                print("add_buy_strategy. unknown strategy", the_전략명)
+                MyLogger.instance().logger().warnning("unknown strategy. ignore %s. %s", the_전략명, self.종목명)
 
     def add_sell_strategy(self, the_전략명):
         from kiwoom.strategy.stop_loss import StopLoss
@@ -52,14 +54,13 @@ class Balance:
             if the_전략명 == "sell_stop_loss":
                 sell_stop_loss = StopLoss(self)
                 self.매도전략[the_전략명] = sell_stop_loss
-                print("add_sell_strategy. sell_stop_loss 추가됨.", self.종목명)
+                MyLogger.instance().logger().info("sell_stop_loss 추가됨. %s", self.종목명)
             elif the_전략명 == "sell_condition_sell":
                 sell_condition_sell = ConditionSell(self)
                 self.매도전략[the_전략명] = sell_condition_sell
-                print("add_sell_strategy. sell_condition_sell 추가됨.", self.종목명)
-                pass
+                MyLogger.instance().logger().info("sell_condition_sell 추가됨. %s", self.종목명)
             else:
-                print("add_sell_strategy. unknown strategy", the_전략명)
+                MyLogger.instance().logger().warnning("unknown strategy. ignore %s. %s", the_전략명, self.종목명)
 
 
 class Condition:
@@ -84,7 +85,7 @@ class Condition:
         return ["0", "1"]
 
     def print(self):
-        print("\t", self.인덱스, self.조건명, self.신호종류, self.적용유무)
+        MyLogger.instance().logger().info("\t\t%d, %s, %s, %s", self.인덱스, self.조건명, self.신호종류, self.적용유무)
 
 
 class Data:
@@ -94,14 +95,16 @@ class Data:
     잔고_dic = {}  # {"00000": Balance("00000"), "00001": Balance("00001")}
 
     def print(self):
-        print("계좌번호", self.계좌번호)
-        print("계좌번호_list", self.계좌번호_list)
-        print("조건식_dic ==============")
+        MyLogger.instance().logger().info("============= current data ==============")
+        MyLogger.instance().logger().info("\t\t계좌번호: %s", self.계좌번호)
+        MyLogger.instance().logger().info("\t\t계좌번호_list: %s", self.계좌번호_list)
+        MyLogger.instance().logger().info("\t-- 조건식_dic --")
         for condition in self.조건식_dic.values():
             condition.print()
-        print("잔고_dic ==============")
+        MyLogger.instance().logger().info("\t-- 잔고_dic --")
         for balance in self.잔고_dic.values():
             balance.print()
+        MyLogger.instance().logger().info("========= end of current data ===========")
 
     def get_condition(self, the_인덱스):
         if the_인덱스 not in self.조건식_dic:
