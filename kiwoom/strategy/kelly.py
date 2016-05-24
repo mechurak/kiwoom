@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """
 -- how to maximize the profit by betting money
 If we know the probability of p and q, we can decide x eventually.
@@ -18,17 +17,3 @@ class KellyBetting:
         x = (b*p-q)/b
 
         return x*totalamount
-
-
-=======
-class KellyBetting:
-    # basic batting
-    # b : 1 + ratio ex) 1.05
-    # p : winning probability
-    # q : losing probability
-    # x : % of total money to bet per a game
-    def on_betting(self, totalamount, b, p, q):
-        x = (b*p-q)/b
-
-        return x*totalamount
->>>>>>> origin/master
