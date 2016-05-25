@@ -24,7 +24,7 @@ class ConditionItem:
         self.combo_box_apply.connect(self.combo_box_apply, SIGNAL("currentIndexChanged(QString)"), self.on_apply_changed)
 
         self.button = QPushButton("조회 및 요청")
-        self.button.clicked.connect(lambda: kiwoom.tr_condition_result(self.condition.조건명, self.condition.인덱스, self.condition.신호종류, self.condition.적용유무))
+        self.button.clicked.connect(lambda: kiwoom.send_condition(self.condition))
 
     def on_signal_changed(self, the_신호종류):
         self.condition.신호종류 = the_신호종류

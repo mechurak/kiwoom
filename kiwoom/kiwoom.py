@@ -132,11 +132,11 @@ class Kiwoom(Singleton):
 
     def OnReceiveChejanData(self, sGubun, nItemCnt, sFidList):
         MyLogger.instance().logger().info("%s, %d, %s", sGubun, nItemCnt, sFidList)
-        if sGubun == 0:  # 주문체결통보
-            MyLogger.instance().logger().info("주문체결통보. sGubun == 0")
+        if sGubun == '0':  # 주문체결통보
+            MyLogger.instance().logger().info("주문체결통보. sGubun: 0")
 
-        elif sGubun == 1:  # 잔고통보
-            MyLogger.instance().logger().info("잔고통보. sGubun == 1")
+        elif sGubun == '1':  # 잔고통보
+            MyLogger.instance().logger().info("잔고통보. sGubun: 1")
             종목코드 = self.ocx.dynamicCall("GetChejanData(int)", 9001)
             종목명 = self.ocx.dynamicCall("GetChejanData(int)", 302)
             현재가_str = self.ocx.dynamicCall("GetChejanData(int)", 10)
@@ -158,14 +158,20 @@ class Kiwoom(Singleton):
 
             else:
                 if 보유수량 != 0 and prev_보유수량 == 0:  # 새로운 종목 매수
-                    self.set_real_reg([종목코드])  # 실시간 등록
+                    for condition in self.data.조건식_dic:
+                        if condition.적용유무 == "1":
+                            MyLogger.instance().logger().info("조건식 실시간 재등록")
+                            self.send_condition(condition)  # 조건식 실시간 재등록
+
+                    MyLogger.instance().logger().info("실시간 등록")
+                    self.set_real_reg(종목코드)  # 실시간 등록
 
                 balance.현재가 = 현재가
                 balance.보유수량 = 보유수량
                 balance.매입가 = 매입단가
 
-        elif sGubun == 3:  # 특이신호
-            MyLogger.instance().logger().warnning("특이신호. sGubun == 3")
+        elif sGubun == '3':  # 특이신호
+            MyLogger.instance().logger().warnning("특이신호. sGubun: 3")
             pass
 
     def OnEventConnect(self, nErrCode):
@@ -221,16 +227,25 @@ class Kiwoom(Singleton):
         ret = self.ocx.dynamicCall("GetConditionLoad()")
         MyLogger.instance().logger().info("call GetConditionLoad(). ret: %d", ret)
 
-    def tr_condition_result(self, 조건명, 인덱스, 신호종류, 적용유무):
-        MyLogger.instance().logger().info("%s, %d, %s, %s", 조건명, 인덱스, 신호종류, 적용유무)
+    def send_condition(self, the_condition):
+        MyLogger.instance().logger().info("%s, %s, %s", the_condition.조건명, the_condition.신호종류, the_condition.적용유무)
         screen_num = constant.SN_조건식_미지정
-        if 신호종류 == "매수신호":
+        if the_condition.신호종류 == "매수신호":
             screen_num = constant.SN_조건식_매수신호
-        elif 신호종류 == "매도신호":
+        elif the_condition.신호종류 == "매도신호":
             screen_num = constant.SN_조건식_매도신호
-        MyLogger.instance().logger().info("param for SendCondition(). SN: %s, 조건명: %s, 인덱스: %d, 적용유무: %d", screen_num, 조건명, 인덱스, int(적용유무))
-        ret = self.ocx.dynamicCall("SendCondition(QString, QString, int, int)", screen_num, 조건명, 인덱스, int(적용유무))
+        if the_condition.적용유무 == "1":
+            MyLogger.instance().logger().info("call send_condition_stop first")
+            self.send_condition_stop(screen_num, the_condition.조건명, the_condition.인덱스)
+
+        MyLogger.instance().logger().info("param for SendCondition(). SN: %s, 조건명: %s, 인덱스: %d, 적용유무: %d", screen_num, the_condition.조건명, the_condition.인덱스, int(the_condition.적용유무))
+        ret = self.ocx.dynamicCall("SendCondition(QString, QString, int, int)", screen_num, the_condition.조건명, the_condition.인덱스, int(the_condition.적용유무))
         MyLogger.instance().logger().info("call SendCondition(). ret: %d", ret)
+
+    def send_condition_stop(self, the_화면번호, the_조건명, the_조건명인덱스):
+        MyLogger.instance().logger().info("%s, %s, %d", the_화면번호, the_조건명, the_조건명인덱스)
+        self.ocx.dynamicCall("SendConditionStop(QString, QString, int)", the_화면번호, the_조건명, the_조건명인덱스)
+        MyLogger.instance().logger().info("call SendConditionStop()")
 
     def tr_balance(self):
         MyLogger.instance().logger().info("계좌번호 %s", self.data.계좌번호)
