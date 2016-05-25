@@ -113,13 +113,13 @@ class Kiwoom(Singleton):
 
     def OnReceiveRealCondition(self, strCode, strType, strConditionName, strConditionIndex):
         MyLogger.instance().logger().info("%s, %s, %s, %s", strCode, strType, strConditionName, strConditionIndex)
-        condition = self.data.get_condition(strConditionIndex)
+        condition = self.data.get_condition(int(strConditionIndex))
+        balance = self.data.get_balance(strCode)
 
         if strType == 'I':  # 조건식 편입
             if condition.신호종류 == "매도신호":
-                balance = self.data.get_balance(strCode)
                 for 매도전략 in balance.매도전략.values():
-                    매도전략.on_condition(strConditionIndex, strConditionName)
+                    매도전략.on_condition(int(strConditionIndex), strConditionName)
 
             elif condition.신호종류 == "매수신호":
                 pass
@@ -132,43 +132,53 @@ class Kiwoom(Singleton):
 
     def OnReceiveChejanData(self, sGubun, nItemCnt, sFidList):
         MyLogger.instance().logger().info("%s, %d, %s", sGubun, nItemCnt, sFidList)
-        if sGubun == '0':  # 주문체결통보
-            MyLogger.instance().logger().info("주문체결통보. sGubun: 0")
+        fid_str_list = sFidList.split(";")
+        for fid_str in fid_str_list:
+            ret = self.ocx.dynamicCall("GetChejanData(int)", int(fid_str))
+            MyLogger.instance().logger().info("\t %s: %s", fid_str, ret)
+
+        if sGubun == '0':  # 주문접수 or 주문체결
+            MyLogger.instance().logger().info("주문체결통보. sGubun: '0'")
+            주문상태 = self.ocx.dynamicCall("GetChejanData(int)", 913)
+            매도수구분 = self.ocx.dynamicCall("GetChejanData(int)", 907)  # "1":매도, "2":매수
+            종목명 = self.ocx.dynamicCall("GetChejanData(int)", 302)
+            주문수량_str = self.ocx.dynamicCall("GetChejanData(int)", 900)
+            주문가격_str = self.ocx.dynamicCall("GetChejanData(int)", 901)
+            체결가격_str = self.ocx.dynamicCall("GetChejanData(int)", 910)
+            체결수량_str = self.ocx.dynamicCall("GetChejanData(int)", 911)
+            MyLogger.instance().logger().info("주문상태: %s, 매도수구분: %s, 종목명: %s, 주문수량: %s, 체결가격: %s, 체결수량: %s", 주문상태, 매도수구분, 종목명, 주문수량_str, 주문가격_str, 체결가격_str, 체결수량_str)
 
         elif sGubun == '1':  # 잔고통보
-            MyLogger.instance().logger().info("잔고통보. sGubun: 1")
+            MyLogger.instance().logger().info("잔고통보. sGubun: '1'")
             종목코드 = self.ocx.dynamicCall("GetChejanData(int)", 9001)
-            종목명 = self.ocx.dynamicCall("GetChejanData(int)", 302)
             현재가_str = self.ocx.dynamicCall("GetChejanData(int)", 10)
             보유수량_str = self.ocx.dynamicCall("GetChejanData(int)", 930)
             매입단가_str = self.ocx.dynamicCall("GetChejanData(int)", 931)
             종목코드 = 종목코드.strip()
-            종목명 = 종목명.strip()
             현재가 = int(현재가_str.strip())
+            현재가 = 현재가 if 현재가 < 0 else 현재가*(-1)
             매입단가 = int(매입단가_str.strip())
             보유수량 = int(보유수량_str.strip())
             잔고_dic = self.data.잔고_dic
 
             balance = self.data.get_balance(종목코드)
-            prev_보유수량 = balance.보유수량
+            balance.현재가 = 현재가
+            balance.매입가 = 매입단가
+            balance.보유수량 = 보유수량
 
-            if 보유수량 == 0 and prev_보유수량 != 0:  # 해당 종목 청산
+            if 보유수량 == 0:  # 해당 종목 청산
                 del 잔고_dic[종목코드]
                 self.set_real_remove(종목코드)  # 실시간 해제
 
-            else:
-                if 보유수량 != 0 and prev_보유수량 == 0:  # 새로운 종목 매수
-                    for condition in self.data.조건식_dic:
-                        if condition.적용유무 == "1":
-                            MyLogger.instance().logger().info("조건식 실시간 재등록")
-                            self.send_condition(condition)  # 조건식 실시간 재등록
+            else:  # 종목 매수
+                MyLogger.instance().logger().info("종목 매수")
+                for condition in self.data.조건식_dic:
+                    if condition.적용유무 == "1":
+                        MyLogger.instance().logger().info("조건식 실시간 재등록")
+                        self.send_condition(condition)  # 조건식 실시간 재등록
 
-                    MyLogger.instance().logger().info("실시간 등록")
-                    self.set_real_reg(종목코드)  # 실시간 등록
-
-                balance.현재가 = 현재가
-                balance.보유수량 = 보유수량
-                balance.매입가 = 매입단가
+                MyLogger.instance().logger().info("실시간 등록")
+                self.set_real_reg(종목코드)  # 실시간 등록
 
         elif sGubun == '3':  # 특이신호
             MyLogger.instance().logger().warnning("특이신호. sGubun: 3")
@@ -241,6 +251,7 @@ class Kiwoom(Singleton):
         MyLogger.instance().logger().info("param for SendCondition(). SN: %s, 조건명: %s, 인덱스: %d, 적용유무: %d", screen_num, the_condition.조건명, the_condition.인덱스, int(the_condition.적용유무))
         ret = self.ocx.dynamicCall("SendCondition(QString, QString, int, int)", screen_num, the_condition.조건명, the_condition.인덱스, int(the_condition.적용유무))
         MyLogger.instance().logger().info("call SendCondition(). ret: %d", ret)
+        return ret
 
     def send_condition_stop(self, the_화면번호, the_조건명, the_조건명인덱스):
         MyLogger.instance().logger().info("%s, %s, %d", the_화면번호, the_조건명, the_조건명인덱스)
@@ -262,13 +273,15 @@ class Kiwoom(Singleton):
         MyLogger.instance().logger().info("the_종목코드_list_str %s", the_종목코드_list_str)
         fid = "9001;10;13"  # 종목코드,업종코드;현재가;누적거래량
         ret = self.ocx.dynamicCall("SetRealReg(QString, QString, QString, QString)",
-                                   [constant.SN_실시간조회, the_종목코드_list_str, fid, "1"])
+                                   [constant.SN_실시간조회, the_종목코드_list_str, fid, "1"])  # "1" 종목 추가, "0" 기존 종목은 제외
         MyLogger.instance().logger().info("call SetRealReg(). ret: %d", ret)
+        return ret
 
     def set_real_remove(self, the_종목코드):
         MyLogger.instance().logger().info("the_종목코드 %s", the_종목코드)
         ret = self.ocx.dynamicCall("SetRealRemove(QString, QString)", [constant.SN_실시간조회, the_종목코드])
         MyLogger.instance().logger().info("call SetRealRemove(). ret: %d", ret)
+        return ret
 
     def send_order(self, 주문유형, 종목코드, 주문수량, 주문단가, 거래구분):
         MyLogger.instance().logger().info("%d, %s, %d, %d, %s", 주문유형, 종목코드, 주문수량, 주문단가, 거래구분)
@@ -277,6 +290,7 @@ class Kiwoom(Singleton):
         ret = self.ocx.dynamicCall("SendOrder(QString, QString, QString, int, QString, int, int, QString, QString)",
                                    [sRQName, sScreenNo, self.data.계좌번호, 주문유형, 종목코드, 주문수량, 주문단가, 거래구분, ""])
         MyLogger.instance().logger().info("call SendOrder(). ret: %d", ret)
+        return ret
 
 
 class KiwoomCallback:

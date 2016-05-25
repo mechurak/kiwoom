@@ -65,3 +65,4 @@ target/
 
 # local data
 my_list.txt
+my_log/
