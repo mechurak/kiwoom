@@ -137,52 +137,41 @@ class Kiwoom(Singleton):
             ret = self.ocx.dynamicCall("GetChejanData(int)", int(fid_str))
             MyLogger.instance().logger().info("\t %s: %s", fid_str, ret)
 
+        종목코드 = self.ocx.dynamicCall("GetChejanData(int)", 9001)
+        종목코드 = 종목코드.strip()
+        종목코드 = 종목코드[1:]  # 앞에 'A' 제거. 잔고 관련 데이터는 'A' 같은 게 붙어 있음
+        종목명 = self.ocx.dynamicCall("GetChejanData(int)", 302)
+        종목명 = 종목명.strip()
+
         if sGubun == '0':  # 주문접수 or 주문체결
             MyLogger.instance().logger().info("주문체결통보. sGubun: '0'")
-            주문상태 = self.ocx.dynamicCall("GetChejanData(int)", 913)
+            주문상태 = self.ocx.dynamicCall("GetChejanData(int)", 913)  # "접수", "체결"
             매도수구분 = self.ocx.dynamicCall("GetChejanData(int)", 907)  # "1":매도, "2":매수
-            종목명 = self.ocx.dynamicCall("GetChejanData(int)", 302)
-            주문수량_str = self.ocx.dynamicCall("GetChejanData(int)", 900)
-            주문가격_str = self.ocx.dynamicCall("GetChejanData(int)", 901)
-            체결가격_str = self.ocx.dynamicCall("GetChejanData(int)", 910)
-            체결수량_str = self.ocx.dynamicCall("GetChejanData(int)", 911)
-            MyLogger.instance().logger().info("주문상태: %s, 매도수구분: %s, 종목명: %s, 주문수량: %s, 체결가격: %s, 체결수량: %s", 주문상태, 매도수구분, 종목명, 주문수량_str, 주문가격_str, 체결가격_str, 체결수량_str)
+
+            if 주문상태 == '체결':
+                MyLogger.instance().logger().info("체결신호!!!! 잔고 갱신 요청")
+                self.tr_balance()
+
+                if 매도수구분 == '매수':
+                    MyLogger.instance().logger().info("%s 종목 매수", 종목명)
+                    # TODO 조건식 실시간 재등록 필요 유무 확인 필요
+                    #for condition in self.data.조건식_dic.values():
+                    #    if condition.적용유무 == "1":
+                    #        MyLogger.instance().logger().info("조건식 실시간 재등록. %s", condition.조건명)
+                    #        self.send_condition(condition)  # 조건식 실시간 재등록
+
+                    MyLogger.instance().logger().info("%s %s 실시간 등록", 종목코드, 종목명)
+                    self.set_real_reg(종목코드)  # 실시간 등록
 
         elif sGubun == '1':  # 잔고통보
             MyLogger.instance().logger().info("잔고통보. sGubun: '1'")
-            종목코드 = self.ocx.dynamicCall("GetChejanData(int)", 9001)
-            현재가_str = self.ocx.dynamicCall("GetChejanData(int)", 10)
             보유수량_str = self.ocx.dynamicCall("GetChejanData(int)", 930)
-            매입단가_str = self.ocx.dynamicCall("GetChejanData(int)", 931)
-            종목코드 = 종목코드.strip()
-            현재가 = int(현재가_str.strip())
-            현재가 = 현재가 if 현재가 < 0 else 현재가*(-1)
-            매입단가 = int(매입단가_str.strip())
             보유수량 = int(보유수량_str.strip())
-            잔고_dic = self.data.잔고_dic
-
-            balance = self.data.get_balance(종목코드)
-            balance.현재가 = 현재가
-            balance.매입가 = 매입단가
-            balance.보유수량 = 보유수량
 
             if 보유수량 == 0:  # 해당 종목 청산
-                del 잔고_dic[종목코드]
+                MyLogger.instance().logger().info("%s 종목 청산", 종목명)
+                del self.data.잔고_dic[종목코드]
                 self.set_real_remove(종목코드)  # 실시간 해제
-
-            else:  # 종목 매수
-                MyLogger.instance().logger().info("종목 매수")
-                for condition in self.data.조건식_dic:
-                    if condition.적용유무 == "1":
-                        MyLogger.instance().logger().info("조건식 실시간 재등록")
-                        self.send_condition(condition)  # 조건식 실시간 재등록
-
-                MyLogger.instance().logger().info("실시간 등록")
-                self.set_real_reg(종목코드)  # 실시간 등록
-
-        elif sGubun == '3':  # 특이신호
-            MyLogger.instance().logger().warnning("특이신호. sGubun: 3")
-            pass
 
     def OnEventConnect(self, nErrCode):
         if nErrCode == 0:
