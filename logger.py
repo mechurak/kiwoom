@@ -21,9 +21,15 @@ class MyLogger(Singleton):
         self._logger.setLevel(logging.DEBUG)
         formatter = logging.Formatter('[%(levelname)s|%(filename)s:%(lineno)s] %(asctime)s (%(funcName)s) %(message)s')
 
-        filename = 'my_log.log'
-        #fileMaxByte = 10 * 1024 * 1024 * 100  # 10MB
-        #fileHandler = logging.RotatingFileHandler(filename, maxBytes=fileMaxByte, backupCount=10)
+        log_dir = "log"
+        import os
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
+
+        from datetime import date
+        today = date.today()
+        filename = log_dir + "/" + today.strftime("%Y%m%d") + ".log"
+
         fileHandler = logging.FileHandler(filename)
         streamHandler = logging.StreamHandler()
 
