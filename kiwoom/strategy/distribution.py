@@ -1,5 +1,7 @@
 """
 분할 매도
+if it reaches the top line,
+sell a half of the item
 """
 
 class distribution:

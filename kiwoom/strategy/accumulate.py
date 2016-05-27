@@ -1,5 +1,7 @@
 """
 분할 매수
+if the current price reaches the bottom line,
+start to buy x % of total money for the item
 """
 
 class accumulate:
