@@ -6,7 +6,7 @@ class StopLoss(StrategyBase):
     threshold = -0.03
 
     def on_real_data(self, sJongmokCode, sRealType, sRealData):
-        MyLogger.instance().logger().info("StopLoss")
+        MyLogger.instance().logger().info("StopLoss. %s", self.balance.종목명)
         if self.is_done:
             MyLogger.instance().logger().info("is_done. do nothing")
             return

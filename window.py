@@ -189,6 +189,7 @@ class MyWindow(QMainWindow, KiwoomCallback):
                 self.ui.table_condition.setCellWidget(i, 3, condition_item.combo_box_apply)
                 self.ui.table_condition.setCellWidget(i, 4, condition_item.button)
                 i += 1
+            kiwoom.data.print()
 
         if "잔고_dic" in key_list:
             self.is_user_changing_balance = False
@@ -197,8 +198,8 @@ class MyWindow(QMainWindow, KiwoomCallback):
             self.ui.table_current.setColumnCount(len(headers))
             self.ui.table_current.setHorizontalHeaderLabels(headers)
             self.ui.table_current.setRowCount(len(kiwoom.data.잔고_dic))
-            self.selected_balance.clear()
-            self.ui.txt_balance.clear()
+            #self.selected_balance.clear()
+            #self.ui.txt_balance.clear()
 
             i = 0
             for balance in kiwoom.data.잔고_dic.values():
@@ -208,6 +209,7 @@ class MyWindow(QMainWindow, KiwoomCallback):
                 i += 1
 
             self.is_user_changing_balance = True
+            kiwoom.data.print()
 
     def on_balance_item_changed(self, item):
         if not self.is_user_changing_balance:

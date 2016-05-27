@@ -42,26 +42,31 @@ class Kiwoom(Singleton):
     def OnReceiveTrData(self, sScrNo, sRQName, sTrCode, sRecordName, sPreNext, nDataLength, sErrorCode, sMessage, sSplmMsg):
         MyLogger.instance().logger().info("%s, %s, %s, %s, %s, %d, %s, %s, %s", sScrNo, sRQName, sTrCode, sRecordName, sPreNext, nDataLength, sErrorCode, sMessage, sSplmMsg)
         if sRQName == "주식기본정보요청":
-            MyLogger.instance().logger().info("sRQName: 계좌평가잔고내역요청")
+            MyLogger.instance().logger().info("sRQName: 주식기본정보요청")
             종목코드 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, 0, "종목코드")
-            종목명 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, 0, "종목명")
-            현재가_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, 0, "현재가")
             종목코드 = 종목코드.strip()
+            종목명 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, 0, "종목명")
             종목명 = 종목명.strip()
+            현재가_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, 0, "현재가")
             현재가_str = 현재가_str.strip()
+            예상체결가_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, 0, "예상체결가")
+            예상체결가_str = 예상체결가_str.strip()
+            예상체결가 = int(예상체결가_str)
+            예상체결가 = 예상체결가 if 예상체결가 >= 0 else 예상체결가 * (-1)
 
             if 종목코드 and 종목명 and 현재가_str:
-                MyLogger.instance().logger().info("종목코드: %s, 종목명: %s, 현재가_str: %s", 종목코드, 종목명, 현재가_str)
-                종목코드 = 종목코드.strip()
-                종목명 = 종목명.strip()
                 현재가 = int(현재가_str.strip())
-                if 현재가 < 0:
-                    현재가 = 현재가 * (-1)  # 현재가가 음수로 오는 경우가 있음
-
+                현재가 = 현재가 if 현재가 >= 0 else 현재가*(-1)
+                MyLogger.instance().logger().info("종목코드: %s, 종목명: %s, 현재가: %d, 예상체결가_str: %s", 종목코드, 종목명, 현재가, 예상체결가_str)
                 balance = self.data.get_balance(종목코드)
                 balance.종목명 = 종목명
                 balance.현재가 = 현재가
+
+                for 매수전략 in balance.매수전략.values():
+                    매수전략.on_expect_price(예상체결가)
+
                 self.callback.on_data_updated(["잔고_dic"])
+
             else:
                 MyLogger.instance().logger().info("잘못된 종목 코드")
 
@@ -99,8 +104,7 @@ class Kiwoom(Singleton):
             if (sRealType == "주식체결"):
                 현재가_str = self.ocx.dynamicCall("GetCommRealData(QString, int)", "주식체결", 10)
                 현재가 = int(현재가_str.strip())
-                if 현재가 < 0:
-                    현재가 = 현재가 * (-1)
+                현재가 = 현재가 if 현재가 >= 0 else 현재가 * (-1)
 
                 balance = self.data.get_balance(sJongmokCode)
                 balance.현재가 = 현재가
@@ -111,20 +115,27 @@ class Kiwoom(Singleton):
                 for 매도전략 in balance.매도전략.values():
                     매도전략.on_real_data(sJongmokCode, sRealType, sRealData)
 
+            if (sRealData == "장시작시간"):
+                현재시간_str = self.ocx.dynamicCall("GetCommRealData(QString, int)", "장시작시간", 10)
+                현재시간_str = 현재시간_str.strip()
+                if 현재시간_str == "085500":  ## 8시 55분
+                    for balance in self.data.잔고_dic.values():
+                        for 매수전략 in balance.매수전략.values():
+                            매수전략.on_time(현재시간_str)
+
     def OnReceiveRealCondition(self, strCode, strType, strConditionName, strConditionIndex):
         MyLogger.instance().logger().info("%s, %s, %s, %s", strCode, strType, strConditionName, strConditionIndex)
         condition = self.data.get_condition(int(strConditionIndex))
-        balance = self.data.get_balance(strCode)
 
-        if strType == 'I':  # 조건식 편입
-            if condition.신호종류 == "매도신호":
-                for 매도전략 in balance.매도전략.values():
-                    매도전략.on_condition(int(strConditionIndex), strConditionName)
+        if condition.신호종류 == "매도신호" and strType == 'I':  # 매도 조건식 편입
+            if strCode not in self.data.잔고_dic:
+                MyLogger.instance().logger().warning("보유 종목 아님. %s", strCode)
+                return
+            balance = self.data.get_balance(strCode)
+            for 매도전략 in balance.매도전략.values():
+                매도전략.on_condition(int(strConditionIndex), strConditionName)
 
-            elif condition.신호종류 == "매수신호":
-                pass
-
-        elif strType == 'D':  # 조건식 이탈
+        elif condition.신호종류 == "매수신호" and strType == "I":  # 매수 조건식 편입
             pass
 
     def OnReceiveMsg(self, sScrNo, sRQName, sTrCode, sMsg):
@@ -233,9 +244,9 @@ class Kiwoom(Singleton):
             screen_num = constant.SN_조건식_매수신호
         elif the_condition.신호종류 == "매도신호":
             screen_num = constant.SN_조건식_매도신호
-        if the_condition.적용유무 == "1":
-            MyLogger.instance().logger().info("call send_condition_stop first")
-            self.send_condition_stop(screen_num, the_condition.조건명, the_condition.인덱스)
+        #if the_condition.적용유무 == "1":
+        #    MyLogger.instance().logger().info("call send_condition_stop first")
+        #    self.send_condition_stop(screen_num, the_condition.조건명, the_condition.인덱스)
 
         MyLogger.instance().logger().info("param for SendCondition(). SN: %s, 조건명: %s, 인덱스: %d, 적용유무: %d", screen_num, the_condition.조건명, the_condition.인덱스, int(the_condition.적용유무))
         ret = self.ocx.dynamicCall("SendCondition(QString, QString, int, int)", screen_num, the_condition.조건명, the_condition.인덱스, int(the_condition.적용유무))

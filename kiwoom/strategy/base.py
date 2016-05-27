@@ -15,6 +15,12 @@ class StrategyBase:
     def on_condition(self, condition_index, condition_name):
         pass
 
+    def on_time(self, cur_time_str):
+        pass
+
+    def on_expect_price(self, expect_price):
+        pass
+
     def on_buy_signal(self, 주문수량):
         MyLogger.instance().logger().info("종목명: %s, 주문수량: %d", self.balance.종목명, 주문수량)
         kiwoom = Kiwoom.instance()

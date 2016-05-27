@@ -13,6 +13,7 @@ class Balance:
     매도전략 = None
 
     def __init__(self, the_종목코드):
+        MyLogger.instance().logger().debug("Balance ctor. %s", the_종목코드)
         self.종목코드 = the_종목코드
         self.매수전략 = {}
         self.매도전략 = {}
@@ -23,7 +24,7 @@ class Balance:
 
     @staticmethod
     def get_available_buy_strategy():
-        return ["buy_just_buy"]
+        return ["buy_just_buy", "buy_on_opening"]
 
     @staticmethod
     def get_available_sell_strategy():
@@ -37,15 +38,18 @@ class Balance:
 
     def add_buy_strategy(self, the_전략명):
         from kiwoom.strategy.just_buy import JustBuy
+        from kiwoom.strategy.buy_on_opening import BuyOnOpening
         if the_전략명 not in self.매수전략:
             if the_전략명 == "buy_just_buy":
                 buy_just_buy = JustBuy(self)
                 self.매수전략[the_전략명] = buy_just_buy
                 MyLogger.instance().logger().info("buy_just_buy 추가됨. %s", self.종목명)
-            elif the_전략명 == "next_strategy":
-                MyLogger.instance().logger().warnning("next_strategy. ignore %s", self.종목명)
+            elif the_전략명 == "buy_on_opening":
+                buy_on_opening = BuyOnOpening(self)
+                self.매수전략[the_전략명] = buy_on_opening
+                MyLogger.instance().logger().info("buy_on_opening 추가됨. %s", self.종목명)
             else:
-                MyLogger.instance().logger().warnning("unknown strategy. ignore %s. %s", the_전략명, self.종목명)
+                MyLogger.instance().logger().warning("unknown strategy. ignore %s. %s", the_전략명, self.종목명)
 
     def add_sell_strategy(self, the_전략명):
         from kiwoom.strategy.stop_loss import StopLoss
@@ -60,7 +64,7 @@ class Balance:
                 self.매도전략[the_전략명] = sell_condition_sell
                 MyLogger.instance().logger().info("sell_condition_sell 추가됨. %s", self.종목명)
             else:
-                MyLogger.instance().logger().warnning("unknown strategy. ignore %s. %s", the_전략명, self.종목명)
+                MyLogger.instance().logger().wanning("unknown strategy. ignore %s. %s", the_전략명, self.종목명)
 
 
 class Condition:
@@ -70,6 +74,7 @@ class Condition:
     적용유무 = "0"        # "0": 실시간 등록은 하지 않음, "1": 실시간 등록 예정
 
     def __init__(self, the_인덱스):
+        MyLogger.instance().logger().debug("Condition ctor. %s", the_인덱스)
         self.인덱스 = the_인덱스
 
     @staticmethod
