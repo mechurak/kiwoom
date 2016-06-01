@@ -6,9 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1075</width>
-    <height>761</height>
+    <width>1354</width>
+    <height>832</height>
    </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Consolas</family>
+    <pointsize>10</pointsize>
+    <kerning>false</kerning>
+   </font>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
@@ -99,8 +106,8 @@
      <rect>
       <x>790</x>
       <y>190</y>
-      <width>111</width>
-      <height>23</height>
+      <width>121</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
@@ -111,9 +118,9 @@
     <property name="geometry">
      <rect>
       <x>790</x>
-      <y>250</y>
-      <width>281</width>
-      <height>101</height>
+      <y>230</y>
+      <width>461</width>
+      <height>141</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_2">
@@ -177,9 +184,9 @@
     <property name="geometry">
      <rect>
       <x>790</x>
-      <y>110</y>
-      <width>46</width>
-      <height>13</height>
+      <y>102</y>
+      <width>111</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -191,8 +198,8 @@
      <rect>
       <x>10</x>
       <y>670</y>
-      <width>81</width>
-      <height>23</height>
+      <width>151</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -210,8 +217,8 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>211</width>
-      <height>31</height>
+      <width>291</width>
+      <height>41</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
@@ -233,28 +240,28 @@
    <widget class="QWidget" name="gridLayoutWidget_5">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>60</y>
-      <width>371</width>
-      <height>31</height>
+      <x>380</x>
+      <y>51</y>
+      <width>401</width>
+      <height>41</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_5">
-     <item row="0" column="2">
+     <item row="0" column="3">
       <widget class="QPushButton" name="btn_print_my_data">
        <property name="text">
         <string>data 확인</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item row="0" column="2">
       <widget class="QPushButton" name="btn_register_real_all">
        <property name="text">
         <string>전체 실시간 등록</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
+     <item row="0" column="1">
       <widget class="QPushButton" name="btn_get_balance">
        <property name="text">
         <string>잔고조회</string>
@@ -268,8 +275,8 @@
      <rect>
       <x>20</x>
       <y>380</y>
-      <width>201</width>
-      <height>31</height>
+      <width>231</width>
+      <height>41</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_4">
@@ -295,10 +302,10 @@
    <widget class="QWidget" name="gridLayoutWidget_3">
     <property name="geometry">
      <rect>
-      <x>530</x>
+      <x>490</x>
       <y>380</y>
-      <width>251</width>
-      <height>31</height>
+      <width>291</width>
+      <height>41</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_3">
@@ -324,7 +331,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1075</width>
+     <width>1354</width>
      <height>21</height>
     </rect>
    </property>
