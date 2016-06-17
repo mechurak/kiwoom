@@ -2,7 +2,7 @@ __author__ = 'sangchae'
 
 class Market:
     def __init__(self, test):
-        print("Select Market: 1.Korea 2.U.S.A. 3.Hongkong 4.China")
+        print("Select Market: 1.KOSPI 2.NASDAQ. 3.Hongkong 4.China")
         sel = input()
 
         if test == 1:
@@ -11,5 +11,13 @@ class Market:
         # read kospi information
         if sel == '1':
             f = open("YAHOO_KOSPI.txt")
-            lists = f.readlines()
+        elif sel == '2':
+            pass
+        elif sel == '3':
+            pass
+        elif sel == '4':
+            pass
+
+        lists = f.readlines()
+        if test == 1:
             print(lists)

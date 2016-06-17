@@ -1,7 +1,6 @@
 __author__ = 'sangchae'
 
 class Menu:
-
     def menu_decide(self, test):
         print("Welcome My Master again.")
         print("Please choose what you want to do today.")
