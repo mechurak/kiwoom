@@ -242,7 +242,7 @@
      <rect>
       <x>380</x>
       <y>51</y>
-      <width>401</width>
+      <width>811</width>
       <height>41</height>
      </rect>
     </property>
@@ -254,6 +254,13 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="btn_get_balance">
+       <property name="text">
+        <string>잔고조회</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="2">
       <widget class="QPushButton" name="btn_register_real_all">
        <property name="text">
@@ -261,10 +268,10 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QPushButton" name="btn_get_balance">
+     <item row="0" column="4">
+      <widget class="QPushButton" name="btn_test">
        <property name="text">
-        <string>잔고조회</string>
+        <string>test</string>
        </property>
       </widget>
      </item>
@@ -385,8 +392,8 @@
    <slot>on_print_my_data_btn_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>779</x>
-     <y>107</y>
+     <x>985</x>
+     <y>104</y>
     </hint>
     <hint type="destinationlabel">
      <x>949</x>
@@ -497,8 +504,8 @@
    <slot>on_buy_strategy_clear_btn_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>883</x>
-     <y>361</y>
+     <x>884</x>
+     <y>390</y>
     </hint>
     <hint type="destinationlabel">
      <x>829</x>
@@ -513,8 +520,8 @@
    <slot>on_sell_strategy_clear_btn_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1040</x>
-     <y>358</y>
+     <x>1249</x>
+     <y>390</y>
     </hint>
     <hint type="destinationlabel">
      <x>1019</x>
@@ -554,6 +561,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btn_test</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_test_btn_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1155</x>
+     <y>91</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1249</x>
+     <y>68</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>on_condition_refresh_btn_clicked()</slot>
@@ -571,5 +594,6 @@
   <slot>on_sell_strategy_clear_btn_clicked()</slot>
   <slot>on_load_balance_btn_clicked()</slot>
   <slot>on_save_balance_btn_clicked()</slot>
+  <slot>on_test_btn_clicked()</slot>
  </slots>
 </ui>

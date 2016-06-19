@@ -164,6 +164,11 @@ class MyWindow(QMainWindow, KiwoomCallback):
             f.write(str(list(balance.매도전략.keys())) + "\n")
         f.close()
 
+    @pyqtSlot()
+    def on_test_btn_clicked(self):
+        MyLogger.instance().logger().info("")
+        kiwoom.perform_test()
+
     def on_connected(self):
         self.statusBar().showMessage("Connected")
 

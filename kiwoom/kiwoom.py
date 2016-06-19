@@ -49,22 +49,14 @@ class Kiwoom(Singleton):
             종목명 = 종목명.strip()
             현재가_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, 0, "현재가")
             현재가_str = 현재가_str.strip()
-            예상체결가_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, 0, "예상체결가")
-            예상체결가_str = 예상체결가_str.strip()
-            예상체결가 = int(예상체결가_str)
-            예상체결가 = 예상체결가 if 예상체결가 >= 0 else 예상체결가 * (-1)
 
             if 종목코드 and 종목명 and 현재가_str:
                 현재가 = int(현재가_str.strip())
                 현재가 = 현재가 if 현재가 >= 0 else 현재가*(-1)
-                MyLogger.instance().logger().info("종목코드: %s, 종목명: %s, 현재가: %d, 예상체결가_str: %s", 종목코드, 종목명, 현재가, 예상체결가_str)
+                MyLogger.instance().logger().info("종목코드: %s, 종목명: %s, 현재가: %d", 종목코드, 종목명, 현재가)
                 balance = self.data.get_balance(종목코드)
                 balance.종목명 = 종목명
                 balance.현재가 = 현재가
-
-                for 매수전략 in balance.매수전략.values():
-                    매수전략.on_expect_price(예상체결가)
-
                 self.callback.on_data_updated(["잔고_dic"])
 
             else:
@@ -100,6 +92,19 @@ class Kiwoom(Singleton):
 
     def OnReceiveRealData(self, sJongmokCode, sRealType, sRealData):
         MyLogger.instance().logger().info("%s, %s, %s", sJongmokCode, sRealType, sRealData)
+
+        if sRealType == "장시작시간":
+            MyLogger.instance().logger().info("장시작시간")
+            현재시간_str = self.ocx.dynamicCall("GetCommRealData(QString, int)", "장시작시간", 20)  # 체결시간
+            현재시간_str = 현재시간_str.strip()
+            MyLogger.instance().logger().info("체결시간: %s", 현재시간_str)
+
+            # TODO 현재는 시장가로 주문. 좀 더 나은 전략 필요
+            if 현재시간_str == "085500":  ## 8시 55분. 31분터 신호 옴
+                for balance in self.data.잔고_dic.values():
+                    for 매수전략 in balance.매수전략.values():
+                        매수전략.on_time(현재시간_str)
+
         if sJongmokCode in self.data.잔고_dic:
             if (sRealType == "주식체결"):
                 현재가_str = self.ocx.dynamicCall("GetCommRealData(QString, int)", "주식체결", 10)
@@ -114,14 +119,6 @@ class Kiwoom(Singleton):
 
                 for 매도전략 in balance.매도전략.values():
                     매도전략.on_real_data(sJongmokCode, sRealType, sRealData)
-
-            if (sRealData == "장시작시간"):
-                현재시간_str = self.ocx.dynamicCall("GetCommRealData(QString, int)", "장시작시간", 10)
-                현재시간_str = 현재시간_str.strip()
-                if 현재시간_str == "085500":  ## 8시 55분
-                    for balance in self.data.잔고_dic.values():
-                        for 매수전략 in balance.매수전략.values():
-                            매수전략.on_time(현재시간_str)
 
     def OnReceiveRealCondition(self, strCode, strType, strConditionName, strConditionIndex):
         MyLogger.instance().logger().info("%s, %s, %s, %s", strCode, strType, strConditionName, strConditionIndex)
@@ -292,6 +289,12 @@ class Kiwoom(Singleton):
         MyLogger.instance().logger().info("call SendOrder(). ret: %d", ret)
         return ret
 
+    def perform_test(self):
+        MyLogger.instance().logger().debug("")
+        현재시간_str = "083000"
+        for balance in self.data.잔고_dic.values():
+            for 매수전략 in balance.매수전략.values():
+                매수전략.on_time(현재시간_str)
 
 class KiwoomCallback:
     def on_connected(self):
