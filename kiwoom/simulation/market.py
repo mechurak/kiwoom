@@ -19,5 +19,4 @@ class Market:
             pass
 
         lists = f.readlines()
-        if test == 1:
-            print(lists)
+

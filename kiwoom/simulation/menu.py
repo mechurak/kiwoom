@@ -7,8 +7,7 @@ class Menu:
         print("1. Simulation") # yahoo api
         print("2. Start EL") # Kiwoom api
         mode = input()
-        if test == 1:
-            print(mode)
+
         if mode == '1':
             print("Which strategy do you want to simulate?")
             print("1. Golen Gross")
@@ -16,8 +15,6 @@ class Menu:
             print("3. Envelope")
 
             simul = input()
-            if test == 1:
-                print(simul)
             return simul
         else:
             pass

@@ -1,1 +1,1 @@
-Check out our strategy based on Simulation
+Check out your strategy based on Simulation
