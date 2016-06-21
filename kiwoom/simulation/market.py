@@ -2,7 +2,7 @@ __author__ = 'sangchae'
 
 class Market:
     def __init__(self, test):
-        print("Select Market: 1.KOSPI 2.NASDAQ. 3.Hongkong 4.China")
+        print("Select Market: 1.KOSPI 2.NASDAQ. 3.NYSE 4.Hongkong")
         sel = input()
 
         if test == 1:
