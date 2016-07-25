@@ -1,0 +1,2187 @@
+<head>
+ <title>
+  인포스탁
+ </title>
+ <meta content="인포스탁 메인화면" name="description">
+  <meta content="ko" http-equiv="Content-Language"/>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="/include/css/main.css" rel="stylesheet" type="text/css"/>
+  <script language="javascript" src="/flash/js/flashObj.js">
+  </script>
+  <script src="/flash/js/AC_RunActiveContent.js" type="text/javascript">
+  </script>
+  <script language="javascript" src="/flash/js/subflashObj.js">
+  </script>
+  <script language="javascript" src="/include/js/line.js">
+  </script>
+  <script language="javascript" src="/include/js/basis.js">
+  </script>
+  <script language="javascript" src="/include/js/pop.js">
+  </script>
+ </meta>
+</head>
+<!--body onLoad="javascript:go_gongzi(56);" style="background-color:transparent" topmargin="15" leftmargin="0" marginheight="0" marginwidth="0"-->
+<body leftmargin="0" marginheight="0" marginwidth="0" style="background-color:transparent" topmargin="15">
+ <style type="text/css">
+  <!--
+.style1 {color: #FFFFFF}
+-->
+ </style>
+ <style type="text/css">
+  <!--
+.style4 {color: #000000}
+.style10 {font-size: 11px}
+.style13 {color: #000000; font-size: 11px; }
+-->
+ </style>
+ <div id="swfDiv" style="position: absolute; left: 50%; margin-left: -490px; top:15px; width:980px; height:124px;  z-index:1;">
+  <!--<div id="swfDiv" style="position:absolute; left:expression((document.body.clientWidth/2)-490); top:15px; width:980px; height:124px;  z-index:10">-->
+  <script type="text/javascript">
+   FlashObject("/flash/index.swf",980, "100%", "#ffffff", "sale");
+   
+	function resizeElement( gubun ){
+		if( gubun == "menu_over"){
+			document.getElementById('swfDiv').style.height = 270+'px';
+		}
+	
+		if( gubun == "menu_out"){
+			document.getElementById('swfDiv').style.height = 124+'px'; 
+		}
+		
+	}
+  </script>
+ </div>
+ <!--div style=z-index:99;position:relative;left:50%;top:10px;padding-top:15px;padding-left:5px;width:2px;height:2px;background-color:black;><img src="http://img.infostock.kr/옴 아모카 살바다라 사다야 시베홈 CEO.jpg" width=4></div-->
+ <!-- 플래시메뉴바 끝 -->
+ <!-- include 플래시메뉴바 영역표시/각장예시 -->
+ <table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr>
+   <td>
+    <div align="center">
+     <table border="0" cellpadding="0" cellspacing="0" width="980">
+      <tr>
+       <td height="125">
+       </td>
+      </tr>
+      <tr>
+       <td>
+        <table align="center" border="0" cellpadding="0" cellspacing="0" width="980">
+         <tr>
+          <!-- Left-->
+          <td height="10" valign="top" width="200">
+           <!-- Left.asp -->
+           <table border="0" cellpadding="0" cellspacing="0" width="200">
+            <tr>
+             <td height="18">
+             </td>
+            </tr>
+            <tr>
+             <td>
+             </td>
+            </tr>
+           </table>
+           <!-- Left/로그인 -->
+           <table border="0" cellpadding="0" cellspacing="0" width="200">
+            <tr>
+             <td>
+              <script language="javascript">
+               function userkeylogin() {
+		if(event.keyCode == 13) { 
+			login(); 
+		}
+	}
+
+	function login()
+	{
+		if (document.login.userid.value.length < 1 || document.login.userid.value == '아이디')
+		{
+			alert("회원 아이디를 기입하여 주세요.");
+			document.login.userid.focus();
+			return;
+		}
+		if	(document.login.passwd.value.length < 1 || document.login.passwd.value == '비밀번호')
+		{
+			alert("패스워드를 기입하여 주세요.");
+			document.login.passwd.focus();
+			return;
+		}
+		
+		if (document.login.useridSaveYN.checked)
+		{
+			document.login.useridSaveYN.value="1"
+		}
+		else
+		{
+			document.login.useridSaveYN.value="0"
+		}
+		
+		document.login.action='/include/inc/login_ok.asp';
+		document.login.submit();
+	}
+
+	function logout()
+	{
+		location.href="/include/inc/logout_ok.asp";
+	}
+              </script>
+              <script src="/include/inc/jquery-1.4.4.min.js" type="text/javascript">
+              </script>
+              <script type="text/javascript">
+               $(document).ready(function() {
+		
+		$('.userid').focus(function() {
+			
+			$(".userid").css("color","black");
+			
+			if($(this).val() == "아이디")
+				$(this).val('');
+
+		}).blur(function() {
+			
+			if($(this).val() == "")
+			{
+				$(".userid").css("color","#CCCCCC");
+				$(this).val('아이디');
+			}
+
+		});
+		
+		$('#passwdLabel').focus(function() {
+			
+//			if($(this).val() == "비밀번호")
+//			{
+//				$(this).val('');
+//			}
+			//$("#passwd").css("color","black");
+			//$(this).css("color","black");
+			$(this).css("display","none");
+			$("input[name='passwd']").css("display","block");
+			$("input[name='passwd']").focus();
+						
+		})
+		
+		$("input[name='passwd']").blur(function() {
+			
+			if($(this).val() == "")
+			{
+				//$("#passwd").css("color","#CCCCCC");
+				$(this).css("display","none");
+				$("#passwdLabel").css("display","block");
+				//document.login.passwd.type="text";
+				//$(this).val('비밀번호');
+			}
+				
+		});
+		
+	});
+              </script>
+              <style type="text/css">
+               .userid{margin-bottom:2px; BORDER:1px SOLID #CCCCCC; FONT-SIZE: 9pt;}
+	.passwd{BORDER:1px SOLID #CCCCCC; FONT-SIZE: 9pt; margin-top:0px}
+	.useridSaveYN{top:0px;bottom:0px;left:0;width:12px;height:12px}
+              </style>
+              <table border="0" cellpadding="0" cellspacing="0" width="200">
+               <form method="post" name="login">
+                <tr>
+                 <td height="9">
+                  <img height="9" src="/img/graytop.gif" width="200"/>
+                 </td>
+                </tr>
+                <tr>
+                 <td>
+                  <table border="0" cellpadding="0" cellspacing="0" width="200">
+                   <tr>
+                    <td background="/img/graypix1.gif" width="2">
+                    </td>
+                    <td width="196">
+                     <table border="0" cellpadding="0" cellspacing="0" width="196">
+                      <tr>
+                       <td rowspan="2" width="10">
+                       </td>
+                       <td colspan="2" height="15" width="116">
+                        <input class="login_box" maxlength="20" name="userid" style="margin:0;width:116px;height:18px;color:#cccccc;" type="text" value="아이디">
+                         <input class="login_box" id="passwdLabel" maxlength="20" onkeydown="javascript:userkeylogin();" readonly="" style="margin:0;width:116px;height:18px;color:#cccccc;" type="text" value="비밀번호">
+                          <input class="login_box" maxlength="20" name="passwd" onkeydown="javascript:userkeylogin();" style="width:115px;height:18px;display:none;" type="password" value="">
+                          </input>
+                         </input>
+                        </input>
+                       </td>
+                       <td width="62">
+                        <a href="javascript:login()">
+                         <img border="0" height="35" src="/img/loginbu.gif" width="62"/>
+                        </a>
+                       </td>
+                       <td rowspan="2" width="8">
+                       </td>
+                      </tr>
+                      <tr>
+                       <td style="padding-top:2px;" width="5">
+                        <input class="useridSaveYN" name="useridSaveYN" type="checkbox">
+                        </input>
+                       </td>
+                       <td style="padding-top:4px;font-size:11px;text-align:left;" width="111">
+                        아이디 저장
+                       </td>
+                       <td>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                         <tr>
+                          <td>
+                           <div align="center">
+                            <a href="/site/member/join.asp">
+                             <img border="0" height="15" src="/img/agreebu.gif" width="64"/>
+                            </a>
+                           </div>
+                          </td>
+                         </tr>
+                        </table>
+                       </td>
+                      </tr>
+                     </table>
+                    </td>
+                    <td background="/img/graypix2.gif" width="2">
+                    </td>
+                   </tr>
+                  </table>
+                 </td>
+                </tr>
+                <tr>
+                 <td>
+                  <img height="10" src="/img/graydown.gif" width="200"/>
+                 </td>
+                </tr>
+               </form>
+              </table>
+              <table border="0" cellpadding="0" cellspacing="0" width="200">
+               <tr>
+                <td height="7">
+                </td>
+               </tr>
+              </table>
+             </td>
+            </tr>
+            <tr>
+             <!-- main Left/회원가입안내  -->
+             <td height="9">
+              <img height="9" src="img/graytop.gif" width="200"/>
+             </td>
+            </tr>
+            <tr>
+             <td height="10">
+              <table border="0" cellpadding="0" cellspacing="0" width="200">
+               <tr>
+                <td background="img/graypix1.gif" width="2">
+                </td>
+                <td width="196">
+                 <table border="0" cellpadding="0" cellspacing="0" width="196">
+                  <tr>
+                   <td height="32" valign="bottom">
+                    <div align="center">
+                     <a href="/site/customer/joinguide.asp">
+                      <img border="0" height="29" src="img/mainleftbu1.gif" width="179"/>
+                     </a>
+                    </div>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td height="5">
+                   </td>
+                  </tr>
+                  <!--
+                 <tr>
+                   <td><div align="center"><a href="http://www.infostock.co.kr/app_news/setup.exe"><img src="img/mainleftbu2.gif" width="179" height="29" border="0"></a></div></td>
+                 </tr>
+                 <tr>
+                   <td height="5"></td>
+                 </tr>
+                 -->
+                  <tr>
+                   <td>
+                    <div align="center">
+                     <a href="/site/customer/newsflash.asp">
+                      <img border="0" height="29" src="img/mainleftbu3.gif" width="179"/>
+                     </a>
+                    </div>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td height="5">
+                   </td>
+                  </tr>
+                  <tr>
+                   <td>
+                    <div align="center">
+                     <a href="/site/b2b/newsflash.asp">
+                      <img border="0" height="29" src="img/mainleftbu4.gif" width="179"/>
+                     </a>
+                    </div>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td height="5">
+                   </td>
+                  </tr>
+                  <tr>
+                   <td>
+                    <div align="center">
+                     <a href="/site/b2b/IR1.asp">
+                      <img border="0" height="29" src="img/mainleftbu7.gif" width="179"/>
+                     </a>
+                    </div>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td height="6">
+                   </td>
+                  </tr>
+                 </table>
+                </td>
+                <td background="img/graypix2.gif" width="2">
+                </td>
+               </tr>
+              </table>
+             </td>
+            </tr>
+            <tr>
+             <td height="10">
+              <img height="10" src="img/graydown.gif" width="200"/>
+             </td>
+            </tr>
+           </table>
+           <!-- Left/인포스탁티커,종목입체분석 버튼 -->
+           <table border="0" cellpadding="0" cellspacing="0" width="200">
+            <tr>
+             <td height="7">
+             </td>
+            </tr>
+            <tr>
+             <td height="73">
+              <a href="/site/n_ticker/news_ticket.asp" onclick="javascript:news_ticker('')" target="news">
+               <img border="0" height="73" src="img/tickerbu.gif" width="200"/>
+              </a>
+             </td>
+            </tr>
+            <tr>
+             <td height="71">
+              <a href="/site/3d/Stock.asp">
+               <img border="0" height="71" src="img/analysisbu.gif" width="200"/>
+              </a>
+             </td>
+            </tr>
+            <tr>
+             <td height="71">
+              <a href="/site/3d/Stock_delist.asp">
+               <img border="0" height="76" src="img/delistbu.gif" width="200"/>
+              </a>
+             </td>
+            </tr>
+           </table>
+           <!-- 광고 배너 -->
+           <!--table width="200" border="0" cellspacing="0" cellpadding="0">
+  		<tr>
+      	<td height="7"></td>
+      </tr>
+  		<tr>
+  			<td><a href="http://paxnet.moneta.co.kr/stock/stockLoan/event/stockLoanGuide.jsp?mediaCode=c&orgCode=4&phoneNum=1644-8314" target=_blank><img src=http://img.infostock.kr/banner/paxnet01.gif border=0></a><td>
+  		</tr>
+  		
+  	</table-->
+           <!-- Left/서비스업체 -->
+           <table border="0" cellpadding="0" cellspacing="0" width="200">
+            <tr>
+             <td height="7" width="200">
+             </td>
+            </tr>
+            <tr>
+             <td>
+              <!-- left/서비스업체 -->
+              <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+              <style type="text/css">
+               /* FONTSIZE-8POINT 서비스업체 */
+.service {font-family: "돋움";font-size: 11px;line-height: 14px; color: #666666;}
+.service a:link {font-family: "돋움";font-size: 11px; color: #666666; text-decoration: none;}
+.service a:visited {font-family: "돋움";font-size: 11px; color:#666666; text-decoration: none;}
+.service a:hover {font-family: "돋움";font-size: 11px; color: #FF5A00; text-decoration: none;}
+.service a:active {font-family: "돋움";font-size: 11px; color: #666666; text-decoration: none;}
+              </style>
+              <table border="0" cellpadding="0" cellspacing="0" width="200">
+               <tr>
+               </tr>
+               <tr>
+                <td height="9">
+                 <img height="37" src="/img/servicetop.gif" width="200"/>
+                </td>
+               </tr>
+               <tr>
+                <td height="10" width="200">
+                 <table border="0" cellpadding="0" cellspacing="0" width="200">
+                  <tr>
+                   <td background="/img/graypix1.gif" width="2">
+                   </td>
+                   <td width="196">
+                    <table border="0" cellpadding="0" cellspacing="0" width="196">
+                     <tr>
+                      <td valign="bottom">
+                       <table border="0" cellpadding="0" cellspacing="0" width="196">
+                        <tr>
+                         <td colspan="2" height="10">
+                         </td>
+                        </tr>
+                        <tr>
+                         <td width="50">
+                         </td>
+                         <td class="service" width="146">
+                          <a href="http://www.hmcib.com/" target="_blank">
+                           <img border="0" height="7" src="/img/dott.gif" width="4">
+                            HMC투자증권
+                           </img>
+                          </a>
+                          <br>
+                           <a href="http://www.ibks.com/" target="_blank">
+                            <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                             IBK투자증권
+                            </img>
+                           </a>
+                           <br>
+                            <a href="http://www.ktbsecurities.com/" target="_blank">
+                             <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                              KTB투자증권
+                             </img>
+                            </a>
+                            <br>
+                             <a href="http://www.ligstock.com/" target="_blank">
+                              <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                               LIG투자증권
+                              </img>
+                             </a>
+                             <br>
+                              <a href="http://www.nhwm.com/" target="_blank">
+                               <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                NH투자증권
+                               </img>
+                              </a>
+                              <br>
+                               <a href="http://www.sks.co.kr/" target="_blank">
+                                <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                 SK증권
+                                </img>
+                               </a>
+                               <br>
+                                <a href="http://www.iprovest.com/" target="_blank">
+                                 <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                  교보증권
+                                 </img>
+                                </a>
+                                <br>
+                                 <a href="http://www.dongbuhappy.com/" target="_blank">
+                                  <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                   동부증권
+                                  </img>
+                                 </a>
+                                 <br>
+                                  <a href="http://www.mk.co.kr/" target="_blank">
+                                   <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                    매경닷컴
+                                   </img>
+                                  </a>
+                                  <br>
+                                   <a href="http://www.imeritz.com/" target="_blank">
+                                    <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                     메리츠종금증권
+                                    </img>
+                                   </a>
+                                   <br>
+                                    <a href="https://www.kdbdw.com/" target="_blank">
+                                     <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                      미래에셋대우
+                                     </img>
+                                    </a>
+                                    <br>
+                                     <a href="http://www.miraeasset.com/stock.jsp" target="_blank">
+                                      <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                       미래에셋증권
+                                      </img>
+                                     </a>
+                                     <br/>
+                                     <a href="http://www.bookook.co.kr/" target="_blank">
+                                      <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                       부국증권
+                                      </img>
+                                     </a>
+                                     <br/>
+                                     <a href="http://www.samsungfn.com/" target="_blank">
+                                      <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                       삼성증권
+                                      </img>
+                                     </a>
+                                     <br>
+                                      <a href="http://www.shinhaninvest.com/" target="_blank">
+                                       <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                        신한금융투자
+                                       </img>
+                                      </a>
+                                      <br>
+                                       <a href="http://www.myasset.com/" target="_blank">
+                                        <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                         유안타증권
+                                        </img>
+                                       </a>
+                                       <br>
+                                        <a href="http://www.eugenefn.com/" target="_blank">
+                                         <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                          유진투자증권
+                                         </img>
+                                        </a>
+                                        <br>
+                                         <a href="http://www.ebestsec.co.kr/" target="_blank">
+                                          <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                           이베스트투자증권
+                                          </img>
+                                         </a>
+                                         <br>
+                                          <a href="http://www.koscom.co.kr/" target="_blank">
+                                           <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                            코스콤
+                                           </img>
+                                          </a>
+                                          <br>
+                                           <a href="http://www.kiwoom.com/" target="_blank">
+                                            <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                             키움증권
+                                            </img>
+                                           </a>
+                                           <br>
+                                            <a href="http://www.hanaw.com/" target="_blank">
+                                             <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                              하나금융투자
+                                             </img>
+                                            </a>
+                                            <br>
+                                             <a href="http://www.hi-ib.com/" target="_blank">
+                                              <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                               하이투자증권
+                                              </img>
+                                             </a>
+                                             <br>
+                                              <a href="http://www.truefriend.com/" target="_blank">
+                                               <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                                한국투자증권
+                                               </img>
+                                              </a>
+                                              <br>
+                                               <a href="http://www.koreastock.co.kr/" target="_blank">
+                                                <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                                 한화투자증권
+                                                </img>
+                                               </a>
+                                               <br>
+                                                <a href="http://www.youfirst.co.kr/" target="_blank">
+                                                 <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                                  현대증권
+                                                 </img>
+                                                </a>
+                                                <br>
+                                                </br>
+                                               </br>
+                                              </br>
+                                             </br>
+                                            </br>
+                                           </br>
+                                          </br>
+                                         </br>
+                                        </br>
+                                       </br>
+                                      </br>
+                                     </br>
+                                    </br>
+                                   </br>
+                                  </br>
+                                 </br>
+                                </br>
+                               </br>
+                              </br>
+                             </br>
+                            </br>
+                           </br>
+                          </br>
+                         </td>
+                        </tr>
+                        <tr>
+                         <td colspan="2" height="7">
+                         </td>
+                        </tr>
+                       </table>
+                      </td>
+                     </tr>
+                     <tr>
+                      <td height="5">
+                      </td>
+                     </tr>
+                    </table>
+                   </td>
+                   <td background="/img/graypix2.gif" width="2">
+                   </td>
+                  </tr>
+                 </table>
+                </td>
+               </tr>
+               <tr>
+                <td height="10">
+                 <img height="10" src="/img/graydown.gif" width="200"/>
+                </td>
+               </tr>
+               <tr>
+                <td height="7" width="200">
+                </td>
+               </tr>
+               <tr>
+                <td height="9">
+                 <img height="37" src="/img/serviceIRtop.gif" width="200"/>
+                </td>
+               </tr>
+               <tr>
+                <td height="10" width="200">
+                 <table border="0" cellpadding="0" cellspacing="0" width="200">
+                  <tr>
+                   <td background="/img/graypix1.gif" width="2">
+                   </td>
+                   <td width="196">
+                    <table border="0" cellpadding="0" cellspacing="0" width="196">
+                     <tr>
+                      <td valign="bottom">
+                       <table border="0" cellpadding="0" cellspacing="0" width="196">
+                        <tr>
+                         <td colspan="2" height="10">
+                         </td>
+                        </tr>
+                        <tr>
+                         <td width="50">
+                         </td>
+                         <td class="service" width="146">
+                          <a href="http://company.locojoy.co.kr/" target="_blank">
+                           <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                            로코조이
+                           </img>
+                          </a>
+                          <br>
+                           <a href="http://www.dongbuinc.co.kr/" target="_blank">
+                            <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                             동부
+                            </img>
+                           </a>
+                           <br>
+                            <a href="http://www.tli.co.kr/" target="_blank">
+                             <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                              티엘아이
+                             </img>
+                            </a>
+                            <br>
+                             <a href="http://www.dongwha.co.kr/" target="_blank">
+                              <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                               동화기업
+                              </img>
+                             </a>
+                             <br>
+                              <a href="http://www.toptec.co.kr/" target="_blank">
+                               <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                톱텍
+                               </img>
+                              </a>
+                              <br>
+                               <a href="http://www.vatechcorp.co.kr/" target="_blank">
+                                <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                 바텍
+                                </img>
+                               </a>
+                               <br>
+                                <a href="http://www.sgasol.kr/" target="_blank">
+                                 <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                  SGA솔루션즈
+                                 </img>
+                                </a>
+                                <br>
+                                 <a href="http://www.sgacorp.kr/" target="_blank">
+                                  <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                   SGA
+                                  </img>
+                                 </a>
+                                 <br>
+                                  <a href="http://www.nuin.co.kr/" target="_blank">
+                                   <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                    뉴인텍
+                                   </img>
+                                  </a>
+                                  <br>
+                                   <a href="http://www.meerecompany.com/" target="_blank">
+                                    <img border="0" height="7" src="/img/dott.gif" width="4">
+                                     미래컴퍼니
+                                    </img>
+                                   </a>
+                                   <br>
+                                    <a href="http://www.sungho.net/" target="_blank">
+                                     <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                      성호전자
+                                     </img>
+                                    </a>
+                                    <br>
+                                     <a href="http://www.ctcbio.com/" target="_blank">
+                                      <img border="0" height="7" src="/img/dott.gif" width="4">
+                                       씨티씨바이오
+                                      </img>
+                                     </a>
+                                     <br>
+                                      <a href="http://www.ydonline.co.kr/" target="_blank">
+                                       <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                        와이디온라인
+                                       </img>
+                                      </a>
+                                      <br>
+                                       <a href="http://e-sang.net/" target="_blank">
+                                        <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                         이상네트웍스
+                                        </img>
+                                       </a>
+                                       <br>
+                                        <a href="http://www.jmikorea.co.kr/" target="_blank">
+                                         <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                          제이엠아이
+                                         </img>
+                                        </a>
+                                        <br>
+                                         <a href="http://www.tobesoft.co.kr/" target="_blank">
+                                          <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                           투비소프트
+                                          </img>
+                                         </a>
+                                         <br>
+                                          <a href="http://www.kec.co.kr/" target="_blank">
+                                           <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                            케이이씨
+                                           </img>
+                                          </a>
+                                          <br>
+                                           <a href="http://www.kortek.co.kr/" target="_blank">
+                                            <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                             코텍
+                                            </img>
+                                           </a>
+                                           <br>
+                                            <a href="http://www.kopla.com/" target="_blank">
+                                             <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                              코프라
+                                             </img>
+                                            </a>
+                                            <br>
+                                             <a href="http://www.poscochemtech.com/" target="_blank">
+                                              <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                               포스코켐텍
+                                              </img>
+                                             </a>
+                                             <br>
+                                              <a href="http://www.hkpak.co.kr/" target="_blank">
+                                               <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                                한국팩키지
+                                               </img>
+                                              </a>
+                                              <br>
+                                               <a href="http://www.fasoo.com/" target="_blank">
+                                                <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                                 파수닷컴
+                                                </img>
+                                               </a>
+                                               <br>
+                                                <a href="http://www.woogenebng.com/" target="_blank">
+                                                 <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                                  우진비앤지
+                                                 </img>
+                                                </a>
+                                                <br>
+                                                 <a href="http://www.techwing.co.kr/" target="_blank">
+                                                  <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                                   테크윙
+                                                  </img>
+                                                 </a>
+                                                 <br>
+                                                  <a href="http://www.ksign.com/" target="_blank">
+                                                   <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                                    케이사인
+                                                   </img>
+                                                  </a>
+                                                  <br>
+                                                   <a href="http://www.ubcare.co.kr/" target="_blank">
+                                                    <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                                     유비케어
+                                                    </img>
+                                                   </a>
+                                                   <br>
+                                                    <a href="http://www.telefield.com/" target="_blank">
+                                                     <img alt="" border="0" height="7" src="/img/dott.gif" width="4">
+                                                      텔레필드
+                                                     </img>
+                                                    </a>
+                                                    <br>
+                                                    </br>
+                                                   </br>
+                                                  </br>
+                                                 </br>
+                                                </br>
+                                               </br>
+                                              </br>
+                                             </br>
+                                            </br>
+                                           </br>
+                                          </br>
+                                         </br>
+                                        </br>
+                                       </br>
+                                      </br>
+                                     </br>
+                                    </br>
+                                   </br>
+                                  </br>
+                                 </br>
+                                </br>
+                               </br>
+                              </br>
+                             </br>
+                            </br>
+                           </br>
+                          </br>
+                         </td>
+                        </tr>
+                        <tr>
+                         <td colspan="2" height="7">
+                         </td>
+                        </tr>
+                       </table>
+                      </td>
+                     </tr>
+                     <tr>
+                      <td height="5">
+                      </td>
+                     </tr>
+                    </table>
+                   </td>
+                   <td background="/img/graypix2.gif" width="2">
+                   </td>
+                  </tr>
+                 </table>
+                </td>
+               </tr>
+               <tr>
+                <td height="10">
+                 <img height="10" src="/img/graydown.gif" width="200"/>
+                </td>
+               </tr>
+              </table>
+             </td>
+            </tr>
+           </table>
+           <!-- 섹터검증, 데일리리포트 관리자화면 -->
+           <table border="0" cellpadding="0" cellspacing="0" width="200">
+            <tr>
+             <td height="7" width="200">
+             </td>
+            </tr>
+            <tr>
+             <td height="32" valign="bottom">
+              <div align="left">
+               <a href="/verification" target="_blank">
+                <img border="0" height="29" src="img/mainleftbu5.gif" width="179"/>
+               </a>
+              </div>
+             </td>
+            </tr>
+            <tr>
+             <td height="32" valign="bottom">
+              <div align="left">
+               <a href="/dailyreport" target="_blank">
+                <img border="0" height="29" src="img/mainleftbu6.gif" width="183"/>
+               </a>
+              </div>
+             </td>
+            </tr>
+           </table>
+          </td>
+          <td width="20">
+          </td>
+          <!-- 메인플래시 배너  -->
+          <td valign="top" width="760">
+           <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+             <td height="10">
+             </td>
+            </tr>
+            <tr>
+             <td height="245" valign="middle">
+              <div align="center">
+               <script type="text/javascript">
+                FlashObject("http://www.infostock.co.kr/gallery.swf",700, "100%", "#ffffff", "sale");
+               </script>
+              </div>
+             </td>
+            </tr>
+           </table>
+           <table border="0" cellpadding="0" cellspacing="0" width="760">
+            <tr>
+             <td width="5">
+             </td>
+             <td valign="top" width="365">
+              <!-- main/시황 속보 -->
+              <script language="javascript">
+               <!--
+	function news_read(no){ 
+		var url = '/site/market/news_read.asp?no='+no;
+		
+	  var mem_part="";	
+  	var user_id="";		
+	
+    if((user_id == "") || (mem_part == "B"))
+  	  alert('유료회원만이 사용 가능합니다');
+  	else		
+		  window.open(url,'show_news','width=570,height=400,menubar=no,scrollbars=yes,resizable=yes,toolbar=no,status=no,top=0,left=0'); 
+	} 
+-->
+              </script>
+              <table border="0" cellpadding="0" cellspacing="0" width="365">
+               <tr>
+                <td colspan="3">
+                 <img border="0" height="39" src="/img/newsflashtop.gif" usemap="#Map10" width="365"/>
+                </td>
+               </tr>
+               <tr>
+                <td background="/img/newsflashleft.gif" width="7">
+                </td>
+                <td width="350">
+                 <table border="0" cellpadding="0" cellspacing="0" width="350">
+                  <tr>
+                   <td width="350">
+                    <a href="javascript:news_read('491848')">
+                     [07/25] 중국 주요기업 주가등락률(마감)..
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="350">
+                    <a href="javascript:news_read('491847')">
+                     [07/25] 국내 채권금리 동향(마감)..
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="350">
+                    <a href="javascript:news_read('491846')">
+                     [07/25] 52주 신고가 종목..
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="350">
+                    <a href="javascript:news_read('491845')">
+                     [07/25] 국내 환율 마감시황..
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="350">
+                    <a href="javascript:news_read('491844')">
+                     [07/25] 증시요약(10) - 기술적 분석 특징주 B(코스닥..
+                    </a>
+                   </td>
+                  </tr>
+                 </table>
+                </td>
+                <td background="/img/newsflashright.gif" width="8">
+                </td>
+               </tr>
+               <tr>
+                <td colspan="3">
+                 <img height="19" src="/img/newsflashdown.gif" width="365"/>
+                </td>
+               </tr>
+              </table>
+              <map id="Map10" name="Map10">
+               <area coords="313,5,359,29" href="/site/market/news.asp" onfocus="this.blur()" shape="rect">
+               </area>
+              </map>
+              <!-- Left/로그인끝  -->
+              <!-- main/시황정보 -->
+             </td>
+             <td width="25">
+             </td>
+             <!-- main/이슈&테마스케쥴 -->
+             <td valign="top" width="365">
+              <!-- main/이슈&테마스케쥴 -->
+              <script language="javascript">
+               <!--
+	function themeissue_read(no){ 
+		var mem_part="";	
+		var user_id="";		
+		var m_board="";		 
+		
+	  if((user_id == "") || (mem_part == "B"))
+	  	alert('유료회원만이 사용 가능합니다');  
+	  else {		
+			var url = "/site/theme/themeissue_month.asp#ad" + no;
+			location.href = url;
+		}
+	}
+-->
+              </script>
+              <table border="0" cellpadding="0" cellspacing="0" width="365">
+               <tr>
+                <td colspan="3">
+                 <img border="0" height="39" src="/img/themeissuetop.gif" usemap="#Map11" width="365"/>
+                </td>
+               </tr>
+               <tr>
+                <td background="/img/themeissueleft.gif" width="7">
+                </td>
+                <td width="350">
+                 <table border="0" cellpadding="0" cellspacing="0" width="350">
+                  <tr>
+                   <td align="left" width="350">
+                    <a href="javascript:themeissue_read('28927')">
+                     2016-07-25   폭스바겐코리아, 자발적 판매중단
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td align="left" width="350">
+                    <a href="javascript:themeissue_read('28538')">
+                     2016-07-25   미국 민주당 전당대회(현지시간)
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td align="left" width="350">
+                    <a href="javascript:themeissue_read('28981')">
+                     2016-07-25   朴 대통령 여름휴가
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td align="left" width="350">
+                    <a href="javascript:themeissue_read('28549')">
+                     2016-07-25   6월 무역지수 및 교역조건
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td align="left" width="350">
+                    <a href="javascript:themeissue_read('28941')">
+                     2016-07-25   파이오링크, 거래 재개
+                    </a>
+                   </td>
+                  </tr>
+                 </table>
+                </td>
+                <td background="/img/themeissueright.gif" width="8">
+                </td>
+               </tr>
+               <tr>
+                <td colspan="3">
+                 <img height="19" src="/img/themeissuedown.gif" width="365"/>
+                </td>
+               </tr>
+              </table>
+             </td>
+             <map id="Map11" name="Map11">
+              <area coords="317,6,355,25" href="/site/theme/themeissue_month.asp" onfocus="this.blur()" shape="rect">
+              </area>
+             </map>
+            </tr>
+           </table>
+          </td>
+         </tr>
+        </table>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+         <tr>
+          <td height="20">
+          </td>
+         </tr>
+         <tr>
+          <td valign="top">
+           <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+             <td width="10">
+             </td>
+             <!-- main/증시요약 특징주 -->
+             <td valign="top" width="224">
+              <!-- main/증시요약 특징주 -->
+              <script language="javascript">
+               <!--
+	function issue_read(no){ 
+		var mem_part="";	
+		var user_id="";		
+		var m_board="";		 
+		
+	  if((user_id == "") || (mem_part == "B"))
+	  	alert('유료회원만이 사용 가능합니다');  
+	  else {		
+			var url = "/site/market/issue_view.asp?board=bbs_market&num=" + no + "&pgcd=3";
+			location.href = url;
+		}
+	}
+-->
+              </script>
+              <table border="0" cellpadding="0" cellspacing="0" width="100%">
+               <tr>
+                <td>
+                 <img border="0" height="24" src="/img/mainbar1.gif" usemap="#Map12" width="224"/>
+                </td>
+               </tr>
+               <tr>
+                <td>
+                 <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                   <td width="4%">
+                    <img src="/admin/img/btn_new_ss.gif"/>
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:issue_read('32056')">
+                     [07/25] 증시 요약
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                    <img src="/admin/img/btn_new_ss.gif"/>
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:issue_read('32055')">
+                     [07/25] 오후장 특징주★(코스닥...
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                    <img src="/admin/img/btn_new_ss.gif"/>
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:issue_read('32054')">
+                     [07/25] 오후장 특징주★(코스피...
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                    <img src="/admin/img/btn_new_ss.gif"/>
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:issue_read('32053')">
+                     [07/25] 오전장 특징주★(코스닥...
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                    <img src="/admin/img/btn_new_ss.gif"/>
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:issue_read('32052')">
+                     [07/25] 오전장 특징주★(코스피...
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                    <img src="/admin/img/btn_new_ss.gif"/>
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:issue_read('32051')">
+                     [07/25] 오전장★섹터동향
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:issue_read('32050')">
+                     [07/22] 증시 요약
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:issue_read('32049')">
+                     [07/22] 오후장 특징주★(코스닥...
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:issue_read('32048')">
+                     [07/22] 오후장 특징주★(코스피...
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:issue_read('32047')">
+                     [07/22] 오전장 특징주★(코스닥...
+                    </a>
+                   </td>
+                  </tr>
+                 </table>
+                </td>
+               </tr>
+              </table>
+              <map id="Map12" name="Map12">
+               <area coords="186,5,221,20" href="/site/market/issue.asp?board=bbs_market&amp;pgcd=3" onfocus="this.blur()" shape="rect">
+               </area>
+              </map>
+             </td>
+             <td width="17">
+             </td>
+             <!-- main/국내지수차트 -->
+             <td valign="top" width="353">
+              <table border="0" cellpadding="0" cellspacing="0" width="353">
+               <tr>
+                <td>
+                 <img height="23" src="img/chartbar1.gif" width="83"/>
+                </td>
+               </tr>
+               <tr>
+                <td valign="top">
+                 <table align="center" border="0" cellpadding="0" cellspacing="0" width="347">
+                  <tr>
+                   <td colspan="3">
+                    <img height="16" src="img/charttop.gif" width="347"/>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td background="img/chartleft.gif" width="2">
+                   </td>
+                   <td width="343">
+                    <table align="center" border="0" cellpadding="0" cellspacing="0" width="97%">
+                     <tr>
+                      <td>
+                       <table border="0" cellpadding="2" cellspacing="2" class="table_7" width="100%">
+                        <tr bgcolor="#CCCCFF">
+                         <td bgcolor="#B4BED3" onmouseover="mouseOverchangeChart( this , 'http://chart.mk.co.kr/msc/rate/rateJisu.php?stCode=KPS001',1);" style="cursor:hand">
+                          <div align="center" class="style15">
+                           코스피
+                          </div>
+                         </td>
+                         <td bgcolor="#B4BED3" onmouseover="mouseOverchangeChart( this , 'http://chart.mk.co.kr/msc/rate/rateJisu.php?stCode=KDS001',1);" style="cursor:hand">
+                          <div align="center" class="style15">
+                           코스닥
+                          </div>
+                         </td>
+                         <td bgcolor="#B4BED3" onmouseover="mouseOverchangeChart( this , 'http://chart.mk.co.kr/png/stock/mscFuture.png',1);" style="cursor:hand">
+                          <div align="center" class="style15">
+                           선물(근월)
+                          </div>
+                         </td>
+                         <td bgcolor="#B4BED3" onmouseover="mouseOverchangeChart( this , 'http://chart.mk.co.kr/msc/rate/rateJisu.php?stCode=KPT029',1);" style="cursor:hand">
+                          <div align="center" class="style15">
+                           코스피200
+                          </div>
+                         </td>
+                        </tr>
+                       </table>
+                      </td>
+                     </tr>
+                     <tr>
+                      <td>
+                       <!--국내증시차트-->
+                       <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <img height="112" name="mainChartImage7" src="http://chart.mk.co.kr/msc/rate/rateJisu.php?stCode=KPS001" width="321">
+                        </img>
+                       </table>
+                      </td>
+                     </tr>
+                    </table>
+                   </td>
+                   <td background="img/chartright.gif" width="2">
+                   </td>
+                  </tr>
+                  <tr>
+                   <td colspan="3">
+                    <img height="16" src="img/chartdown.gif" width="347"/>
+                   </td>
+                  </tr>
+                 </table>
+                </td>
+               </tr>
+              </table>
+             </td>
+             <td width="18">
+             </td>
+             <!-- main/해외지수차트 -->
+             <td align="right" valign="top" width="138">
+              <img border="0" height="197" id="xxx" src="img/foreignimg.gif" usemap="#Map" width="138"/>
+             </td>
+            </tr>
+           </table>
+          </td>
+         </tr>
+        </table>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+         <tr>
+          <td height="20">
+          </td>
+         </tr>
+         <tr>
+          <td valign="top">
+           <table border="0" cellpadding="0" cellspacing="0" width="760">
+            <tr>
+             <td rowspan="4" width="10">
+             </td>
+             <!-- main/데일리테마 -->
+             <td align="left" valign="top" width="224">
+              <!-- main/데일리테마 -->
+              <script language="javascript">
+               function dailytheme_read(no){ 
+
+		var mem_part="";	
+		var user_id="";		
+		var m_board="";		 
+		
+	  if((user_id == "") || (mem_part == "B"))
+	  	alert('유료회원만이 사용 가능합니다');
+	  else {
+			
+			var url = "/site/market/issue_view.asp?board=bbs_daltm&num=" + no + "&pgcd=3";
+			location.href = url;
+		}
+	}
+              </script>
+              <table border="0" cellpadding="0" cellspacing="0" width="100%">
+               <tr>
+                <td>
+                 <img border="0" height="24" src="/img/mainbar2.gif" usemap="#Map13" width="224"/>
+                </td>
+               </tr>
+               <tr>
+                <td>
+                 <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                   <td width="4%">
+                    <img src="/admin/img/btn_new_ss.gif"/>
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:dailytheme_read('17426')">
+                     [07/25] 데일리 섹터(비철금속,...
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:dailytheme_read('17425')">
+                     [07/22] 데일리 섹터(출산장려정...
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:dailytheme_read('17424')">
+                     [07/21] 데일리 섹터(드론(Dr...
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:dailytheme_read('17423')">
+                     [07/20] 데일리 섹터(LED, ...
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:dailytheme_read('17422')">
+                     [07/19] 데일리 섹터(사물인터넷...
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:dailytheme_read('17421')">
+                     [07/18] 데일리 섹터(가상현실(...
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:dailytheme_read('17420')">
+                     [07/15] 데일리 섹터(2차전지/...
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:dailytheme_read('17419')">
+                     [07/14] 데일리 섹터(섹터 시황...
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:dailytheme_read('17417')">
+                     [07/13] 데일리 섹터(철강 주요...
+                    </a>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                   </td>
+                   <td width="95%">
+                    <a href="javascript:dailytheme_read('17416')">
+                     [07/12] 데일리 섹터(대구공항 ...
+                    </a>
+                   </td>
+                  </tr>
+                 </table>
+                </td>
+               </tr>
+              </table>
+              <map id="Map13" name="Map13">
+               <area coords="186,5,223,22" href="/site/market/issue.asp?board=bbs_daltm&amp;pgcd=3" onfocus="this.blur()" shape="rect">
+               </area>
+              </map>
+             </td>
+             <td width="25">
+             </td>
+             <!-- main/모닝브리핑 -->
+             <td align="left" valign="top" width="224">
+              <!-- main/모닝브리핑 -->
+              <script language="javascript">
+               <!--
+function briefing_read(no, mode, file){
+	//location.href = 'view_pdf.asp?list_mode=' + mode + '&idx=' + no + '&page=' + page + '&file=' + file;
+	var mem_part="";	
+	var user_id="";		
+	var m_board="";		 
+	
+  if((m_board != "mbriefing") && ((user_id == "") || (mem_part == "B")))
+  	alert('유료회원만이 사용 가능합니다');
+  else
+	  window.open( "/site/theme/view_pdf.asp?idx="+ no +"&list_mode="+ mode +"&file=" + file , "view", "width=700,height=600,scrollbars=1,status=0, top=0, left=0, resizable=yes")
+}
+-->
+              </script>
+              <table border="0" cellpadding="0" cellspacing="0" width="100%">
+               <tr>
+                <td>
+                 <img border="0" height="24" src="/img/mainbar3.gif" usemap="#Map14" width="224"/>
+                </td>
+               </tr>
+               <tr>
+                <td>
+                 <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                   <td width="4%">
+                    <img src="/admin/img/btn_new_ss.gif"/>
+                    <td align="left" width="95%">
+                     <a href="/site/market/why_view.asp?num=163">
+                      07월25일 급등락종목 사유분석
+                     </a>
+                    </td>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                    <img src="/admin/img/btn_new_ss.gif"/>
+                    <td align="left" width="95%">
+                     <a href="javascript:briefing_read('2677', 'mbriefing','모닝160725.pdf')">
+                      07월25일자 인포스탁 데일리
+                     </a>
+                    </td>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                    <td align="left" width="95%">
+                     <a href="/site/market/why_view.asp?num=162">
+                      07월22일 급등락종목 사유분석
+                     </a>
+                    </td>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                    <td align="left" width="95%">
+                     <a href="javascript:briefing_read('2676', 'mbriefing','모닝1607221.pdf')">
+                      07월22일자 인포스탁 데일리
+                     </a>
+                    </td>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                    <td align="left" width="95%">
+                     <a href="/site/market/why_view.asp?num=161">
+                      07월21일 급등락종목 사유분석
+                     </a>
+                    </td>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                    <td align="left" width="95%">
+                     <a href="javascript:briefing_read('2675', 'mbriefing','모닝1607211.pdf')">
+                      07월21일자 인포스탁 데일리
+                     </a>
+                    </td>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                    <td align="left" width="95%">
+                     <a href="/site/market/why_view.asp?num=160">
+                      07월20일 급등락종목 사유분석
+                     </a>
+                    </td>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                    <td align="left" width="95%">
+                     <a href="javascript:briefing_read('2674', 'mbriefing','모닝160720.pdf')">
+                      07월20일자 인포스탁 데일리
+                     </a>
+                    </td>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                    <td align="left" width="95%">
+                     <a href="/site/market/why_view.asp?num=159">
+                      07월19일 급등락종목 사유분석
+                     </a>
+                    </td>
+                   </td>
+                  </tr>
+                  <tr>
+                   <td width="4%">
+                    <td align="left" width="95%">
+                     <a href="javascript:briefing_read('2673', 'mbriefing','모닝160719.pdf')">
+                      07월19일자 인포스탁 데일리
+                     </a>
+                    </td>
+                   </td>
+                  </tr>
+                 </table>
+                </td>
+               </tr>
+              </table>
+              <map id="Map14" name="Map14">
+               <area coords="187,3,223,20" href="/site/theme/briefing.asp?list_mode=mbriefing" onfocus="this.blur()" shape="rect">
+               </area>
+              </map>
+             </td>
+             <td rowspan="4" width="25">
+             </td>
+             <!-- main/Today's World -->
+             <td rowspan="4" valign="top" width="252">
+              <table border="0" cellpadding="0" cellspacing="0" width="100%">
+               <tr>
+                <td>
+                 <img height="20" src="img/todaybar.gif" width="88"/>
+                </td>
+               </tr>
+               <tr>
+                <td height="3">
+                </td>
+               </tr>
+               <tr>
+                <!-- main/Today's World -->
+                <td valign="top">
+                 <table bgcolor="E1E1E1" cellpadding="1" cellspacing="1" width="100%">
+                  <tr>
+                   <td align="center" bgcolor="1c67b8" class="8pointw style1" colspan="2" height="25">
+                    항목
+                   </td>
+                   <td align="center" bgcolor="1c67b8" class="8pointw style1" width="50">
+                    현재가
+                   </td>
+                   <td align="center" bgcolor="1c67b8" class="8pointw style1" width="50">
+                    전일대비
+                   </td>
+                  </tr>
+                 </table>
+                </td>
+               </tr>
+              </table>
+             </td>
+            </tr>
+           </table>
+          </td>
+         </tr>
+        </table>
+       </td>
+      </tr>
+     </table>
+    </div>
+   </td>
+  </tr>
+ </table>
+</body>
+<tr bgcolor="#FFFFFF">
+ <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">
+  국제유가
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point">
+  44.19$
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point" height="20">
+  <font color="#0000ff">
+   -0.56
+  </font>
+ </td>
+</tr>
+<tr bgcolor="#F5F5F5">
+ <td align="center" bgcolor="#F5F5F5" class="8point" rowspan="3" width="46">
+  <a href="http://www.dramexchange.com" target="new">
+   <font color="#FF0000">
+    반도체
+   </font>
+  </a>
+ </td>
+ <td bgcolor="#F5F5F5" class="8point" width="77">
+  DDR3 4G
+ </td>
+ <td align="right" bgcolor="#F5F5F5" class="8point">
+  1.675$
+ </td>
+ <td align="right" class="8point" height="20">
+  <font color="#ff0000">
+   +0.007
+  </font>
+ </td>
+</tr>
+<tr bgcolor="#F5F5F5">
+ <td class="8point" width="77">
+  DDR3 2G
+ </td>
+ <td align="right" class="8point">
+  1.077$
+ </td>
+ <td align="right" class="8point" height="20">
+  <font color="#0000ff">
+   -0.003
+  </font>
+ </td>
+</tr>
+<tr bgcolor="#F5F5F5">
+ <td class="8point" width="77">
+  NAND 16G
+ </td>
+ <td align="right" class="8point">
+  1.571$
+ </td>
+ <td align="right" class="8point" height="20">
+  <font color="">
+   0.000
+  </font>
+ </td>
+</tr>
+<tr bgcolor="#FFFFFF">
+ <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">
+  Yen/Dollar
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point">
+  106.13 ￥
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point" height="20">
+  <font color="#ff0000">
+   +0.31
+  </font>
+ </td>
+</tr>
+<tr bgcolor="#FFFFFF">
+ <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">
+  Euro/Dollar
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point">
+  0.9110E
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point" height="20">
+  <font color="#ff0000">
+   +0.0041
+  </font>
+ </td>
+</tr>
+<tr bgcolor="#FFFFFF">
+ <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">
+  Won/Dollar
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point">
+  1,137.00￦
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point" height="20">
+  <font color="#ff0000">
+   +2.60
+  </font>
+ </td>
+</tr>
+<tr bgcolor="#FFFFFF">
+ <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">
+  회사채(무보증3년)AA-
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point">
+  1.655%
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point" height="20">
+  <font color="">
+   0.000
+  </font>
+ </td>
+</tr>
+<tr bgcolor="#FFFFFF">
+ <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">
+  국고채(3년)
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point">
+  1.225%
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point" height="20">
+  <font color="#0000ff">
+   -0.002
+  </font>
+ </td>
+</tr>
+<tr bgcolor="#FFFFFF">
+ <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">
+  국고채(5년)
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point">
+  1.257%
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point" height="20">
+  <font color="#ff0000">
+   +0.005
+  </font>
+ </td>
+</tr>
+<tr bgcolor="#FFFFFF">
+ <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">
+  국고채(10년)
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point">
+  1.425%
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point" height="20">
+  <font color="#ff0000">
+   +0.007
+  </font>
+ </td>
+</tr>
+<tr bgcolor="#FFFFFF">
+ <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">
+  통안채(1년)
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point">
+  1.267%
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point" height="20">
+  <font color="#ff0000">
+   +0.002
+  </font>
+ </td>
+</tr>
+<tr bgcolor="#FFFFFF">
+ <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">
+  통안채(2년)
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point">
+  1.248%
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point" height="20">
+  <font color="">
+   0.000
+  </font>
+ </td>
+</tr>
+<tr bgcolor="#FFFFFF">
+ <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">
+  산금채(1년)
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point">
+  1.309%
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point" height="20">
+  <font color="#0000ff">
+   -0.001
+  </font>
+ </td>
+</tr>
+<tr bgcolor="#FFFFFF">
+ <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">
+  한전채(3년)
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point">
+  1.367%
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point" height="20">
+  <font color="">
+   0.000
+  </font>
+ </td>
+</tr>
+<tr bgcolor="#FFFFFF">
+ <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">
+  CD(91일물)
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point">
+  1.36%
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point" height="20">
+  <font color="">
+   0.00
+  </font>
+ </td>
+</tr>
+<tr bgcolor="#FFFFFF">
+ <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">
+  콜(1일물)
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point">
+  1.23%
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point" height="20">
+  <font color="">
+   0.00
+  </font>
+ </td>
+</tr>
+<tr bgcolor="#FFFFFF">
+ <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">
+  기업어음(3개월)
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point">
+  1.51%
+ </td>
+ <td align="right" bgcolor="#F9FAF9" class="8point" height="20">
+  <font color="">
+   0.00
+  </font>
+ </td>
+</tr>
+<tr>
+ <td colspan="3" height="20">
+ </td>
+</tr>
+<tr>
+ <!-- main/증권사 추천주 -->
+ <td align="left" valign="top" width="224">
+  <!-- main/利�沅���� 異�泥�二� -->
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+   <tr>
+    <td>
+     <img border="0" height="24" src="/img/mainbar4.gif" usemap="#Map15" width="224"/>
+    </td>
+   </tr>
+   <tr>
+    <td>
+     <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr>
+       <td align="left" bgcolor="F1F4F8" width="130">
+        원익IPS(240810)
+       </td>
+       <td align="left" width="90">
+        삼성
+       </td>
+      </tr>
+      <tr>
+       <td align="left" bgcolor="F1F4F8" width="130">
+        바디텍메드(206640)
+       </td>
+       <td align="left" width="90">
+        하나금융투자
+       </td>
+      </tr>
+      <tr>
+       <td align="left" bgcolor="F1F4F8" width="130">
+        바디텍메드(206640)
+       </td>
+       <td align="left" width="90">
+        하나금융투자
+       </td>
+      </tr>
+      <tr>
+       <td align="left" bgcolor="F1F4F8" width="130">
+        JB금융지주(175330)
+       </td>
+       <td align="left" width="90">
+        하나금융투자
+       </td>
+      </tr>
+      <tr>
+       <td align="left" bgcolor="F1F4F8" width="130">
+        휴젤(145020)
+       </td>
+       <td align="left" width="90">
+        하나금융투자
+       </td>
+      </tr>
+      <tr>
+       <td align="left" bgcolor="F1F4F8" width="130">
+        테라세미콘(123100)
+       </td>
+       <td align="left" width="90">
+        NH투자
+       </td>
+      </tr>
+      <tr>
+       <td align="left" bgcolor="F1F4F8" width="130">
+        ISC(095340)
+       </td>
+       <td align="left" width="90">
+        교보
+       </td>
+      </tr>
+      <tr>
+       <td align="left" bgcolor="F1F4F8" width="130">
+        LIG넥스원(079550)
+       </td>
+       <td align="left" width="90">
+        교보
+       </td>
+      </tr>
+      <tr>
+       <td align="left" bgcolor="F1F4F8" width="130">
+        에이블씨엔씨(078520)
+       </td>
+       <td align="left" width="90">
+        삼성
+       </td>
+      </tr>
+     </table>
+    </td>
+   </tr>
+  </table>
+  <map id="Map15" name="Map15">
+   <area coords="181,3,221,21" href="http://www.infostock.co.kr/site/spot/recommend.asp" onfocus="this.blur()" shape="rect">
+   </area>
+  </map>
+ </td>
+ <td width="25">
+ </td>
+ <!-- main/공지사항 -->
+ <td align="left" valign="top" width="224">
+  <!-- main/怨듭����ы�� -->
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+   <tr>
+    <td>
+     <img border="0" height="24" src="/img/mainbar5.gif" usemap="#Map16" width="224"/>
+    </td>
+   </tr>
+   <tr>
+    <td>
+     <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr>
+       <td align="center" height="18" width="9%">
+        <img height="3" src="/img/red_dot.gif" width="3"/>
+       </td>
+       <td class="8pointblb" width="91%">
+        <a href="/site/customer/notice_view.asp?board=bbs_gongzi&amp;num=57">
+         <font color="#FF0000">
+          [06/16]신입사원 수시채용
+         </font>
+        </a>
+       </td>
+      </tr>
+      <tr>
+       <td align="center" height="18" width="9%">
+        <img height="3" src="/img/red_dot.gif" width="3"/>
+       </td>
+       <td width="91%">
+        <a href="/site/customer/notice_view.asp?board=bbs_gongzi&amp;num=55">
+         <font color="#FF0000">
+          [12/23]'급등락 사유분석' 오픈
+         </font>
+        </a>
+       </td>
+      </tr>
+      <tr>
+       <td align="center" height="18" width="9%">
+        <img height="3" src="/img/red_dot.gif" width="3"/>
+       </td>
+       <td width="91%">
+        <a href="/site/customer/notice_view.asp?board=bbs_gongzi&amp;num=54">
+         [12/13] 본사 주소이전 안내
+        </a>
+       </td>
+      </tr>
+      <tr>
+       <td align="center" height="18" width="9%">
+        <img height="3" src="/img/red_dot.gif" width="3"/>
+       </td>
+       <td width="91%">
+        <a href="/site/customer/notice_view.asp?board=bbs_gongzi&amp;num=53">
+         <font color="#FF0000">
+          [12/11]신용카드 결제시스템 오픈!
+         </font>
+        </a>
+       </td>
+      </tr>
+      <tr>
+       <td align="center" height="18" width="9%">
+        <img height="3" src="/img/red_dot.gif" width="3"/>
+       </td>
+       <td width="91%">
+        <a href="/site/customer/notice_view.asp?board=bbs_gongzi&amp;num=52">
+         [04/02]모바일 결제 일시장애 안내
+        </a>
+       </td>
+      </tr>
+      <tr>
+       <td align="center" height="18" width="9%">
+        <img height="3" src="/img/red_dot.gif" width="3"/>
+       </td>
+       <td width="91%">
+        <a href="/site/customer/notice_view.asp?board=bbs_gongzi&amp;num=51">
+         [03/13]인포스탁 기업정보 배포 서
+        </a>
+       </td>
+      </tr>
+      <tr>
+       <td align="center" height="18" width="9%">
+        <img height="3" src="/img/red_dot.gif" width="3"/>
+       </td>
+       <td width="91%">
+        <a href="/site/customer/notice_view.asp?board=bbs_gongzi&amp;num=50">
+         [04/19]인포스탁 금융당국 조사 결
+        </a>
+       </td>
+      </tr>
+      <tr>
+       <td align="center" height="18" width="9%">
+        <img height="3" src="/img/red_dot.gif" width="3"/>
+       </td>
+       <td width="91%">
+        <a href="/site/customer/notice_view.asp?board=bbs_gongzi&amp;num=49">
+         [02/13]금감원 정치테마주 조사에
+        </a>
+       </td>
+      </tr>
+      <tr>
+       <td align="center" height="18" width="9%">
+        <img height="3" src="/img/red_dot.gif" width="3"/>
+       </td>
+       <td width="91%">
+        <a href="/site/customer/notice_view.asp?board=bbs_gongzi&amp;num=48">
+         [11/01]저작권 보호 안내
+        </a>
+       </td>
+      </tr>
+      <tr>
+       <td align="center" height="18" width="9%">
+        <img height="3" src="/img/red_dot.gif" width="3"/>
+       </td>
+       <td width="91%">
+        <a href="/site/customer/notice_view.asp?board=bbs_gongzi&amp;num=47">
+         [05/17]홈페이지 개편 및 콘텐츠
+        </a>
+       </td>
+      </tr>
+     </table>
+    </td>
+   </tr>
+  </table>
+  <map id="Map16" name="Map16">
+   <area coords="183,4,222,21" href="/site/customer/notice.asp?board=bbs_gongzi" onfocus="this.blur()" shape="rect">
+   </area>
+  </map>
+ </td>
+</tr>
+<tr>
+ <td colspan="3" valign="top">
+ </td>
+</tr>
+<tr>
+ <td height="30">
+ </td>
+</tr>
+<tr>
+ <td>
+  <!-- 하단 회사소개 -->
+ </td>
+ <table align="center" border="0" cellpadding="0" cellspacing="0" width="980">
+  <tr>
+   <td bgcolor="333333" height="27">
+    <div align="center">
+     <img border="0" height="20" src="/img/downtx.gif" usemap="#Map2" width="650"/>
+    </div>
+   </td>
+  </tr>
+  <tr>
+   <td height="10">
+   </td>
+  </tr>
+  <tr>
+   <td align="center">
+    <img border="0" height="150" src="/img/downlogotx.gif" usemap="#Map3" width="953">
+     <div style="z-index:99;position:relative;left:320px;top:-105px;">
+      <img src="http://img.infostock.kr/옴 아모카 살바다라 사다야 시베홈 CEO.jpg" width="4"/>
+     </div>
+    </img>
+   </td>
+  </tr>
+  <tr>
+   <td height="10">
+   </td>
+  </tr>
+ </table>
+</tr>
+<!-- 전체메인테이블 end -->
+<map name="Map">
+ <area alt="Philadelphia Semiconductor" coords="17,143,123,184" onclick="javascript:MM_openBrWindow('./indexchart/sox.asp','a','scrollbars=yes,width=750,height=380,top=180,left=120')" onmouseout="xxx.style.cursor='auto'" onmouseover="xxx.style.cursor='hand'" shape="rect">
+  <area alt="NIKKEI" coords="13,105,125,129" onclick="javascript:javascript:MM_openBrWindow('http://stockcharts.com/c-sc/sc?s=%24NIKK&amp;p=D&amp;b=5&amp;g=0&amp;i=t38930451580&amp;r=1465339884678','a','scrollbars=yes,width=750,height=380,top=180,left=120')" onmouseout="xxx.style.cursor='auto'" onmouseover="xxx.style.cursor='hand'" shape="rect">
+   <area alt="DOW" coords="14,71,124,92" onclick="javascript:MM_openBrWindow('http://stockcharts.com/c-sc/sc?s=%24INDU&amp;p=D&amp;b=5&amp;g=0&amp;i=t37598629797&amp;r=1465339980581','a','scrollbars=yes,width=750,height=380,top=180,left=120')" onmouseout="xxx.style.cursor='auto'" onmouseover="xxx.style.cursor='hand'" shape="rect">
+    <area alt="NASDAQ" coords="13,37,125,61" onclick="javascript:MM_openBrWindow('http://stockcharts.com/c-sc/sc?s=%24COMPQ&amp;p=D&amp;b=5&amp;g=0&amp;i=t43890726423&amp;r=1465339030309','a','scrollbars=yes,width=750,height=380,top=180,left=120')" onmouseout="xxx.style.cursor='auto'" onmouseover="xxx.style.cursor='hand'" shape="rect">
+    </area>
+   </area>
+  </area>
+ </area>
+</map>
+<map name="Map2">
+ <area coords="1,2,53,18" href="/site/company/company.asp" onfocus="this.blur()" shape="rect">
+  <area coords="85,2,173,18" href="/site/company/policy.asp" onfocus="this.blur()" shape="rect">
+   <area coords="201,2,287,20" href="/site/company/principle.asp" onfocus="this.blur()" shape="rect">
+    <area coords="311,1,384,19" href="/site/company/info.asp" onfocus="this.blur()" shape="rect">
+     <area coords="420,1,495,19" href="/site/company/policy_youth.asp" onfocus="this.blur()" shape="rect">
+      <area coords="520,2,575,19" href="/site/customer/contact.asp" onfocus="this.blur()" shape="rect">
+       <area coords="605,1,640,23" href="/site/community/voice.asp?board=bbs_qna" onfocus="this.blur()" shape="rect">
+       </area>
+      </area>
+     </area>
+    </area>
+   </area>
+  </area>
+ </area>
+</map>
+<map name="Map3">
+ <area coords="452,22,573,39" href="mailto:webmaster@infostock.co.kr" onfocus="this.blur()" shape="rect">
+ </area>
+</map>
+<form name="frm">
+ <input name="codename" type="hidden" value="">
+ </input>
+</form>
+
+[<td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">국제유가</td>, <td align="right" bgcolor="#F9FAF9" class="8point">44.19$</td>, <td align="right" bgcolor="#F9FAF9" class="8point" height="20"><font color="#0000ff">-0.56 </font></td>, <td align="center" bgcolor="#F5F5F5" class="8point" rowspan="3" width="46"><a href="http://www.dramexchange.com" target="new"><font color="#FF0000">반도체</font></a></td>, <td bgcolor="#F5F5F5" class="8point" width="77">DDR3 4G</td>, <td align="right" bgcolor="#F5F5F5" class="8point">1.675$</td>, <td align="right" class="8point" height="20"><font color="#ff0000">+0.007 </font></td>, <td class="8point" width="77">DDR3 2G</td>, <td align="right" class="8point">1.077$</td>, <td align="right" class="8point" height="20"><font color="#0000ff">-0.003 </font></td>, <td class="8point" width="77">NAND 16G</td>, <td align="right" class="8point">1.571$</td>, <td align="right" class="8point" height="20"><font color="">0.000 </font></td>, <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">Yen/Dollar</td>, <td align="right" bgcolor="#F9FAF9" class="8point">106.13 ￥</td>, <td align="right" bgcolor="#F9FAF9" class="8point" height="20"><font color="#ff0000">+0.31 </font></td>, <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">Euro/Dollar</td>, <td align="right" bgcolor="#F9FAF9" class="8point">0.9110E </td>, <td align="right" bgcolor="#F9FAF9" class="8point" height="20"><font color="#ff0000">+0.0041 </font></td>, <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">Won/Dollar</td>, <td align="right" bgcolor="#F9FAF9" class="8point">1,137.00￦</td>, <td align="right" bgcolor="#F9FAF9" class="8point" height="20"><font color="#ff0000">+2.60 </font></td>, <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">회사채(무보증3년)AA-</td>, <td align="right" bgcolor="#F9FAF9" class="8point">1.655%</td>, <td align="right" bgcolor="#F9FAF9" class="8point" height="20"><font color="">0.000 </font></td>, <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">국고채(3년)</td>, <td align="right" bgcolor="#F9FAF9" class="8point">1.225%</td>, <td align="right" bgcolor="#F9FAF9" class="8point" height="20"><font color="#0000ff">-0.002 </font></td>, <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">국고채(5년)</td>, <td align="right" bgcolor="#F9FAF9" class="8point">1.257%</td>, <td align="right" bgcolor="#F9FAF9" class="8point" height="20"><font color="#ff0000">+0.005 </font></td>, <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">국고채(10년)</td>, <td align="right" bgcolor="#F9FAF9" class="8point">1.425%</td>, <td align="right" bgcolor="#F9FAF9" class="8point" height="20"><font color="#ff0000">+0.007 </font></td>, <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">통안채(1년)</td>, <td align="right" bgcolor="#F9FAF9" class="8point">1.267%</td>, <td align="right" bgcolor="#F9FAF9" class="8point" height="20"><font color="#ff0000">+0.002 </font></td>, <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">통안채(2년)</td>, <td align="right" bgcolor="#F9FAF9" class="8point">1.248%</td>, <td align="right" bgcolor="#F9FAF9" class="8point" height="20"><font color="">0.000 </font></td>, <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">산금채(1년)</td>, <td align="right" bgcolor="#F9FAF9" class="8point">1.309%</td>, <td align="right" bgcolor="#F9FAF9" class="8point" height="20"><font color="#0000ff">-0.001 </font></td>, <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">한전채(3년)</td>, <td align="right" bgcolor="#F9FAF9" class="8point">1.367%</td>, <td align="right" bgcolor="#F9FAF9" class="8point" height="20"><font color="">0.000 </font></td>, <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">CD(91일물)</td>, <td align="right" bgcolor="#F9FAF9" class="8point">1.36%</td>, <td align="right" bgcolor="#F9FAF9" class="8point" height="20"><font color="">0.00 </font></td>, <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">콜(1일물)</td>, <td align="right" bgcolor="#F9FAF9" class="8point">1.23%</td>, <td align="right" bgcolor="#F9FAF9" class="8point" height="20"><font color="">0.00 </font></td>, <td align="center" bgcolor="#F9FAF9" class="8point" colspan="2">기업어음(3개월)</td>, <td align="right" bgcolor="#F9FAF9" class="8point">1.51%</td>, <td align="right" bgcolor="#F9FAF9" class="8point" height="20"><font color="">0.00 </font></td>]
