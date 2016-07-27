@@ -184,6 +184,7 @@ class MyWindow(QMainWindow, KiwoomCallback):
             headers = Condition.get_table_header()
             self.ui.table_condition.setColumnCount(len(headers))
             self.ui.table_condition.setHorizontalHeaderLabels(headers)
+            self.ui.table_condition.setRowCount(len(kiwoom.data.조건식_dic))
 
             i = 0
             for condition in kiwoom.data.조건식_dic.values():
