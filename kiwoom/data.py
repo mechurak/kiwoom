@@ -28,7 +28,7 @@ class Balance:
 
     @staticmethod
     def get_available_sell_strategy():
-        return ["sell_stop_loss", "sell_condition_sell"]
+        return ["sell_stop_loss", "sell_condition_sell", "sell_on_closing"]
 
     def get_str_list(self):
         return [self.종목코드, self.종목명, str(self.현재가), str(self.매입가), str(self.보유수량), str(self.목표보유수량), str(self.수익률), str(list(self.매수전략.keys())), str(list(self.매도전략.keys()))]
@@ -54,6 +54,7 @@ class Balance:
     def add_sell_strategy(self, the_전략명):
         from kiwoom.strategy.stop_loss import StopLoss
         from kiwoom.strategy.condition_sell import ConditionSell
+        from kiwoom.strategy.sell_on_closing import SellOnClosing
         if the_전략명 not in self.매도전략:
             if the_전략명 == "sell_stop_loss":
                 sell_stop_loss = StopLoss(self)
@@ -63,6 +64,10 @@ class Balance:
                 sell_condition_sell = ConditionSell(self)
                 self.매도전략[the_전략명] = sell_condition_sell
                 MyLogger.instance().logger().info("sell_condition_sell 추가됨. %s", self.종목명)
+            elif the_전략명 == "sell_on_closing":
+                sell_on_closing = SellOnClosing(self)
+                self.매도전략[the_전략명] = sell_on_closing
+                MyLogger.instance().logger().info("sell_on_closing 추가됨. %s", self.종목명)
             else:
                 MyLogger.instance().logger().wanning("unknown strategy. ignore %s. %s", the_전략명, self.종목명)
 

@@ -105,6 +105,12 @@ class Kiwoom(Singleton):
                     for 매수전략 in balance.매수전략.values():
                         매수전략.on_time(현재시간_str)
 
+            # TODO 현재는 시장가로 매도. 좀 더 나은 전략 필요
+            if 현재시간_str == "145000": ## 14시 50분.
+                for balance in self.data.잔고_dic.values():
+                    for 매도전략 in balance.매도전략.values():
+                        매도전략.on_time(현재시간_str)
+
         if sJongmokCode in self.data.잔고_dic:
             if (sRealType == "주식체결"):
                 현재가_str = self.ocx.dynamicCall("GetCommRealData(QString, int)", "주식체결", 10)
