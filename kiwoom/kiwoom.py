@@ -282,9 +282,8 @@ class Kiwoom(Singleton):
 
     def set_real_remove(self, the_종목코드):
         MyLogger.instance().logger().info("the_종목코드 %s", the_종목코드)
-        ret = self.ocx.dynamicCall("SetRealRemove(QString, QString)", [constant.SN_실시간조회, the_종목코드])
-        MyLogger.instance().logger().info("call SetRealRemove(). ret: %d", ret)
-        return ret
+        self.ocx.dynamicCall("SetRealRemove(QString, QString)", [constant.SN_실시간조회, the_종목코드])
+        MyLogger.instance().logger().info("call SetRealRemove()")
 
     def send_order(self, 주문유형, 종목코드, 주문수량, 주문단가, 거래구분):
         MyLogger.instance().logger().info("%d, %s, %d, %d, %s", 주문유형, 종목코드, 주문수량, 주문단가, 거래구분)
