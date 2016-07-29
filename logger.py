@@ -30,7 +30,7 @@ class MyLogger(Singleton):
         today = date.today()
         filename = log_dir + "/" + today.strftime("%Y%m%d") + ".log"
 
-        fileHandler = logging.FileHandler(filename)
+        fileHandler = logging.FileHandler(filename, "a", "utf-8")
         streamHandler = logging.StreamHandler()
 
         fileHandler.setFormatter(formatter)
