@@ -166,13 +166,13 @@ class Kiwoom(Singleton):
                 MyLogger.instance().logger().info("체결신호!!!! 잔고 갱신 요청")
                 self.tr_balance()
 
-                if 매도수구분 == '매수':
+                if 매도수구분 == '2':
                     MyLogger.instance().logger().info("%s 종목 매수", 종목명)
                     # TODO 조건식 실시간 재등록 필요 유무 확인 필요
-                    #for condition in self.data.조건식_dic.values():
-                    #    if condition.적용유무 == "1":
-                    #        MyLogger.instance().logger().info("조건식 실시간 재등록. %s", condition.조건명)
-                    #        self.send_condition(condition)  # 조건식 실시간 재등록
+                    for condition in self.data.조건식_dic.values():
+                        if condition.적용유무 == "1":
+                            MyLogger.instance().logger().info("조건식 실시간 재등록. %s", condition.조건명)
+                            self.send_condition(condition)  # 조건식 실시간 재등록
 
                     MyLogger.instance().logger().info("%s %s 실시간 등록", 종목코드, 종목명)
                     self.set_real_reg(종목코드)  # 실시간 등록
