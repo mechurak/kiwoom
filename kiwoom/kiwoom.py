@@ -122,15 +122,19 @@ class Kiwoom(Singleton):
 
         if sRealType == "장시작시간":
             MyLogger.instance().logger().info("장시작시간")
-            현재시간_str = self.ocx.dynamicCall("GetCommRealData(QString, int)", "장시작시간", 20)  # 체결시간
+            현재시간_str = self.ocx.dynamicCall("GetCommRealData(QString, int)", "장시작시간", 20)
             현재시간_str = 현재시간_str.strip()
-            MyLogger.instance().logger().info("체결시간: %s", 현재시간_str)
+            MyLogger.instance().logger().info("현재시간_str: %s", 현재시간_str)
 
             # TODO 현재는 시장가로 주문. 좀 더 나은 전략 필요
             if 현재시간_str == "085500":  ## 8시 55분. 31분터 신호 옴
                 for balance in self.data.잔고_dic.values():
                     for 매수전략 in balance.매수전략.values():
                         매수전략.on_time(현재시간_str)
+
+            if 현재시간_str == "085950":
+                MyLogger.instance().logger().info("장시작시간 10초전. 100초 후 조건식 재확인")
+                QTimer().singleShot(100000, self.reload_condition())  # ms 후에 함수 실행
 
             # TODO 현재는 시장가로 매도. 좀 더 나은 전략 필요
             if 현재시간_str == "145000": ## 14시 50분.
@@ -188,10 +192,16 @@ class Kiwoom(Singleton):
             MyLogger.instance().logger().info("주문체결통보. sGubun: '0'")
             주문상태 = self.ocx.dynamicCall("GetChejanData(int)", 913)  # "접수", "체결"
             매도수구분 = self.ocx.dynamicCall("GetChejanData(int)", 907)  # "1":매도, "2":매수
+            시간_str = self.ocx.dynamicCall("GetChejanData(int)", 908)  # 주문/체결시간(HHMMSSMS)
+            시간 = int(시간_str[:4])
 
             if 주문상태 == '체결':
-                MyLogger.instance().logger().info("체결신호!!!! 잔고 갱신 요청")
-                self.tr_balance()
+                MyLogger.instance().logger().info("체결신호!!!!")
+                if 901 < 시간:  # 9시에 몰린 체결 신호는 무시 (장 시작때 일괄 매수)
+                    MyLogger.instance().logger().info("체결시간:%d. 무시함", 시간)
+                    return
+
+                self.tr_balance()  # 잔고 갱신 요청
 
                 if 매도수구분 == '2':
                     MyLogger.instance().logger().info("%s 종목 매수", 종목명)
@@ -326,6 +336,14 @@ class Kiwoom(Singleton):
         MyLogger.instance().logger().debug("")
         job = Job(self.send_order, 1, "043260", 10, 0, "03")
         self.job_queue.put(job)
+
+    def reload_condition(self):
+        MyLogger.instance().logger().info("")
+        self.tr_balance()  # 잔고 갱신 요청
+        for condition in self.data.조건식_dic.values():
+            if condition.적용유무 == "1":
+                MyLogger.instance().logger().info("조건식 실시간 재등록. %s", condition.조건명)
+                self.send_condition(condition)  # 조건식 실시간 재등록
 
 
 class KiwoomCallback:

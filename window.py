@@ -257,6 +257,9 @@ class MyWindow(QMainWindow, KiwoomCallback):
         selected_balance_str = ",".join(종목명_list)
         self.ui.txt_balance.setText(selected_balance_str)
 
+    #def tick(self):
+    #    print("tick")
+
 if __name__ == "__main__":
     MyLogger.instance().logger().info("\n\n============================ start application =====================")
     app = QApplication(sys.argv)
@@ -264,4 +267,7 @@ if __name__ == "__main__":
     kiwoom = Kiwoom.instance()
     kiwoom.set_callback(window)
     window.show()
+    #timer = QTimer()
+    #timer.timeout.connect(window.tick)
+    #timer.start(5000)
     app.exec_()
