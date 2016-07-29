@@ -6,8 +6,8 @@ class JustBuy(StrategyBase):
 
     def on_real_data(self, sJongmokCode, sRealType, sRealData):
         MyLogger.instance().logger().info("JustBuy")
-        if self.is_done:
-            MyLogger.instance().logger().info("is_done. do nothing")
+        if self.is_queued:
+            MyLogger.instance().logger().info("is_queued. do nothing")
             return
 
         if self.balance.목표보유수량 == 0 or self.balance.목표보유수량 <= self.balance.보유수량:

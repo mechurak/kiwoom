@@ -7,8 +7,8 @@ class ConditionSell(StrategyBase):
 
     def on_condition(self, condition_index, condition_name):
         MyLogger.instance().logger().info("index: %d, name: %s", condition_index, condition_name)
-        if self.is_done:
-            MyLogger.instance().logger().info("is_done. do nothing")
+        if self.is_queued:
+            MyLogger.instance().logger().info("is_queued. do nothing")
             return
 
         if self.balance.보유수량 == 0:

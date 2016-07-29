@@ -7,8 +7,8 @@ class StopLoss(StrategyBase):
 
     def on_real_data(self, sJongmokCode, sRealType, sRealData):
         MyLogger.instance().logger().info("StopLoss. %s", self.balance.종목명)
-        if self.is_done:
-            MyLogger.instance().logger().info("is_done. do nothing")
+        if self.is_queued:
+            MyLogger.instance().logger().info("is_queued. do nothing")
             return
 
         if self.balance.보유수량 == 0:

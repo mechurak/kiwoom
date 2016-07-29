@@ -1,9 +1,10 @@
 from logger import MyLogger
 from kiwoom.kiwoom import Kiwoom
+from kiwoom.kiwoom import Job
 
 
 class StrategyBase:
-    is_done = False
+    is_queued = False
     balance = None
 
     def __init__(self, the_balance):
@@ -24,13 +25,15 @@ class StrategyBase:
     def on_buy_signal(self, 주문수량):
         MyLogger.instance().logger().info("종목명: %s, 주문수량: %d", self.balance.종목명, 주문수량)
         kiwoom = Kiwoom.instance()
-        ret = kiwoom.send_order(1, self.balance.종목코드, 주문수량, 0, "03")  # 시장가로 매수
-        if ret == 0:
-            self.is_done = True
+        job = Job(kiwoom.send_order, 1, self.balance.종목코드, 주문수량, 0, "03")  # 시장가로 매수
+        kiwoom.job_queue.put(job)
+        self.is_queued = True
+        # TODO 실제 주문 (키움 API) 리턴 값이 0 인지 확인은 안해도 괜찮을까
 
     def on_sell_signal(self, 주문수량):
         MyLogger.instance().logger().info("종목명: %s, 주문수량: %d", self.balance.종목명, 주문수량)
         kiwoom = Kiwoom.instance()
-        ret = kiwoom.send_order(2, self.balance.종목코드, 주문수량, 0, "03")  # 시장가로 매도
-        if ret == 0:
-            self.is_done = True
+        job = Job(kiwoom.send_order, 2, self.balance.종목코드, 주문수량, 0, "03")  # 시장가로 매도
+        kiwoom.job_queue.put(job)
+        self.is_queued = True
+

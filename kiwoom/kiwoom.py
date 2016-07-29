@@ -3,6 +3,19 @@ from PyQt4.QtCore import *
 from kiwoom.data import Data
 from kiwoom import constant
 from logger import MyLogger
+import queue
+import threading
+import time
+
+
+class Job:
+    def __init__(self, fn, *args, **kwargs):
+        self.fn = fn
+        self.args = args
+        self.kwargs = kwargs
+
+    def __call__(self):
+        return self.fn(*self.args, **self.kwargs)
 
 
 class Singleton:
@@ -36,8 +49,22 @@ class Kiwoom(Singleton):
         self.ocx.connect(self.ocx, SIGNAL("OnReceiveConditionVer(int, QString)"), self.OnReceiveConditionVer)
         self.login()
 
+        # 5개 이상 종목의 주문 처리를 위한 큐, 쓰레드
+        self.job_queue = queue.Queue()
+        t = threading.Thread(target=self.basic_worker)
+        t.daemon = True
+        t.start()
+        self.job_queue.join()
+
     def set_callback(self, the_callback):
         self.callback = the_callback
+
+    def basic_worker(self):
+        while True:
+            f = self.job_queue.get()
+            f()
+            time.sleep(0.2)  # 0.2초 대기. 1초에 주문 5개 이상이면 오류
+            self.job_queue.task_done()
 
     def OnReceiveTrData(self, sScrNo, sRQName, sTrCode, sRecordName, sPreNext, nDataLength, sErrorCode, sMessage, sSplmMsg):
         MyLogger.instance().logger().info("%s, %s, %s, %s, %s, %d, %s, %s, %s", sScrNo, sRQName, sTrCode, sRecordName, sPreNext, nDataLength, sErrorCode, sMessage, sSplmMsg)
@@ -294,12 +321,12 @@ class Kiwoom(Singleton):
         MyLogger.instance().logger().info("call SendOrder(). ret: %d", ret)
         return ret
 
+    # "test" 버튼 눌렀을 때, 테스트
     def perform_test(self):
         MyLogger.instance().logger().debug("")
-        현재시간_str = "083000"
-        for balance in self.data.잔고_dic.values():
-            for 매수전략 in balance.매수전략.values():
-                매수전략.on_time(현재시간_str)
+        job = Job(self.send_order, 1, "043260", 10, 0, "03")
+        self.job_queue.put(job)
+
 
 class KiwoomCallback:
     def on_connected(self):
