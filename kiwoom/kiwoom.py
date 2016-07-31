@@ -89,6 +89,28 @@ class Kiwoom(Singleton):
             else:
                 MyLogger.instance().logger().info("잘못된 종목 코드")
 
+        elif sRQName == "관심종목":
+            MyLogger.instance().logger().info("sRQName: 관심종목")
+            count = self.ocx.dynamicCall("GetRepeatCnt(QString, QString)", sTrCode, sRecordName)
+            MyLogger.instance().logger().debug("count: %d", count)
+
+            for i in range(0, count):
+                종목코드 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "종목코드").strip()
+                종목명 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "종목명").strip()
+                현재가_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "현재가").strip()
+
+                if 종목코드 and 종목명 and 현재가_str:
+                    현재가 = int(현재가_str)
+                    현재가 = 현재가 if 현재가 >= 0 else 현재가 * (-1)
+                    MyLogger.instance().logger().info("종목코드: %s, 종목명: %s, 현재가: %d", 종목코드, 종목명, 현재가)
+                    balance = self.data.get_balance(종목코드)
+                    balance.종목명 = 종목명
+                    balance.현재가 = 현재가
+                else:
+                    MyLogger.instance().logger().info("잘못된 종목 코드")
+
+            self.callback.on_data_updated(["잔고_dic"])
+
         elif sRQName == "계좌평가잔고내역요청":
             MyLogger.instance().logger().info("sRQName: 계좌평가잔고내역요청")
             count = self.ocx.dynamicCall("GetDataCount(QString)", ["계좌평가잔고개별합산"])
@@ -134,7 +156,7 @@ class Kiwoom(Singleton):
 
             if 현재시간_str == "085950":
                 MyLogger.instance().logger().info("장시작시간 10초전. 100초 후 조건식 재확인")
-                QTimer().singleShot(100000, self.reload_condition())  # ms 후에 함수 실행
+                QTimer().singleShot(100000, self.reload_condition)  # ms 후에 함수 실행. 실시간 조건검색 리프레쉬
 
             # TODO 현재는 시장가로 매도. 좀 더 나은 전략 필요
             if 현재시간_str == "145000": ## 14시 50분.
@@ -302,12 +324,31 @@ class Kiwoom(Singleton):
         MyLogger.instance().logger().info("계좌번호 %s", self.data.계좌번호)
         self.ocx.dynamicCall("SetInputValue(QString, QString)", "계좌번호", self.data.계좌번호)
         self.ocx.dynamicCall("SetInputValue(QString, QString)", "조회구분", 2)
-        self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "계좌평가잔고내역요청", "opw00018", 0, constant.SN_잔고조회)
+        ret = self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "계좌평가잔고내역요청", "opw00018", 0, constant.SN_잔고조회)
+        MyLogger.instance().logger().info("ret %d", ret)
 
     def tr_code(self, the_종목코드):
         MyLogger.instance().logger().info("the_종목코드 %s", the_종목코드)
         self.ocx.dynamicCall("SetInputValue(QString, QString)", "종목코드", the_종목코드)
         self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "주식기본정보요청", "opt10001", 0, constant.SN_종목정보)
+
+    def tr_multi_code(self, the_종목코드_list_str, the_종목수):
+        MyLogger.instance().logger().info("the_종목코드_list_str %s, the_종목수 %d", the_종목코드_list_str, the_종목수)
+        ret = self.ocx.dynamicCall("CommKwRqData(QString, int, int, int, QString, QString)", the_종목코드_list_str, 0, the_종목수, 0, "관심종목", constant.SN_잔고조회)
+        MyLogger.instance().logger().info("ret %d", ret)
+
+    # 미보유 종목 있으면 조회 (for 현재가 갱신)
+    def refresh_interest_balance(self):
+        MyLogger.instance().logger().info("")
+        code_list = []
+        for balance in self.data.잔고_dic.values():
+            if balance.보유수량 == 0:
+                code_list.append(balance.종목코드)
+        if len(code_list) > 0:
+            code_list_str = ";".join(code_list)
+            self.tr_multi_code(code_list_str, len(code_list))
+        else:
+            MyLogger.instance().logger().debug("code_list len: %d", len(code_list))
 
     def set_real_reg(self, the_종목코드_list_str):
         MyLogger.instance().logger().info("the_종목코드_list_str %s", the_종목코드_list_str)

@@ -149,7 +149,8 @@ class MyWindow(QMainWindow, KiwoomCallback):
                 매도전략 = 매도전략_temp.strip()[1:-1]  # 따옴표 제거
                 balance.add_sell_strategy(매도전략)
             line = f.readline()
-        self.on_data_updated(["잔고_dic"])
+        #self.on_data_updated(["잔고_dic"])
+        kiwoom.refresh_interest_balance()
 
     @pyqtSlot()
     def on_save_balance_btn_clicked(self):
