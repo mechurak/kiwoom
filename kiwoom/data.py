@@ -1,4 +1,5 @@
 from logger import MyLogger
+import collections
 
 
 class Balance:
@@ -101,8 +102,8 @@ class Condition:
 class Data:
     계좌번호 = "12345"
     계좌번호_list = ["12345", "23456"]
-    조건식_dic = {}  # {0: Condition(0), 1: Condition(1)}
-    잔고_dic = {}  # {"00000": Balance("00000"), "00001": Balance("00001")}
+    조건식_dic = collections.OrderedDict()  # {0: Condition(0), 1: Condition(1)}
+    잔고_dic = collections.OrderedDict()  # {"00000": Balance("00000"), "00001": Balance("00001")}
 
     def print(self):
         MyLogger.instance().logger().info("============= current data ==============")
