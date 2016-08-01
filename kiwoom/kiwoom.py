@@ -231,7 +231,7 @@ class Kiwoom(Singleton):
 
             if 주문상태 == '체결':
                 MyLogger.instance().logger().info("체결신호!!!!")
-                if 901 < 시간:  # 9시에 몰린 체결 신호는 무시 (장 시작때 일괄 매수)
+                if 시간 < 901:  # 9시에 몰린 체결 신호는 무시 (장 시작때 일괄 매수)
                     MyLogger.instance().logger().info("체결시간:%d. 무시함", 시간)
                     return
 
