@@ -121,6 +121,7 @@ class Kiwoom(Singleton):
                 else:
                     MyLogger.instance().logger().info("잘못된 종목 코드")
 
+            self.stop_real_data(constant.SN_관심종목조회)  # 현재는 오는 실시간 데이터 양이 과도해 보임
             self.callback.on_data_updated(["잔고_dic"])
 
         elif sRQName == "계좌평가잔고내역요청":
@@ -346,7 +347,7 @@ class Kiwoom(Singleton):
 
     def tr_multi_code(self, the_종목코드_list_str, the_종목수):
         MyLogger.instance().logger().info("the_종목코드_list_str %s, the_종목수 %d", the_종목코드_list_str, the_종목수)
-        ret = self.ocx.dynamicCall("CommKwRqData(QString, int, int, int, QString, QString)", the_종목코드_list_str, 0, the_종목수, 0, "관심종목", constant.SN_잔고조회)
+        ret = self.ocx.dynamicCall("CommKwRqData(QString, int, int, int, QString, QString)", the_종목코드_list_str, 0, the_종목수, 0, "관심종목", constant.SN_관심종목조회)
         MyLogger.instance().logger().info("ret %d", ret)
 
     # 미보유 종목 있으면 조회 (for 현재가 갱신)
@@ -374,6 +375,11 @@ class Kiwoom(Singleton):
         MyLogger.instance().logger().info("the_종목코드 %s", the_종목코드)
         self.ocx.dynamicCall("SetRealRemove(QString, QString)", [constant.SN_실시간조회, the_종목코드])
         MyLogger.instance().logger().info("call SetRealRemove()")
+
+    def stop_real_data(self, the_화면번호):
+        MyLogger.instance().logger().info("the_화면번호 %s", the_화면번호)
+        self.ocx.dynamicCall("DisconnectRealData(QString)", [the_화면번호])
+        MyLogger.instance().logger().info("call DisconnectRealData()")
 
     def send_order(self, 주문유형, 종목코드, 주문수량, 주문단가, 거래구분):
         MyLogger.instance().logger().info("%d, %s, %d, %d, %s", 주문유형, 종목코드, 주문수량, 주문단가, 거래구분)
