@@ -84,6 +84,12 @@ class Kiwoom(Singleton):
                 balance = self.data.get_balance(종목코드)
                 balance.종목명 = 종목명
                 balance.현재가 = 현재가
+
+                for 매수전략 in balance.매수전략.values():
+                    매수전략.on_tr_data(현재가)
+                for 매도전략 in balance.매도전략.values():
+                    매도전략.on_tr_data(현재가)
+
                 self.callback.on_data_updated(["잔고_dic"])
 
             else:
@@ -106,6 +112,12 @@ class Kiwoom(Singleton):
                     balance = self.data.get_balance(종목코드)
                     balance.종목명 = 종목명
                     balance.현재가 = 현재가
+
+                    for 매수전략 in balance.매수전략.values():
+                        매수전략.on_tr_data(현재가)
+                    for 매도전략 in balance.매도전략.values():
+                        매도전략.on_tr_data(현재가)
+
                 else:
                     MyLogger.instance().logger().info("잘못된 종목 코드")
 
@@ -159,7 +171,7 @@ class Kiwoom(Singleton):
                 QTimer().singleShot(100000, self.reload_condition)  # ms 후에 함수 실행. 실시간 조건검색 리프레쉬
 
             # TODO 현재는 시장가로 매도. 좀 더 나은 전략 필요
-            if 현재시간_str == "145000": ## 14시 50분.
+            if 현재시간_str == "152000":  # 15시 20분.
                 for balance in self.data.잔고_dic.values():
                     for 매도전략 in balance.매도전략.values():
                         매도전략.on_time(현재시간_str)

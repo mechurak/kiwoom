@@ -5,6 +5,19 @@ from logger import MyLogger
 class StopLoss(StrategyBase):
     threshold = -0.03
 
+    def __init__(self, the_balance, the_param_dic):
+        super().__init__(the_balance, the_param_dic)
+        MyLogger.instance().logger().debug("StopLoss. %s, %s", the_balance, str(the_param_dic))
+        if 'threshold' in the_param_dic:
+            self.threshold = the_param_dic['threshold']
+
+    @staticmethod
+    def get_default_param():
+        return {"threshold": -0.03}
+
+    def get_current_param(self):
+        return {"threshold": self.threshold}
+
     def on_real_data(self, sJongmokCode, sRealType, sRealData):
         MyLogger.instance().logger().info("StopLoss. %s", self.balance.종목명)
         if self.is_queued:

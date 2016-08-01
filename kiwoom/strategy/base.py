@@ -7,8 +7,16 @@ class StrategyBase:
     is_queued = False
     balance = None
 
-    def __init__(self, the_balance):
+    def __init__(self, the_balance, the_param_dic):
+        MyLogger.instance().logger().debug("StrategyBase. %s, %s", the_balance, str(the_param_dic))
         self.balance = the_balance
+
+    @staticmethod
+    def get_default_param():
+        return {}
+
+    def get_current_param(self):
+        return {}
 
     def on_real_data(self, sJongmokCode, sRealType, sRealData):
         pass
@@ -19,7 +27,7 @@ class StrategyBase:
     def on_time(self, cur_time_str):
         pass
 
-    def on_expect_price(self, expect_price):
+    def on_tr_data(self, current_price):
         pass
 
     def on_buy_signal(self, 주문수량):

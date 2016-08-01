@@ -7,6 +7,7 @@ from kiwoom.kiwoom import KiwoomCallback
 from kiwoom.data import Condition
 from kiwoom.data import Balance
 from logger import MyLogger
+import json
 
 
 class ConditionItem:
@@ -65,6 +66,11 @@ class MyWindow(QMainWindow, KiwoomCallback):
         kiwoom.tr_balance()
 
     @pyqtSlot()
+    def on_interest_balance_btn_clicked(self):
+        MyLogger.instance().logger().info("")
+        kiwoom.refresh_interest_balance()
+
+    @pyqtSlot()
     def on_print_my_data_btn_clicked(self):
         MyLogger.instance().logger().info("")
         kiwoom.data.print()
@@ -95,7 +101,11 @@ class MyWindow(QMainWindow, KiwoomCallback):
         strategy_str = self.ui.combo_buy.currentText()
         MyLogger.instance().logger().info("전략: %s", strategy_str)
         for balance in self.selected_balance:
-            balance.add_buy_strategy(strategy_str)
+            param = eval(self.ui.txt_buy_param.text())
+            if not type(param) == dict:
+                MyLogger.instance().logger().error("wrong param text: %s", self.ui.txt_buy_param.text())
+                param = {}
+            balance.add_buy_strategy(strategy_str, param)
         self.on_data_updated(["잔고_dic"])
 
     @pyqtSlot()
@@ -103,8 +113,41 @@ class MyWindow(QMainWindow, KiwoomCallback):
         strategy_str = self.ui.combo_sell.currentText()
         MyLogger.instance().logger().info("전략: %s", strategy_str)
         for balance in self.selected_balance:
-            balance.add_sell_strategy(strategy_str)
+            param = eval(self.ui.txt_sell_param.text())
+            if not type(param) == dict:
+                MyLogger.instance().logger().error("wrong param text: %s", self.ui.txt_sell_param.text())
+                param = {}
+            balance.add_sell_strategy(strategy_str, param)
         self.on_data_updated(["잔고_dic"])
+
+    @pyqtSlot(str)
+    def on_buy_strategy_changed(self, strategy):
+        from kiwoom.strategy.just_buy import JustBuy
+        from kiwoom.strategy.buy_on_opening import BuyOnOpening
+        if strategy == "buy_just_buy":
+            default_param = JustBuy.get_default_param()
+        elif strategy == "buy_on_opening":
+            default_param = BuyOnOpening.get_default_param()
+        else:
+            MyLogger.instance().logger().warning("unknown strategy. ignore %s", strategy)
+        MyLogger.instance().logger().warning("strategy %s, default_param %s", strategy, str(default_param))
+        self.ui.txt_buy_param.setText(str(default_param))
+
+    @pyqtSlot(str)
+    def on_sell_strategy_changed(self, strategy):
+        from kiwoom.strategy.stop_loss import StopLoss
+        from kiwoom.strategy.condition_sell import ConditionSell
+        from kiwoom.strategy.sell_on_closing import SellOnClosing
+        if strategy == "sell_stop_loss":
+            default_param = StopLoss.get_default_param()
+        elif strategy == "sell_condition_sell":
+            default_param = ConditionSell.get_default_param()
+        elif strategy == "sell_on_closing":
+            default_param = SellOnClosing.get_default_param()
+        else:
+            MyLogger.instance().logger().warning("unknown strategy. ignore %s", strategy)
+        MyLogger.instance().logger().warning("strategy %s, default_param %s", strategy, str(default_param))
+        self.ui.txt_sell_param.setText(str(default_param))
 
     @pyqtSlot()
     def on_buy_strategy_clear_btn_clicked(self):
@@ -123,46 +166,32 @@ class MyWindow(QMainWindow, KiwoomCallback):
     @pyqtSlot()
     def on_load_balance_btn_clicked(self):
         MyLogger.instance().logger().info("")
-        f = open("my_list.txt", "r")
-        line = f.readline()
-        while line:
-            str_list = line.split(";")
-            종목코드 = str_list[0]
-            balance = kiwoom.data.get_balance(종목코드)
-            종목명 = str_list[1]
-            balance.종목명 = 종목명
-            목표보유수량_str = str_list[2]
-            if 목표보유수량_str != "None":
-                balance.목표보유수량 = int(목표보유수량_str)
-            매수전략_str = str_list[3]
-            매수전략_list = 매수전략_str[1:-1].split(",")
-            for 매수전략_temp in 매수전략_list:
-                if len(매수전략_temp) < 3:
-                    continue
-                매수전략 = 매수전략_temp.strip()[1:-1]  # 따옴표 제거
-                balance.add_buy_strategy(매수전략)
-            매도전략_str = str_list[4].strip()
-            매도전략_list = 매도전략_str[1:-1].split(",")
-            for 매도전략_temp in 매도전략_list:
-                if len(매도전략_temp) < 3:
-                    continue
-                매도전략 = 매도전략_temp.strip()[1:-1]  # 따옴표 제거
-                balance.add_sell_strategy(매도전략)
-            line = f.readline()
-        #self.on_data_updated(["잔고_dic"])
+        f = open("my_list.txt", "r", encoding='utf8')
+        data = json.load(f)
+        print(data)
+
+        for item in data:
+            balance = kiwoom.data.get_balance(item['종목코드'])
+            balance.종목명 = item['종목명']
+            if not item['목표보유수량']:
+                balance.목표보유수량 = item['목표보유수량']
+            for k, v in item['매수전략_dic'].items():
+                balance.add_buy_strategy(k, v)
+            for k, v in item['매도전략_dic'].items():
+                balance.add_sell_strategy(k, v)
+
+        self.on_data_updated(["잔고_dic"])
         kiwoom.refresh_interest_balance()
 
     @pyqtSlot()
     def on_save_balance_btn_clicked(self):
         MyLogger.instance().logger().info("")
-        f = open("my_list.txt", "w")
+        f = open("my_list.txt", "w", encoding='utf8')
+        list_data = []
         for balance in kiwoom.data.잔고_dic.values():
-            balance.get_str_list()
-            f.write(balance.종목코드 + ";")
-            f.write(balance.종목명 + ";")
-            f.write(str(balance.목표보유수량) + ";")
-            f.write(str(list(balance.매수전략.keys())) + ";")
-            f.write(str(list(balance.매도전략.keys())) + "\n")
+            list_data.append(balance.get_dic())
+        data = json.dumps(list_data, ensure_ascii=False, indent=4)
+        f.write(data)
         f.close()
 
     @pyqtSlot()

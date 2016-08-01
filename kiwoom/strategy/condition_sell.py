@@ -3,7 +3,20 @@ from logger import MyLogger
 
 
 class ConditionSell(StrategyBase):
-    threshold = 0.01
+    threshold = 0.01  # 1% 이상 수익이 아니라면 팔지 않음
+
+    def __init__(self, the_balance, the_param_dic):
+        super().__init__(the_balance, the_param_dic)
+        MyLogger.instance().logger().debug("ConditionSell. %s, %s", the_balance, str(the_param_dic))
+        if 'threshold' in the_param_dic:
+            self.threshold = the_param_dic['threshold']
+
+    @staticmethod
+    def get_default_param():
+        return {"threshold": 0.01}
+
+    def get_current_param(self):
+        return {"threshold": self.threshold}
 
     def on_condition(self, condition_index, condition_name):
         MyLogger.instance().logger().info("index: %d, name: %s", condition_index, condition_name)
