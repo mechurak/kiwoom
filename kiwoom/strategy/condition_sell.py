@@ -28,7 +28,7 @@ class ConditionSell(StrategyBase):
             MyLogger.instance().logger().info("보유수량 == 0. do nothing")
             return
 
-        수익률 = (self.balance.현재가 - self.balance.매입가) / self.balance.매입가
+        수익률 = self.balance.get_return_rate()
         MyLogger.instance().logger().debug("수익률: %f, 현재가: %d, 매입가: %d, 보유수량: %d", 수익률, self.balance.현재가, self.balance.매입가, self.balance.보유수량)
 
         if 수익률 > self.threshold:
