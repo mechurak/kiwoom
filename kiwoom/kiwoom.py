@@ -193,7 +193,7 @@ class Kiwoom(Singleton):
                     매도전략.on_real_data(sJongmokCode, sRealType, sRealData)
 
     def OnReceiveRealCondition(self, strCode, strType, strConditionName, strConditionIndex):
-        MyLogger.instance().logger().info("%s, %s, %s, %s", strCode, strType, strConditionName, strConditionIndex)
+        MyLogger.instance().logger().info("%s, %s, %s, %s, %s", strCode, self.get_master_code_name(strCode), strType, strConditionName, strConditionIndex)
         condition = self.data.get_condition(int(strConditionIndex))
 
         if condition.신호종류 == "매도신호" and strType == 'I':  # 매도 조건식 편입
@@ -390,19 +390,27 @@ class Kiwoom(Singleton):
         MyLogger.instance().logger().info("call SendOrder(). ret: %d", ret)
         return ret
 
+    def get_master_code_name(self, 종목코드):
+        return self.ocx.dynamicCall("GetMasterCodeName(QString)", [종목코드])  # 종목명 리턴
+
     # "test" 버튼 눌렀을 때, 테스트
     def perform_test(self):
         MyLogger.instance().logger().debug("")
-        job = Job(self.send_order, 1, "043260", 10, 0, "03")
-        self.job_queue.put(job)
+        종목명 = self.get_master_code_name("021650")
+        MyLogger.instance().logger().debug("종목명 %s", 종목명)
 
     def reload_condition(self):
         MyLogger.instance().logger().info("")
-        self.tr_balance()  # 잔고 갱신 요청
+
+        # 잔고 갱신 요청
+        job = Job(self.tr_balance)
+        self.job_queue.put(job)
+
         for condition in self.data.조건식_dic.values():
             if condition.적용유무 == "1":
-                MyLogger.instance().logger().info("조건식 실시간 재등록. %s", condition.조건명)
-                self.send_condition(condition)  # 조건식 실시간 재등록
+                # 조건식 실시간 재등록
+                job = Job(self.send_condition, condition)
+                self.job_queue.put(job)
 
 
 class KiwoomCallback:
