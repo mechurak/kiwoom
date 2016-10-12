@@ -61,6 +61,17 @@ class MyWindow(QMainWindow, KiwoomCallback):
         kiwoom.refresh_condition_dic()
 
     @pyqtSlot()
+    def on_condition_result_add_btn_clicked(self):
+        MyLogger.instance().logger().info("")
+        code_text = self.ui.txt_condition_result.toPlainText()
+        if len(code_text) > 4:
+            code_list = (eval(code_text))
+            code_list_str = ";".join(code_list)
+            kiwoom.tr_multi_code(code_list_str, len(code_list))
+        else:
+            MyLogger.instance().logger().error("self.ui.txt_condition_result is too short.")
+
+    @pyqtSlot()
     def on_balance_btn_clicked(self):
         MyLogger.instance().logger().info("")
         kiwoom.tr_balance()
@@ -246,6 +257,9 @@ class MyWindow(QMainWindow, KiwoomCallback):
 
             self.is_user_changing_balance = True
             kiwoom.data.print()
+
+    def on_condition_search_result(self, code_list):
+        self.ui.txt_condition_result.setText(str(code_list))
 
     def on_balance_item_changed(self, item):
         if not self.is_user_changing_balance:

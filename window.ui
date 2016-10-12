@@ -394,6 +394,35 @@
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>520</y>
+      <width>241</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>조건검색 결과</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTextEdit" name="txt_condition_result"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_add_codes">
+       <property name="text">
+        <string>검색 종목 추가</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -687,6 +716,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btn_add_codes</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_condition_result_add_btn_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>609</x>
+     <y>668</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>673</x>
+     <y>696</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>on_condition_refresh_btn_clicked()</slot>
@@ -708,5 +753,6 @@
   <slot>on_buy_strategy_changed(QString)</slot>
   <slot>on_sell_strategy_changed(QString)</slot>
   <slot>on_interest_balance_btn_clicked()</slot>
+  <slot>on_condition_result_add_btn_clicked()</slot>
  </slots>
 </ui>

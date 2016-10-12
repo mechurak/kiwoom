@@ -281,6 +281,7 @@ class Kiwoom(Singleton):
         for code in code_list:
             name = self.ocx.dynamicCall("GetMasterCodeName(QString)", [code])
             MyLogger.instance().logger().info("code: %s, name: %s", code, name)
+        self.callback.on_condition_search_result(code_list)
 
     def OnReceiveConditionVer(self, lRet, sMsg):
         MyLogger.instance().logger().info("%d %s", lRet, sMsg)
@@ -418,4 +419,7 @@ class KiwoomCallback:
         pass
 
     def on_data_updated(self, key_list):
+        pass
+
+    def on_condition_search_result(self, code_list):
         pass
