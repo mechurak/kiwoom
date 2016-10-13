@@ -67,9 +67,9 @@ class Kiwoom(Singleton):
             self.job_queue.task_done()
 
     def OnReceiveTrData(self, sScrNo, sRQName, sTrCode, sRecordName, sPreNext, nDataLength, sErrorCode, sMessage, sSplmMsg):
-        MyLogger.instance().logger().info("%s, %s, %s, %s, %s, %d, %s, %s, %s", sScrNo, sRQName, sTrCode, sRecordName, sPreNext, nDataLength, sErrorCode, sMessage, sSplmMsg)
+        MyLogger.instance().logger().debug("%s, %s, %s, %s, %s, %d, %s, %s, %s", sScrNo, sRQName, sTrCode, sRecordName, sPreNext, nDataLength, sErrorCode, sMessage, sSplmMsg)
         if sRQName == "주식기본정보요청":
-            MyLogger.instance().logger().info("sRQName: 주식기본정보요청")
+            MyLogger.instance().logger().debug("sRQName: 주식기본정보요청")
             종목코드 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, 0, "종목코드")
             종목코드 = 종목코드.strip()
             종목명 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, 0, "종목명")
@@ -80,7 +80,7 @@ class Kiwoom(Singleton):
             if 종목코드 and 종목명 and 현재가_str:
                 현재가 = int(현재가_str.strip())
                 현재가 = 현재가 if 현재가 >= 0 else 현재가*(-1)
-                MyLogger.instance().logger().info("종목코드: %s, 종목명: %s, 현재가: %d", 종목코드, 종목명, 현재가)
+                MyLogger.instance().logger().debug("종목코드: %s, 종목명: %s, 현재가: %d", 종목코드, 종목명, 현재가)
                 balance = self.data.get_balance(종목코드)
                 balance.종목명 = 종목명
                 balance.현재가 = 현재가
@@ -93,10 +93,10 @@ class Kiwoom(Singleton):
                 self.callback.on_data_updated(["잔고_dic"])
 
             else:
-                MyLogger.instance().logger().info("잘못된 종목 코드")
+                MyLogger.instance().logger().error("잘못된 종목 코드")
 
         elif sRQName == "관심종목":
-            MyLogger.instance().logger().info("sRQName: 관심종목")
+            MyLogger.instance().logger().debug("sRQName: 관심종목")
             count = self.ocx.dynamicCall("GetRepeatCnt(QString, QString)", sTrCode, sRecordName)
             MyLogger.instance().logger().debug("count: %d", count)
 
@@ -108,7 +108,7 @@ class Kiwoom(Singleton):
                 if 종목코드 and 종목명 and 현재가_str:
                     현재가 = int(현재가_str)
                     현재가 = 현재가 if 현재가 >= 0 else 현재가 * (-1)
-                    MyLogger.instance().logger().info("종목코드: %s, 종목명: %s, 현재가: %d", 종목코드, 종목명, 현재가)
+                    MyLogger.instance().logger().debug("종목코드: %s, 종목명: %s, 현재가: %d", 종목코드, 종목명, 현재가)
                     balance = self.data.get_balance(종목코드)
                     balance.종목명 = 종목명
                     balance.현재가 = 현재가
@@ -119,13 +119,13 @@ class Kiwoom(Singleton):
                         매도전략.on_tr_data(현재가)
 
                 else:
-                    MyLogger.instance().logger().info("잘못된 종목 코드")
+                    MyLogger.instance().logger().error("잘못된 종목 코드")
 
             self.stop_real_data(constant.SN_관심종목조회)  # 현재는 오는 실시간 데이터 양이 과도해 보임
             self.callback.on_data_updated(["잔고_dic"])
 
         elif sRQName == "계좌평가잔고내역요청":
-            MyLogger.instance().logger().info("sRQName: 계좌평가잔고내역요청")
+            MyLogger.instance().logger().debug("sRQName: 계좌평가잔고내역요청")
             count = self.ocx.dynamicCall("GetDataCount(QString)", ["계좌평가잔고개별합산"])
             MyLogger.instance().logger().debug("count: %d", count)
             for i in range(0, count):
@@ -153,16 +153,17 @@ class Kiwoom(Singleton):
             self.callback.on_data_updated(["잔고_dic"])
 
     def OnReceiveRealData(self, sJongmokCode, sRealType, sRealData):
-        MyLogger.instance().logger().info("%s, %s, %s", sJongmokCode, sRealType, sRealData)
+        MyLogger.instance().logger().debug("%s, %s, %s", sJongmokCode, sRealType, sRealData)
 
         if sRealType == "장시작시간":
-            MyLogger.instance().logger().info("장시작시간")
+            MyLogger.instance().logger().debug("장시작시간")
             현재시간_str = self.ocx.dynamicCall("GetCommRealData(QString, int)", "장시작시간", 20)
             현재시간_str = 현재시간_str.strip()
-            MyLogger.instance().logger().info("현재시간_str: %s", 현재시간_str)
+            MyLogger.instance().logger().debug("현재시간_str: %s", 현재시간_str)
 
             # TODO 현재는 시장가로 주문. 좀 더 나은 전략 필요
             if 현재시간_str == "085500":  ## 8시 55분. 31분터 신호 옴
+                MyLogger.instance().logger().info("8시 55분. 종목별 매수전략 확인")
                 for balance in self.data.잔고_dic.values():
                     for 매수전략 in balance.매수전략.values():
                         매수전략.on_time(현재시간_str)
@@ -173,6 +174,7 @@ class Kiwoom(Singleton):
 
             # TODO 현재는 시장가로 매도. 좀 더 나은 전략 필요
             if 현재시간_str == "152000":  # 15시 20분.
+                MyLogger.instance().logger().info("15시 20분. 종목별 매도전략 확인")
                 for balance in self.data.잔고_dic.values():
                     for 매도전략 in balance.매도전략.values():
                         매도전략.on_time(현재시간_str)
@@ -208,14 +210,14 @@ class Kiwoom(Singleton):
             pass
 
     def OnReceiveMsg(self, sScrNo, sRQName, sTrCode, sMsg):
-        MyLogger.instance().logger().info("%s, %s, %s, %s", sScrNo, sRQName, sTrCode, sMsg)
+        MyLogger.instance().logger().debug("%s, %s, %s, %s", sScrNo, sRQName, sTrCode, sMsg)
 
     def OnReceiveChejanData(self, sGubun, nItemCnt, sFidList):
         MyLogger.instance().logger().info("%s, %d, %s", sGubun, nItemCnt, sFidList)
         fid_str_list = sFidList.split(";")
         for fid_str in fid_str_list:
             ret = self.ocx.dynamicCall("GetChejanData(int)", int(fid_str))
-            MyLogger.instance().logger().info("\t %s: %s", fid_str, ret)
+            MyLogger.instance().logger().debug("\t %s: %s", fid_str, ret)
 
         종목코드 = self.ocx.dynamicCall("GetChejanData(int)", 9001)
         종목코드 = 종목코드.strip()
@@ -261,7 +263,7 @@ class Kiwoom(Singleton):
 
     def OnEventConnect(self, nErrCode):
         if nErrCode == 0:
-            MyLogger.instance().logger().info("로그인 성공")
+            MyLogger.instance().logger().debug("로그인 성공")
             account_num = self.ocx.dynamicCall("GetLoginInfo(QString)", ["ACCNO"])
             account_num = account_num[:-1]
             account_list = account_num.split(";")
@@ -271,20 +273,20 @@ class Kiwoom(Singleton):
             self.callback.on_connected()
 
     def OnReceiveCondition(self, strCode, strType, strConditionName, strConditionIndex):
-        MyLogger.instance().logger().info("%s, %s, %s, %s", strCode, strType, strConditionName, strConditionIndex)
+        MyLogger.instance().logger().debug("%s, %s, %s, %s", strCode, strType, strConditionName, strConditionIndex)
 
     def OnReceiveTrCondition(self, sScrNo, strCodeList, strConditionName, nIndex, nNext):
-        MyLogger.instance().logger().info("%s, %s, %s, %d, %d", sScrNo, strCodeList, strConditionName, nIndex, nNext)
+        MyLogger.instance().logger().debug("%s, %s, %s, %d, %d", sScrNo, strCodeList, strConditionName, nIndex, nNext)
         code_list_str = strCodeList[:-1]  # 마지막 ";" 제거
         code_list = code_list_str.split(';')
-        MyLogger.instance().logger().info("code_list: %s", code_list)
+        MyLogger.instance().logger().debug("code_list: %s", code_list)
         for code in code_list:
             name = self.ocx.dynamicCall("GetMasterCodeName(QString)", [code])
-            MyLogger.instance().logger().info("code: %s, name: %s", code, name)
+            MyLogger.instance().logger().debug("code: %s, name: %s", code, name)
         self.callback.on_condition_search_result(code_list)
 
     def OnReceiveConditionVer(self, lRet, sMsg):
-        MyLogger.instance().logger().info("%d %s", lRet, sMsg)
+        MyLogger.instance().logger().debug("%d %s", lRet, sMsg)
         condition_ret = self.ocx.dynamicCall("GetConditionNameList()")
         condition_ret = condition_ret[:-1]  # 마지막 ";" 제거
         condition_list_raw = condition_ret.split(";")
@@ -304,17 +306,16 @@ class Kiwoom(Singleton):
     ##############################################################
 
     def login(self):
-        MyLogger.instance().logger().info("")
+        MyLogger.instance().logger().debug("")
         if self.ocx.dynamicCall("GetConnectState()") == 0:
             self.ocx.dynamicCall("CommConnect()")
 
     def refresh_condition_dic(self):
-        MyLogger.instance().logger().info("")
         ret = self.ocx.dynamicCall("GetConditionLoad()")
-        MyLogger.instance().logger().info("call GetConditionLoad(). ret: %d", ret)
+        MyLogger.instance().logger().debug("call GetConditionLoad(). ret: %d", ret)
 
     def send_condition(self, the_condition):
-        MyLogger.instance().logger().info("%s, %s, %s", the_condition.조건명, the_condition.신호종류, the_condition.적용유무)
+        MyLogger.instance().logger().debug("%s, %s, %s", the_condition.조건명, the_condition.신호종류, the_condition.적용유무)
         screen_num = constant.SN_조건식_미지정
         if the_condition.신호종류 == "매수신호":
             screen_num = constant.SN_조건식_매수신호
@@ -324,36 +325,36 @@ class Kiwoom(Singleton):
         #    MyLogger.instance().logger().info("call send_condition_stop first")
         #    self.send_condition_stop(screen_num, the_condition.조건명, the_condition.인덱스)
 
-        MyLogger.instance().logger().info("param for SendCondition(). SN: %s, 조건명: %s, 인덱스: %d, 적용유무: %d", screen_num, the_condition.조건명, the_condition.인덱스, int(the_condition.적용유무))
+        MyLogger.instance().logger().debug("param for SendCondition(). SN: %s, 조건명: %s, 인덱스: %d, 적용유무: %d", screen_num, the_condition.조건명, the_condition.인덱스, int(the_condition.적용유무))
         ret = self.ocx.dynamicCall("SendCondition(QString, QString, int, int)", screen_num, the_condition.조건명, the_condition.인덱스, int(the_condition.적용유무))
-        MyLogger.instance().logger().info("call SendCondition(). ret: %d", ret)
+        MyLogger.instance().logger().debug("call SendCondition(). ret: %d", ret)
         return ret
 
     def send_condition_stop(self, the_화면번호, the_조건명, the_조건명인덱스):
-        MyLogger.instance().logger().info("%s, %s, %d", the_화면번호, the_조건명, the_조건명인덱스)
+        MyLogger.instance().logger().debug("%s, %s, %d", the_화면번호, the_조건명, the_조건명인덱스)
         self.ocx.dynamicCall("SendConditionStop(QString, QString, int)", the_화면번호, the_조건명, the_조건명인덱스)
-        MyLogger.instance().logger().info("call SendConditionStop()")
+        MyLogger.instance().logger().debug("call SendConditionStop()")
 
     def tr_balance(self):
-        MyLogger.instance().logger().info("계좌번호 %s", self.data.계좌번호)
+        MyLogger.instance().logger().debug("계좌번호 %s", self.data.계좌번호)
         self.ocx.dynamicCall("SetInputValue(QString, QString)", "계좌번호", self.data.계좌번호)
         self.ocx.dynamicCall("SetInputValue(QString, QString)", "조회구분", 2)
         ret = self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "계좌평가잔고내역요청", "opw00018", 0, constant.SN_잔고조회)
-        MyLogger.instance().logger().info("ret %d", ret)
+        MyLogger.instance().logger().debug("ret %d", ret)
 
     def tr_code(self, the_종목코드):
-        MyLogger.instance().logger().info("the_종목코드 %s", the_종목코드)
+        MyLogger.instance().logger().debug("the_종목코드 %s", the_종목코드)
         self.ocx.dynamicCall("SetInputValue(QString, QString)", "종목코드", the_종목코드)
         self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "주식기본정보요청", "opt10001", 0, constant.SN_종목정보)
 
     def tr_multi_code(self, the_종목코드_list_str, the_종목수):
-        MyLogger.instance().logger().info("the_종목코드_list_str %s, the_종목수 %d", the_종목코드_list_str, the_종목수)
+        MyLogger.instance().logger().debug("the_종목코드_list_str %s, the_종목수 %d", the_종목코드_list_str, the_종목수)
         ret = self.ocx.dynamicCall("CommKwRqData(QString, int, int, int, QString, QString)", the_종목코드_list_str, 0, the_종목수, 0, "관심종목", constant.SN_관심종목조회)
-        MyLogger.instance().logger().info("ret %d", ret)
+        MyLogger.instance().logger().debug("ret %d", ret)
 
     # 미보유 종목 있으면 조회 (for 현재가 갱신)
     def refresh_interest_balance(self):
-        MyLogger.instance().logger().info("")
+        MyLogger.instance().logger().debug("")
         code_list = []
         for balance in self.data.잔고_dic.values():
             if balance.보유수량 == 0:

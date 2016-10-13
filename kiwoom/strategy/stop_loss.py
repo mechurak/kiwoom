@@ -19,7 +19,7 @@ class StopLoss(StrategyBase):
         return {"threshold": self.threshold}
 
     def on_real_data(self, sJongmokCode, sRealType, sRealData):
-        MyLogger.instance().logger().info("StopLoss. %s", self.balance.종목명)
+        MyLogger.instance().logger().debug("StopLoss. %s", self.balance.종목명)
         if self.is_queued:
             MyLogger.instance().logger().info("is_queued. do nothing")
             return
