@@ -89,11 +89,16 @@ class MyWindow(QMainWindow, KiwoomCallback):
     @pyqtSlot()
     def on_register_real_all_btn_clicked(self):
         MyLogger.instance().logger().info("")
-        잔고_dic = kiwoom.data.잔고_dic
-        종목코드_list = 잔고_dic.keys()
-        종목코드_list_str = ";".join(종목코드_list)
-        MyLogger.instance().logger().info("종목코드_list_str %s", 종목코드_list_str)
-        kiwoom.set_real_reg(종목코드_list_str)
+        종목코드_list = []
+        for balance in kiwoom.data.잔고_dic.values():
+            if len(balance.매도전략) or len(balance.매수전략):
+                종목코드_list.append(balance.종목코드)
+        if len(종목코드_list):
+            종목코드_list_str = ";".join(종목코드_list)
+            MyLogger.instance().logger().info("종목코드_list_str %s", 종목코드_list_str)
+            kiwoom.set_real_reg(종목코드_list_str)
+        else:
+            MyLogger.instance().logger().error("전략 있는 종목 없음")
 
     @pyqtSlot()
     def on_buy_strategy_add_btn_clicked(self):
