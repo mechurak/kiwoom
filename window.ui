@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1354</width>
-    <height>832</height>
+    <height>852</height>
    </rect>
   </property>
   <property name="font">
@@ -68,7 +68,7 @@
      <rect>
       <x>10</x>
       <y>450</y>
-      <width>521</width>
+      <width>631</width>
       <height>211</height>
      </rect>
     </property>
@@ -85,7 +85,7 @@
      <bool>true</bool>
     </attribute>
     <attribute name="verticalHeaderVisible">
-     <bool>false</bool>
+     <bool>true</bool>
     </attribute>
     <row/>
     <row/>
@@ -397,8 +397,8 @@
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>540</x>
-      <y>520</y>
+      <x>170</x>
+      <y>670</y>
       <width>241</width>
       <height>141</height>
      </rect>
@@ -417,11 +417,99 @@
      <item>
       <widget class="QPushButton" name="btn_add_codes">
        <property name="text">
-        <string>검색 종목 추가</string>
+        <string>검색 종목을 대상 종목에 추가</string>
        </property>
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>450</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>선택 조건식</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="txt_condition_select">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>470</y>
+      <width>271</width>
+      <height>51</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QWidget" name="gridLayoutWidget_6">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>550</y>
+      <width>441</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_6">
+     <item row="2" column="0">
+      <widget class="QPushButton" name="pushButton_4">
+       <property name="text">
+        <string>선택 조건식에 신호종류 적용</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QComboBox" name="combo_signal"/>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>신호종류</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>적용유무</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="combo_apply"/>
+     </item>
+     <item row="2" column="1">
+      <widget class="QPushButton" name="pushButton_5">
+       <property name="text">
+        <string>선택 조건식에 적용유무 적용</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="Line" name="line">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>430</y>
+      <width>1281</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -723,12 +811,44 @@
    <slot>on_condition_result_add_btn_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>609</x>
-     <y>668</y>
+     <x>240</x>
+     <y>830</y>
     </hint>
     <hint type="destinationlabel">
-     <x>673</x>
-     <y>696</y>
+     <x>420</x>
+     <y>771</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_4</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_condition_signal_btn_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>683</x>
+     <y>622</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>700</x>
+     <y>671</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_5</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_condition_apply_btn_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>954</x>
+     <y>614</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>989</x>
+     <y>680</y>
     </hint>
    </hints>
   </connection>
@@ -754,5 +874,9 @@
   <slot>on_sell_strategy_changed(QString)</slot>
   <slot>on_interest_balance_btn_clicked()</slot>
   <slot>on_condition_result_add_btn_clicked()</slot>
+  <slot>on_condition_signal_btn_clicked()</slot>
+  <slot>on_condition_apply_btn_clicked()</slot>
+  <slot>on_condition_signal_changed(QString)</slot>
+  <slot>on_condition_apply_changed(QString)</slot>
  </slots>
 </ui>

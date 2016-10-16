@@ -13,25 +13,8 @@ import json
 class ConditionItem:
     def __init__(self, the_condition):
         self.condition = the_condition
-
-        self.combo_box_signal = QComboBox()
-        self.combo_box_signal.addItems(Condition.get_signal_type_items_list())
-        self.combo_box_signal.setCurrentIndex(self.combo_box_signal.findText(self.condition.신호종류))
-        self.combo_box_signal.connect(self.combo_box_signal, SIGNAL("currentIndexChanged(QString)"), self.on_signal_changed)
-
-        self.combo_box_apply = QComboBox()
-        self.combo_box_apply.addItems(Condition.get_applied_items_list())
-        self.combo_box_apply.setCurrentIndex(self.combo_box_apply.findText(self.condition.적용유무))
-        self.combo_box_apply.connect(self.combo_box_apply, SIGNAL("currentIndexChanged(QString)"), self.on_apply_changed)
-
         self.button = QPushButton("조회 및 요청")
         self.button.clicked.connect(lambda: kiwoom.send_condition(self.condition))
-
-    def on_signal_changed(self, the_신호종류):
-        self.condition.신호종류 = the_신호종류
-
-    def on_apply_changed(self, the_적용유무):
-        self.condition.적용유무 = the_적용유무
 
 
 class MyWindow(QMainWindow, KiwoomCallback):
@@ -49,6 +32,11 @@ class MyWindow(QMainWindow, KiwoomCallback):
         self.selected_balance = []
         self.ui.combo_buy.addItems(Balance.get_available_buy_strategy())
         self.ui.combo_sell.addItems(Balance.get_available_sell_strategy())
+        condition_vertical_header = self.ui.table_condition.verticalHeader()
+        condition_vertical_header.connect(condition_vertical_header, SIGNAL("sectionClicked(int)"), self.on_condition_section_clicked)
+        self.selected_condition = []
+        self.ui.combo_signal.addItems(Condition.get_signal_type_items_list())
+        self.ui.combo_apply.addItems(Condition.get_applied_items_list())
 
     @pyqtSlot(str)
     def on_account_changed(self, account):
@@ -232,8 +220,8 @@ class MyWindow(QMainWindow, KiwoomCallback):
                 condition_item = ConditionItem(condition)
                 self.ui.table_condition.setItem(i, 0, QTableWidgetItem(str(condition.인덱스)))
                 self.ui.table_condition.setItem(i, 1, QTableWidgetItem(condition.조건명))
-                self.ui.table_condition.setCellWidget(i, 2, condition_item.combo_box_signal)
-                self.ui.table_condition.setCellWidget(i, 3, condition_item.combo_box_apply)
+                self.ui.table_condition.setItem(i, 2, QTableWidgetItem(condition.신호종류))
+                self.ui.table_condition.setItem(i, 3, QTableWidgetItem(condition.적용유무))
                 self.ui.table_condition.setCellWidget(i, 4, condition_item.button)
                 i += 1
             kiwoom.data.print()
@@ -301,7 +289,50 @@ class MyWindow(QMainWindow, KiwoomCallback):
         selected_balance_str = ",".join(종목명_list)
         self.ui.txt_balance.setText(selected_balance_str)
 
-    #def tick(self):
+    def on_condition_section_clicked(self, row):
+        MyLogger.instance().logger().info("row: %d", row)
+        rows = []
+        for idx in self.ui.table_condition.selectedIndexes():
+            current_row = idx.row()
+            if current_row not in rows:
+                rows.append(current_row)
+
+        self.selected_condition.clear()
+        for row in rows:
+
+            인덱스_item = self.ui.table_condition.item(row, 0)
+            if not 인덱스_item:  # 빈칸(None)인 경우
+                continue
+            인덱스 = int(인덱스_item.text())
+            condition = kiwoom.data.get_condition(인덱스)
+            self.selected_condition.append(condition)
+
+        조건식_list = []
+        for condition in self.selected_condition:
+            조건식_list.append(condition.조건명)
+        selected_condition_str = ",".join(조건식_list)
+        self.ui.txt_condition_select.setText(selected_condition_str)
+
+
+    @pyqtSlot()
+    def on_condition_signal_btn_clicked(self):
+        MyLogger.instance().logger().info("")
+        signal_str = self.ui.combo_signal.currentText()
+        MyLogger.instance().logger().info("신호종류: %s", signal_str)
+        for condition in self.selected_condition:
+            condition.신호종류 = signal_str
+        self.on_data_updated(["조건식_dic"])
+
+    @pyqtSlot()
+    def on_condition_apply_btn_clicked(self):
+        MyLogger.instance().logger().info("")
+        apply_str = self.ui.combo_apply.currentText()
+        MyLogger.instance().logger().info("신호종류: %s", apply_str)
+        for condition in self.selected_condition:
+            condition.적용유무 = apply_str
+        self.on_data_updated(["조건식_dic"])
+
+        #def tick(self):
     #    print("tick")
 
 if __name__ == "__main__":

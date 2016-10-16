@@ -25,7 +25,7 @@ class StopLoss(StrategyBase):
             return
 
         if self.balance.보유수량 == 0:
-            MyLogger.instance().logger().info("보유수량 == 0. do nothing")
+            MyLogger.instance().logger().debug("보유수량 == 0. do nothing")
             return
 
         수익률 = self.balance.get_return_rate()
