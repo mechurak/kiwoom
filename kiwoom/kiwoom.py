@@ -152,6 +152,26 @@ class Kiwoom(Singleton):
 
             self.callback.on_data_updated(["잔고_dic"])
 
+        elif sRQName == "주식분봉조회":
+            MyLogger.instance().logger().debug("sRQName: 주식분봉조회")
+            count = self.ocx.dynamicCall("GetRepeatCnt(QString, QString)", sTrCode, sRecordName)
+            MyLogger.instance().logger().debug("count: %d", count)
+
+            for i in range(0, count):
+                현재가 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "현재가").strip()
+                거래량 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "거래량").strip()
+                체결시간 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "체결시간").strip()
+                MyLogger.instance().logger().debug("현재가: %s, 거래량: %s, 체결시간: %s", 현재가, 거래량, 체결시간)
+
+            if sPreNext == "2":
+                time.sleep(0.2)
+                self.ocx.dynamicCall("SetInputValue(QString, QString)", "종목코드", "005930")
+                self.ocx.dynamicCall("SetInputValue(QString, QString)", "틱범위", "1")
+                self.ocx.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1")
+                ret = self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "주식분봉조회", "opt10080", 2, constant.SN_잔고조회)
+                MyLogger.instance().logger().debug("CommRqData. ret: %d", ret)
+
+
     def OnReceiveRealData(self, sJongmokCode, sRealType, sRealData):
         MyLogger.instance().logger().debug("%s, %s, %s", sJongmokCode, sRealType, sRealData)
 
@@ -398,8 +418,11 @@ class Kiwoom(Singleton):
     # "test" 버튼 눌렀을 때, 테스트
     def perform_test(self):
         MyLogger.instance().logger().debug("")
-        종목명 = self.get_master_code_name("021650")
-        MyLogger.instance().logger().debug("종목명 %s", 종목명)
+        self.ocx.dynamicCall("SetInputValue(QString, QString)", "종목코드", "005930")
+        self.ocx.dynamicCall("SetInputValue(QString, QString)", "틱범위", "1")
+        self.ocx.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1")
+        ret = self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "주식분봉조회", "opt10080", 0, constant.SN_잔고조회)
+
 
     def reload_condition(self):
         MyLogger.instance().logger().info("")
