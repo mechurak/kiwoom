@@ -152,25 +152,92 @@ class Kiwoom(Singleton):
 
             self.callback.on_data_updated(["잔고_dic"])
 
-        elif sRQName == "주식분봉조회":
-            MyLogger.instance().logger().debug("sRQName: 주식분봉조회")
+        elif sRQName == "주식일봉조회":
+            MyLogger.instance().logger().debug("sRQName: %s", sRQName)
+            종목코드 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, 0, "종목코드").strip()
+            종목명 = self.ocx.dynamicCall("GetMasterCodeName(QString)", [종목코드]).strip()
+            MyLogger.instance().logger().debug("종목코드: %s, 종목명: %s", 종목코드, 종목명)
+            if '/' in 종목명:
+                종목명 = 종목명.replace('/', '-')
+            f = open("data/day/" + 종목코드 + "_" + 종목명 + ".csv", "a")
+
             count = self.ocx.dynamicCall("GetRepeatCnt(QString, QString)", sTrCode, sRecordName)
             MyLogger.instance().logger().debug("count: %d", count)
 
             for i in range(0, count):
-                현재가 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "현재가").strip()
-                거래량 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "거래량").strip()
-                체결시간 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "체결시간").strip()
-                MyLogger.instance().logger().debug("현재가: %s, 거래량: %s, 체결시간: %s", 현재가, 거래량, 체결시간)
+                일자 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "일자").strip()
+                시가_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "시가").strip()
+                시가 = abs(int(시가_str))
+                고가_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "고가").strip()
+                고가 = abs(int(고가_str))
+                저가_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "저가").strip()
+                저가 = abs(int(저가_str))
+                현재가_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "현재가").strip()
+                현재가 = abs(int(현재가_str))
+                거래량_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "거래량").strip()
+                거래량 = abs(int(거래량_str))
+
+                #MyLogger.instance().logger().debug("%s %d %d %d %d %d", 일자, 시가, 고가, 저가, 현재가, 거래량)
+                f.write("%s, %d, %d, %d, %d, %d, %d\n" % (일자, 시가, 고가, 저가, 현재가, 거래량, 현재가))
+
+            f.close()
 
             if sPreNext == "2":
                 time.sleep(0.2)
-                self.ocx.dynamicCall("SetInputValue(QString, QString)", "종목코드", "005930")
+                self.ocx.dynamicCall("SetInputValue(QString, QString)", "종목코드", 종목코드)
+                self.ocx.dynamicCall("SetInputValue(QString, QString)", "기준일자", "20161022")
+                self.ocx.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1")
+                ret = self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "주식일봉조회", "opt10081", 2, constant.SN_데이터_일봉조회)
+                MyLogger.instance().logger().info("연속조회 CommRqData. code: %s, ret: %d", 종목코드, ret)
+
+            elif sPreNext == "0":
+                self.condition_value.acquire()
+                self.condition_value.notify()
+                self.condition_value.release()
+
+
+        elif sRQName == "주식분봉조회":
+            MyLogger.instance().logger().debug("sRQName: %s", sRQName)
+            종목코드 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, 0, "종목코드").strip()
+            종목명 = self.ocx.dynamicCall("GetMasterCodeName(QString)", [종목코드]).strip()
+            MyLogger.instance().logger().debug("종목코드: %s, 종목명: %s", 종목코드, 종목명)
+            if '/' in 종목명:
+                종목명 = 종목명.replace('/', '-')
+            f = open("data/minute/" + 종목코드 + "_" + 종목명 + ".csv", "a")
+
+            count = self.ocx.dynamicCall("GetRepeatCnt(QString, QString)", sTrCode, sRecordName)
+            MyLogger.instance().logger().debug("count: %d", count)
+
+            for i in range(0, count):
+                체결시간 = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "체결시간").strip()
+                시가_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "시가").strip()
+                시가 = abs(int(시가_str))
+                고가_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "고가").strip()
+                고가 = abs(int(고가_str))
+                저가_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "저가").strip()
+                저가 = abs(int(저가_str))
+                현재가_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "현재가").strip()
+                현재가 = abs(int(현재가_str))
+                거래량_str = self.ocx.dynamicCall("CommGetData(QString, QString, QString, int, QString)", sTrCode, "", sRQName, i, "거래량").strip()
+                거래량 = abs(int(거래량_str))
+
+                #MyLogger.instance().logger().debug("%s %d %d %d %d %d", 체결시간, 시가, 고가, 저가, 현재가, 거래량)
+                f.write("%s, %d, %d, %d, %d, %d, %d\n" % (체결시간, 시가, 고가, 저가, 현재가, 거래량, 현재가))
+
+            f.close()
+
+            if sPreNext == "2":
+                time.sleep(0.2)
+                self.ocx.dynamicCall("SetInputValue(QString, QString)", "종목코드", 종목코드)
                 self.ocx.dynamicCall("SetInputValue(QString, QString)", "틱범위", "1")
                 self.ocx.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1")
-                ret = self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "주식분봉조회", "opt10080", 2, constant.SN_잔고조회)
-                MyLogger.instance().logger().debug("CommRqData. ret: %d", ret)
+                ret = self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "주식분봉조회", "opt10080", 2, constant.SN_데이터_분봉조회)
+                MyLogger.instance().logger().debug("연속조회 CommRqData. code: %s, ret: %d", 종목코드, ret)
 
+            elif sPreNext == "0":
+                self.condition_value.acquire()
+                self.condition_value.notify()
+                self.condition_value.release()
 
     def OnReceiveRealData(self, sJongmokCode, sRealType, sRealData):
         MyLogger.instance().logger().debug("%s, %s, %s", sJongmokCode, sRealType, sRealData)
@@ -437,6 +504,97 @@ class Kiwoom(Singleton):
                 job = Job(self.send_condition, condition)
                 self.job_queue.put(job)
 
+    def collect_day_data(self):
+        MyLogger.instance().logger().debug("")
+
+        class DayData(threading.Thread):
+            def __init__(self, the_ocx, the_condition_value):
+                super().__init__()
+                self.ocx = the_ocx
+                self.condition_value = the_condition_value
+
+            def run(self):
+                kospi_code_list_str = self.ocx.dynamicCall("GetCodeListByMarket(QString)", ["0"])
+                kospi_code_list = kospi_code_list_str.split(';')
+                MyLogger.instance().logger().info("kospi_code_list. len: %d", len(kospi_code_list))
+                kosdaq_code_list_str = self.ocx.dynamicCall("GetCodeListByMarket(QString)", ["10"])
+                kosdaq_code_list = kosdaq_code_list_str.split(';')
+                MyLogger.instance().logger().info("kosdaq_code_list. len: %d", len(kosdaq_code_list))
+                code_list = kospi_code_list + kosdaq_code_list
+                from datetime import datetime
+                기준일자 = datetime.today().strftime("%Y%m%d")
+                from glob import glob
+
+                for code in code_list:
+                    if len(code) < 3:
+                        MyLogger.instance().logger().warning("unexpected code: %s", code)
+                        continue
+
+                    temp_list = glob('data/day/' + code + '*.csv')
+                    if len(temp_list) >= 1:
+                        MyLogger.instance().logger().warning("%s already exist", code)
+                        continue
+
+                    time.sleep(1)
+                    self.condition_value.acquire()
+                    self.ocx.dynamicCall("SetInputValue(QString, QString)", "종목코드", code)
+                    self.ocx.dynamicCall("SetInputValue(QString, QString)", "기준일자", 기준일자)
+                    self.ocx.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1")
+                    ret = self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "주식일봉조회", "opt10081", 0, constant.SN_데이터_일봉조회)
+                    MyLogger.instance().logger().info("CommRqData. code: %s, ret: %d", code, ret)
+                    self.condition_value.wait()
+
+                self.condition_value.release()
+                MyLogger.instance().logger().info("the end of run()")
+
+        self.condition_value = threading.Condition()
+        test_thread = DayData(self.ocx, self.condition_value)
+        test_thread.start()
+
+    def collect_minute_data(self):
+        MyLogger.instance().logger().debug("")
+
+        class MinuteData(threading.Thread):
+            def __init__(self, the_ocx, the_condition_value):
+                super().__init__()
+                self.ocx = the_ocx
+                self.condition_value = the_condition_value
+
+            def run(self):
+                kospi_code_list_str = self.ocx.dynamicCall("GetCodeListByMarket(QString)", ["0"])
+                kospi_code_list = kospi_code_list_str.split(';')
+                MyLogger.instance().logger().info("kospi_code_list. len: %d", len(kospi_code_list))
+                kosdaq_code_list_str = self.ocx.dynamicCall("GetCodeListByMarket(QString)", ["10"])
+                kosdaq_code_list = kosdaq_code_list_str.split(';')
+                MyLogger.instance().logger().info("kosdaq_code_list. len: %d", len(kosdaq_code_list))
+                code_list = kospi_code_list + kosdaq_code_list
+                from glob import glob
+
+                for code in code_list:
+                    if len(code) < 3:
+                        MyLogger.instance().logger().warning("unexpected code: %s", code)
+                        continue
+
+                    temp_list = glob('data/minute/' + code + '*.csv')
+                    if len(temp_list) >= 1:
+                        MyLogger.instance().logger().warning("%s already exist", code)
+                        continue
+
+                    time.sleep(1)
+                    self.condition_value.acquire()
+                    self.ocx.dynamicCall("SetInputValue(QString, QString)", "종목코드", code)
+                    self.ocx.dynamicCall("SetInputValue(QString, QString)", "틱범위", "1")
+                    self.ocx.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1")
+                    ret = self.ocx.dynamicCall("CommRqData(QString, QString, int, QString)", "주식분봉조회", "opt10080", 0, constant.SN_데이터_분봉조회)
+                    MyLogger.instance().logger().info("CommRqData. code: %s, ret: %d", code, ret)
+                    self.condition_value.wait()
+
+                self.condition_value.release()
+                MyLogger.instance().logger().info("the end of run()")
+
+        self.condition_value = threading.Condition()
+        test_thread = MinuteData(self.ocx, self.condition_value)
+        test_thread.start()
 
 class KiwoomCallback:
     def on_connected(self):

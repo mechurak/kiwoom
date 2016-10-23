@@ -511,6 +511,45 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>700</y>
+      <width>201</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>차트데이터 수집</string>
+    </property>
+    <widget class="QWidget" name="verticalLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>181</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QPushButton" name="pushButton_6">
+        <property name="text">
+         <string>전체 일봉 데이터 수집</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_7">
+        <property name="text">
+         <string>전체 분봉 데이터 수집</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -827,8 +866,8 @@
    <slot>on_condition_signal_btn_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>683</x>
-     <y>622</y>
+     <x>684</x>
+     <y>660</y>
     </hint>
     <hint type="destinationlabel">
      <x>700</x>
@@ -843,12 +882,44 @@
    <slot>on_condition_apply_btn_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>954</x>
-     <y>614</y>
+     <x>1089</x>
+     <y>660</y>
     </hint>
     <hint type="destinationlabel">
      <x>989</x>
      <y>680</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_6</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_day_data_btn_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1260</x>
+     <y>767</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1300</x>
+     <y>680</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_7</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_minute_data_btn_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1214</x>
+     <y>796</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1102</x>
+     <y>793</y>
     </hint>
    </hints>
   </connection>
@@ -878,5 +949,7 @@
   <slot>on_condition_apply_btn_clicked()</slot>
   <slot>on_condition_signal_changed(QString)</slot>
   <slot>on_condition_apply_changed(QString)</slot>
+  <slot>on_day_data_btn_clicked()</slot>
+  <slot>on_minute_data_btn_clicked()</slot>
  </slots>
 </ui>

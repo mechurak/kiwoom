@@ -337,6 +337,16 @@ class MyWindow(QMainWindow, KiwoomCallback):
             condition.적용유무 = apply_str
         self.on_data_updated(["조건식_dic"])
 
+    @pyqtSlot()
+    def on_day_data_btn_clicked(self):
+        MyLogger.instance().logger().info("")
+        kiwoom.collect_day_data()
+
+    @pyqtSlot()
+    def on_minute_data_btn_clicked(self):
+        MyLogger.instance().logger().info("")
+        kiwoom.collect_minute_data()
+
         #def tick(self):
     #    print("tick")
 
